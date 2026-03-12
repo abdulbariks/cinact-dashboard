@@ -1,4 +1,4 @@
-import { OverviewIcon } from '@/components/icons/SidebarIcons';
+import { AttendenceIcon, CalenderIcon, ChatIcon, CommunityIcon, GradHat,   OverviewIcon, PaymentIcon, SettingsIcon, TeacherIcon, UsersIcon } from '@/components/icons/sidebar.tsx/SidebarIcons';
 import { Layout, Settings, HelpCircle, Users, BookOpen, CreditCard, Home, FileText, Calendar, DollarSign, BarChart } from 'lucide-react';
 import { ComponentType } from 'react';
 
@@ -30,47 +30,89 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
     
     // Academic Category
     {
-      id: 'courses',
-      name: 'Courses',
-      href: '/dashboard/courses',
-      icon: BookOpen,
-      description: 'Manage courses',
-      category: 'Academic'
-    },
-    {
-      id: 'students',
-      name: 'Students',
-      href: '/dashboard/students',
-      icon: Users,
+      id: 'student-management',
+      name: 'Student Management',
+      href: '/dashboard/student-management',
+      icon: UsersIcon,
       description: 'Manage students',
       category: 'Academic'
     },
     {
-      id: 'classes',
-      name: 'Classes',
-      href: '/dashboard/classes',
-      icon: Calendar,
-      description: 'Manage classes',
+      id: 'course-management',
+      name: 'Course Management',
+      href: '/dashboard/course-management',
+      icon:  GradHat,
+      description: 'Manage courses',
+      category: 'Academic'
+    },
+    {
+      id: 'teacher-management',
+      name: 'Teacher Management',
+      href: '/dashboard/teacher-management',
+      icon: TeacherIcon,
+      description: 'Manage teachers',
+      category: 'Academic'
+    },
+    {
+      id: 'attendence',
+      name: 'Attendence',
+      href: '/dashboard/attendence',
+      icon: AttendenceIcon,
+      description: 'attendence',
       category: 'Academic'
     },
     
-    // Settings Category
+    // administration Category
     {
+      id: 'finance',
+      name: 'Finance & Payments',
+      href: '/dashboard/finance-payments',
+      icon: PaymentIcon,
+      description: 'finance and payments',
+      category: 'Administration'
+    },
+    {
+      id: 'events',
+      name: 'Events',
+      href: '/dashboard/events',
+      icon: CalenderIcon,
+      description: 'events',
+      category: 'Administration'
+    },
+
+    // engagement Category
+
+        {
+      id: 'chats',
+      name: 'Chats',
+      href: '/dashboard/chats',
+      icon: ChatIcon,
+      description: 'chats',
+      category: 'Engagement'
+    },
+    {
+      id: 'community',
+      name: 'Community',
+      href: '/dashboard/community',
+      icon: CommunityIcon,
+      description: 'community',
+      category: 'Engagement'
+    },
+
+    // settings category
+
+       {
       id: 'settings',
-      name: 'Settings',
+      name: 'System Settings',
       href: '/dashboard/settings',
-      icon: Settings,
-      description: 'System settings',
+      icon: SettingsIcon,
+      description: 'settings',
       category: 'Settings'
-    },
-    {
-      id: 'support',
-      name: 'Support',
-      href: '/dashboard/support',
-      icon: HelpCircle,
-      description: 'Get help',
-      category: 'Settings'
-    },
+    }, 
+
+
+
+
   ],
 
   tutor: [

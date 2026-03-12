@@ -18,6 +18,8 @@ import {
 } from "@/config/menuItems";
 import { parseCookies } from "nookies";
 import CollapseIcon from "../icons/sidebar.tsx/CollapseIcon";
+import logo from '@/public/admin-dashboard/mainLogo.png'
+import Image from "next/image";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -124,21 +126,19 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
           min-h-[calc(100vh-100px)] 
           ${effectiveCollapsed ? 'w-20' : 'w-[300px]'}
           shadow-[0px_-0.3px_5.5px_0px_rgba(0,0,0,0.02)]
-          p-3 lg:p-4 overflow-y-auto transition-all duration-300
+           p-6 overflow-y-auto transition-all duration-300
           bg-[#18222c]
         `}
       >
         {/* Header with Logo and Toggle Button */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-9">
           <Link
-            href={"/"}
+            href={"/dashboard"}
             className={`flex items-center transition-all duration-300 overflow-hidden ${
               effectiveCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'
             }`}
           >
-            <h2 className="text-primaryColor text-3xl font-semibold tracking-wide whitespace-nowrap">
-              LOGO
-            </h2>
+            <Image src={logo} alt="logo" />
           </Link>
           
           {!isMobile && (
@@ -197,10 +197,10 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                       onClick={onClose}
                       className={`
                         flex items-center group gap-3 px-3 py-2.5 lg:py-3 rounded-lg 
-                        transition-all duration-200 relative
+                        transition-all duration-200 relative 
                         ${active 
-                          ? "bg-[#5f6ca0] text-white"   
-                          : "text-gray-700 hover:bg-gray-50"
+                          ? "bg-[#5f6ca0] text-white   "   
+                          : "text-[#5F6CA0] hover:bg-[#5F6CA0]/50 hover:text-white"
                         }
                         ${effectiveCollapsed ? 'justify-center' : ''}
                       `}
@@ -218,7 +218,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                         
                         {/* Show text on mobile always, on desktop only when not collapsed */}
                         {(isMobile || !effectiveCollapsed) && (
-                          <span className="text-sm font-medium whitespace-nowrap">
+                          <span className="text-base font-medium whitespace-nowrap">
                             {item.name}
                           </span>
                         )}
