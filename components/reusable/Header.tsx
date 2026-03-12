@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({
   const router = useRouter();
 
   return (
-    <nav className=" text-blackColor border-b bg-bgColor border-borderColor  py-3">
+    <nav className=" text-blackColor border-b bg-[#0a1929] border-[#343745]  py-3">
       <div className=" px-3  md:px-6   relative flex justify-between w-full mb-1 z-50">
         {/* Mobile menu button */}
         <div>
@@ -51,11 +51,11 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Notification and Profile Group */}
-        <div className="flex items-center gap-2 lg:gap-6 justify-end w-full">
-          <div className=" hidden md:block w-full ">
+        <div className="flex items-center gap-2 lg:gap-6 w-full justify-end">
+          <div className="hidden md:block w-auto max-w-md">
             <Search />
           </div>
-          <div className="flex items-center gap-2 lg:gap-5 justify-between">
+          <div className="flex items-center gap-2 lg:gap-5">
             <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger
                 className="cursor-pointer relative flex justify-center items-center "
@@ -91,17 +91,17 @@ const Header: React.FC<HeaderProps> = ({
               </PopoverContent>
             </Popover>
 
-            <div className="  relative sm:ml-0">
+            <div className="relative sm:ml-0">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div className="flex gap-3 h-full items-center">
                     <div
-                      className="flex items-center  p-1  rounded-full cursor-pointer hover:opacity-90"
+                      className="flex items-center p-1 rounded-full cursor-pointer hover:opacity-90"
                       style={{
                         boxShadow: "2px 2px 7px 2px rgba(0, 0, 0, 0.1)",
                       }}
                     >
-                      <div className=" w-6 h-6 lg:w-8 lg:h-8 rounded-md overflow-hidden">
+                      <div className="w-6 h-6 lg:w-8 lg:h-8 rounded-md overflow-hidden">
                         <Image
                           src={"/profile.png"}
                           alt="Admin Avatar"
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({
                       </div>
                     </div>
 
-                    <button className=" cursor-pointer">
+                    <button className="cursor-pointer">
                       <IoIosArrowDown size={16} className="text-blackColor" />
                     </button>
                   </div>
@@ -143,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </div>
-      <div className=" md:hidden px-4">
+      <div className="md:hidden px-4">
         <Search />
       </div>
     </nav>

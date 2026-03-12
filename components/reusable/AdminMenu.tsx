@@ -51,7 +51,7 @@ function AdminMenu({ children }: { children: React.ReactNode }) {
           </div>
 
           
-          <main className="flex-1 overflow-y-auto overflow-x-hidden text-headerColor p-6">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden text-headerColor p-6 bg-[#070707]">
             {children}
             <ToastContainer />
           </main>

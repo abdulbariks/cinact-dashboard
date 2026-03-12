@@ -105,25 +105,16 @@ export default function Search() {
         name="search"
         value={search}
         onChange={handleChange}
-        className="w-full text-sm  bg-whiteColor border border-gray2Color rounded-md md:rounded-lg py-3 md:py-3.5 px-4 pl-10 focus:outline-none focus:border-dark-500"
-        placeholder="Search by Name, Email or Phone Number"
+        className=" w-full  p-3  rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56]"
+        placeholder="Search User"
       />
       <button
         onClick={handleSearch}
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-2xl"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 18 18"
-          fill="none"
-        >
-          <path
-            d="M14.197 13.1363C13.9041 12.8434 13.4292 12.8434 13.1363 13.1363C12.8434 13.4292 12.8434 13.9041 13.1363 14.197L13.6667 13.6667L14.197 13.1363ZM13.6667 13.6667L13.1363 14.197L16.8863 17.947L17.4167 17.4167L17.947 16.8863L14.197 13.1363L13.6667 13.6667ZM15.75 8.25H16.5C16.5 3.69365 12.8063 0 8.25 0V0.75V1.5C11.9779 1.5 15 4.52208 15 8.25H15.75ZM8.25 0.75V0C3.69365 0 0 3.69365 0 8.25H0.75H1.5C1.5 4.52208 4.52208 1.5 8.25 1.5V0.75ZM0.75 8.25H0C0 12.8063 3.69365 16.5 8.25 16.5V15.75V15C4.52208 15 1.5 11.9779 1.5 8.25H0.75ZM8.25 15.75V16.5C12.8063 16.5 16.5 12.8063 16.5 8.25H15.75H15C15 11.9779 11.9779 15 8.25 15V15.75Z"
-            fill="#111927"
-          />
-        </svg>
+       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <path d="M16.893 16.92L19.973 20M19 11.5C19 13.4891 18.2098 15.3968 16.8033 16.8033C15.3968 18.2098 13.4891 19 11.5 19C9.51088 19 7.60322 18.2098 6.1967 16.8033C4.79018 15.3968 4 13.4891 4 11.5C4 9.51088 4.79018 7.60322 6.1967 6.1967C7.60322 4.79018 9.51088 4 11.5 4C13.4891 4 15.3968 4.79018 16.8033 6.1967C18.2098 7.60322 19 9.51088 19 11.5Z" stroke="#A5A5AB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
       </button>
 
       {/* Display the filtered product list */}

@@ -114,7 +114,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
   const effectiveCollapsed = isMobile ? false : isCollapsed;
 
   return (
-    <div className="h-full">
+    <div className="h-full ">
       <div
         className={`
           ${
@@ -122,12 +122,12 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
               ? "z-50 h-full w-full overflow-hidden absolute top-0 left-0"
               : "h-full"
           }
-          flex flex-col
+          flex flex-col border-r border-[#343745]
           min-h-[calc(100vh-100px)] 
           ${effectiveCollapsed ? 'w-20' : 'w-[300px]'}
           shadow-[0px_-0.3px_5.5px_0px_rgba(0,0,0,0.02)]
-           p-6 overflow-y-auto transition-all duration-300
-          bg-[#18222c]
+           p-6 overflow-y-auto no-scrollbar   transition-all duration-300
+          bg-[#0a1929]
         `}
       >
         {/* Header with Logo and Toggle Button */}

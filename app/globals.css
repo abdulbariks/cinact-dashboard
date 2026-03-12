@@ -176,3 +176,7 @@ input:checked ~ .checkmark {
 
   border-radius: 50%;
 }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
