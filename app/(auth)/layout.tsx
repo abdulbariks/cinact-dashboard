@@ -10,9 +10,9 @@ export default function FrontEndLayout({
 }) {
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       {children}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
