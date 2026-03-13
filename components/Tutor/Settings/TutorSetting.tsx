@@ -4,18 +4,19 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import MobileSidebar from "./MobileSidebar";
 import PersonalInfo from "./PersonalInfo";
+import NotificationSettings from "./NotificationSettings";
 
 // Dynamic content based on active section
 function getActiveSectionContent(activeSection: string) {
   switch (activeSection) {
     case "business":
       return <div>{/* <BusinessSetting /> */}</div>;
-    // case "notifications":
-    //   return (
-    //     <div>
-    //       <NotificationSettings />
-    //     </div>
-    //   );
+    case "notifications":
+      return (
+        <div>
+          <NotificationSettings />
+        </div>
+      );
     case "language":
       return <div>{/* <LanguageSettings /> */}</div>;
     case "support":
