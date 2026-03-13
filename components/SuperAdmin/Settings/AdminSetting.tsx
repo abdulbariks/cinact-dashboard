@@ -5,6 +5,7 @@ import MobileSidebar from "./MobileSidebar";
 import Sidebar from "./Sidebar";
 import ProfileAccount from "./ProfileAccount";
 import GeneralSettings from "./GeneralSettings";
+import NotificationSettings from "./NotificationSettings";
 
 // Dynamic content based on active section
 function getActiveSectionContent(activeSection: string) {
@@ -20,7 +21,7 @@ function getActiveSectionContent(activeSection: string) {
     case "payment":
       return <div>{/* <PaymentSetting /> */}</div>;
     case "notifications":
-      return <div>{/* <NotificationSettings /> */}</div>;
+      return <NotificationSettings />;
     case "general-settings":
     default:
       return <GeneralSettings />;

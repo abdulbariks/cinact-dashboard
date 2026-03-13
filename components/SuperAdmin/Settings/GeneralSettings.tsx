@@ -26,6 +26,7 @@ export default function GeneralSettings() {
             <CardTitle className="text-lg font-semibold">
               Academy Information
             </CardTitle>
+            <hr className="border-[#243b55] mt-3" />
           </CardHeader>
 
           <CardContent className="px-0">

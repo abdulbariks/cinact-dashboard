@@ -25,6 +25,7 @@ export default function ProfileAccount() {
           <CardTitle className="text-lg font-semibold">
             Profile Information
           </CardTitle>
+          <hr className="border-[#243b55] mt-3" />
         </CardHeader>
 
         <CardContent className="px-0">
