@@ -1,5 +1,5 @@
-import DashboardPage from "@/components/Dashboard/DashboardPage";
 import SuperAdminHome from "@/components/SuperAdmin/Home/SuperAdminHome";
+ 
 
 function page() {
   return (

@@ -50,25 +50,28 @@ export default function DynamicTable({
   return (
     <div>
       {/* Table Wrapper with Border & Radius */}
-      <div className={`rounded-t-md ${border ? "border border-gray-200" : ""}`}>
-        <div className={` overflow-auto bg-white ${border ? "p-2" : ""}`}>
+      <div className={`rounded-t-md  
+         `}>
+           {/* ${border ? "border border-gray-200" : ""} */}
+        <div className={` overflow-auto  `}>
+           {/* ${border ? "p-2" : ""} */}
           <table
-            className={`min-w-[1000px] w-full text-left bg-whiteColor  ${border ? "p-2" : ""}`}
+            className={`min-w-[1000px] w-full text-left bg-[#07121d] rounded-lg ${border ? "p-2" : ""}`}
           >
-            <thead className=" sticky top-0 text-white rounded-2xl! overflow-hidden  p-2">
+            <thead className=" sticky top-0 text-white rounded-2xl! overflow-hidden  p-2 rounded-tl">
               <tr className="">
                 {columns.map((col, index) => (
                   <th
                     key={index}
                     style={{ width: col.width || "auto" }}
-                    className={`${index == 0 ? "rounded-l-lg" : index === columns.length - 1 ? "rounded-r-lg" : ""} px-4! bg-blackColor   py-5! text-sm font-medium border-b  `}
+                    className={`${index == 0 ? "rounded-tl-lg" : index === columns.length - 1 ? "rounded-tr-lg" : ""} px-4! bg-[#282e44]   py-3 text-sm text-[#8D9CDC] font-medium uppercase    `}
                   >
                     {col.label}
                   </th>
                 ))}
                 {(onView || onDelete) && (
                   <th>
-                    <div className="px-4 border border-red-600  rounded-2xl py-3 text-sm font-medium text-[#4a4c56] border-b  bg-neutral-50">
+                    <div className="px-4  rounded-2xl py-3 text-sm font-medium text-[#4a4c56]    bg-neutral-50">
                       Action
                     </div>
                   </th>
@@ -87,7 +90,8 @@ export default function DynamicTable({
                 </tr>
               ) : data?.length > 0 ? (
                 data.map((row, i) => (
-                  <tr key={i} className="border-t border-gray-100">
+                  <tr key={i} className={i !==0 ?'border-t border-[#141B34]':""  } >
+                    {/* className="border-t border-gray-100" */}
                     {columns.map((col, idx) => (
                       <td
                         key={idx}

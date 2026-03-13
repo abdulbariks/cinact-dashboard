@@ -73,7 +73,7 @@ function PaginationPage({
   const originalArray = [1, 5, 10, 25, 50, 100];
   const uniqueArray = [...new Set(originalArray)];
   return (
-    <div className="mt-10 mb-0 lg:mb-20 ">
+    <div className="  mb-0   ">
       <div className=" flex justify-end ">
         {/* Pagination */}
         {totalPages > 0 && (
