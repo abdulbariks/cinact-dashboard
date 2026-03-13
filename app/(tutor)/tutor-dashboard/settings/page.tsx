@@ -1,9 +1,10 @@
+import TutorSetting from "@/components/Tutor/Settings/TutorSetting";
 import React from "react";
 
 export default function SettingsPage() {
   return (
     <div>
-      <p>System Settings Page</p>
+      <TutorSetting />
     </div>
   );
 }

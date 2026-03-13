@@ -120,47 +120,49 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
     {
       id: 'dashboard',
       name: 'Dashboard',
-      href: '/dashboard',
+      href: '/tutor-dashboard',
       icon: Layout,
       description: 'Your teaching overview',
       category: 'Dashboard'
     },
     
-    // Teaching Category
+    // Academic Category
     {
       id: 'my-courses',
       name: 'My Courses',
-      href: '/dashboard/my-courses',
+      href: '/tutor-dashboard/my-courses',
       icon: BookOpen,
       description: 'Your courses',
-      category: 'Teaching'
+      category: 'Academic'
     },
     {
-      id: 'my-students',
-      name: 'My Students',
-      href: '/dashboard/my-students',
+      id: 'attendence',
+      name: 'Attendence',
+      href: '/tutor-dashboard/attendence',
       icon: Users,
       description: 'Your students',
-      category: 'Teaching'
+      category: 'Academic'
     },
-    {
-      id: 'assignments',
-      name: 'Assignments',
-      href: '/dashboard/assignments',
-      icon: FileText,
-      description: 'Grade assignments',
-      category: 'Teaching'
+    // engagement Category
+        {
+      id: 'chats',
+      name: 'Chats',
+      href: '/tutor-dashboard/chats',
+      icon: ChatIcon,
+      description: 'chats',
+      category: 'Engagement'
     },
+
+    // settings category
+       {
+      id: 'settings',
+      name: 'System Settings',
+      href: '/tutor-dashboard/settings',
+      icon: SettingsIcon,
+      description: 'settings',
+      category: 'Settings'
+    }, 
     
-    // Schedule Category
-    {
-      id: 'schedule',
-      name: 'Schedule',
-      href: '/dashboard/schedule',
-      icon: Calendar,
-      description: 'Your class schedule',
-      category: 'Schedule'
-    },
   ],
 
   finance: [
@@ -168,12 +170,22 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
     {
       id: 'dashboard',
       name: 'Dashboard',
-      href: '/dashboard',
+      href: '/finance-dashboard',
       icon: Layout,
       description: 'Financial overview',
       category: 'Dashboard'
     },
     
+    // Academic Category
+   {
+      id: 'student-management',
+      name: 'Student Management',
+      href: '/finance-dashboard/student-management',
+      icon: UsersIcon,
+      description: 'Manage students',
+      category: 'Academic'
+    },
+
     // Financial Category
     {
       id: 'invoices',
