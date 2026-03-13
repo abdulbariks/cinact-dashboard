@@ -177,6 +177,29 @@ input:checked ~ .checkmark {
   border-radius: 50%;
 }
 
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+ 
+
+  /* .hello{
+    background-color: aqua;
+  } */
+
+  .sidebar-scroll::-webkit-scrollbar{
+    background-color: #070707;
   }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #132c45;
+  border-radius: 10px;
+   
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 5px;  
+  height: 12px;  
+  /* display: none; */
+}
+
+  /* .hello::-webkit-scrollbar-track {
+      background: #0000;
+  border-radius: 10px;
+  } */
