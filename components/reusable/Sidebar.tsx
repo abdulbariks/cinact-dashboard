@@ -1,24 +1,20 @@
 "use client";
 
 import { CookieHelper } from "@/helper/cookie.helper";
-import {
-  ChevronLeft,
-  ChevronRight,
-  LogOutIcon,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { 
-  getMenuItemsByRole, 
+import {
+  getMenuItemsByRole,
   getMenuItemsGroupedByCategory,
-  MenuItem, 
-  UserRole, 
-  isValidRole 
+  MenuItem,
+  UserRole,
+  isValidRole,
 } from "@/config/menuItems";
 import { parseCookies } from "nookies";
 import CollapseIcon from "../icons/sidebar.tsx/CollapseIcon";
-import logo from '@/public/admin-dashboard/mainLogo.png'
+import logo from "@/public/admin-dashboard/mainLogo.png";
 import Image from "next/image";
 // import '@/app/'
 
@@ -34,8 +30,10 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [userRole, setUserRole] = useState<UserRole>('viewer');
-  const [groupedMenuItems, setGroupedMenuItems] = useState<Record<string, MenuItem[]>>({});
+  const [userRole, setUserRole] = useState<UserRole>("viewer");
+  const [groupedMenuItems, setGroupedMenuItems] = useState<
+    Record<string, MenuItem[]>
+  >({});
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if mobile on mount and resize
@@ -43,10 +41,10 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -54,8 +52,8 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
     const cookies = parseCookies();
     const userCookie = cookies.user;
     const roleCookie = cookies.userRole;
-    
-    let role: UserRole = 'viewer';
+
+    let role: UserRole = "viewer";
 
     if (userCookie) {
       try {
@@ -72,7 +70,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
       role = roleCookie as UserRole;
     } else {
       const urlParams = new URLSearchParams(window.location.search);
-      const roleParam = urlParams.get('role');
+      const roleParam = urlParams.get("role");
       if (roleParam && isValidRole(roleParam)) {
         role = roleParam as UserRole;
       }
@@ -96,19 +94,20 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
     if (href === "/" || href === "/dashboard") {
       return pathname === href;
     }
-    
+
     if (pathname.startsWith(href)) {
       const remainingPath = pathname.slice(href.length);
-      return remainingPath === '' || remainingPath.startsWith('/');
+      return remainingPath === "" || remainingPath.startsWith("/");
     }
-    
+
     return false;
   };
 
   const handleLogout = () => {
     CookieHelper.destroy({ key: "accessToken" });
     document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    document.cookie = "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    document.cookie =
+      "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     router.push("/");
   };
 
@@ -125,7 +124,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
           }
           flex flex-col border-r border-[#343745]
           min-h-[calc(100vh-100px)] 
-          ${effectiveCollapsed ? 'w-20' : 'w-[300px]'}
+          ${effectiveCollapsed ? "w-20" : "w-[300px]"}
           shadow-[0px_-0.3px_5.5px_0px_rgba(0,0,0,0.02)]
            p-6 overflow-y-auto    transition-all duration-300
           bg-[#0a1929] sidebar-scroll background-color
@@ -136,17 +135,17 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
           <Link
             href={"/dashboard"}
             className={`flex items-center transition-all duration-300 overflow-hidden ${
-              effectiveCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'
+              effectiveCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
             }`}
           >
             <Image src={logo} alt="logo" />
           </Link>
-          
+
           {!isMobile && (
             <button
               onClick={toggleCollapse}
               className={`
-                ${effectiveCollapsed ? 'mx-auto' : 'ml-auto'}
+                ${effectiveCollapsed ? "mx-auto" : "ml-auto"}
                 w-8 h-8 
                 flex items-center justify-center
               
@@ -158,7 +157,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
               title={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               type="button"
             >
-          <CollapseIcon/>
+              <CollapseIcon />
             </button>
           )}
 
@@ -184,13 +183,13 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                   {category}
                 </h3>
               )}
-              
+
               {/* Category Items */}
               <div className="space-y-1">
                 {items.map((item) => {
                   const active = isActive(item.href);
                   const Icon = item.icon;
-                  
+
                   return (
                     <Link
                       key={item.id}
@@ -199,24 +198,29 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                       className={`
                         flex items-center group gap-3 px-3 py-2.5 lg:py-3 rounded-lg 
                         transition-all duration-200 relative 
-                        ${active 
-                          ? "bg-[#5f6ca0] text-white   "   
-                          : "text-[#5F6CA0] hover:bg-[#5F6CA0]/50 hover:text-white"
+                        ${
+                          active
+                            ? "bg-[#5f6ca0] text-white   "
+                            : "text-[#5F6CA0] hover:bg-[#5F6CA0]/50 hover:text-white"
                         }
-                        ${effectiveCollapsed ? 'justify-center' : ''}
+                        ${effectiveCollapsed ? "justify-center" : ""}
                       `}
                       title={effectiveCollapsed ? item.name : ""}
                     >
-                      <div className={`flex ${effectiveCollapsed ? '' : 'gap-3'} items-center`}>
+                      <div
+                        className={`flex ${effectiveCollapsed ? "" : "gap-3"} items-center`}
+                      >
                         <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
                           <Icon
                             className={`w-5 h-5 transition-all duration-200 ${
-                              active ? 'text-blackColor' : 'text-gray-500 group-hover:text-gray-700'
+                              active
+                                ? "text-blackColor"
+                                : "text-gray-500 group-hover:text-gray-700"
                             }`}
-                          isActive={active}
-                             />
+                            isActive={active}
+                          />
                         </div>
-                        
+
                         {/* Show text on mobile always, on desktop only when not collapsed */}
                         {(isMobile || !effectiveCollapsed) && (
                           <span className="text-base font-medium whitespace-nowrap">
@@ -224,8 +228,6 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                           </span>
                         )}
                       </div>
-
-                    
                     </Link>
                   );
                 })}
@@ -242,7 +244,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
               flex items-center gap-3 px-3 py-3 
               w-full rounded-lg 
               transition-all duration-200
-              ${effectiveCollapsed ? 'justify-center' : ''}
+              ${effectiveCollapsed ? "justify-center" : ""}
               text-gray-700 hover:bg-red-50 hover:text-red-600
               group
             `}
@@ -252,7 +254,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
             <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
               <LogOutIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
             </div>
-            
+
             {(isMobile || !effectiveCollapsed) && (
               <span className="text-sm font-medium whitespace-nowrap">
                 Log Out Account
