@@ -5,22 +5,30 @@ import Sidebar from "./Sidebar";
 import MobileSidebar from "./MobileSidebar";
 import PersonalInfo from "./PersonalInfo";
 import NotificationSettings from "./NotificationSettings";
+import RolesPermissions from "./RolesPermissions";
+import PaymentSettings from "./PaymentSettings";
 
 // Dynamic content based on active section
 function getActiveSectionContent(activeSection: string) {
   switch (activeSection) {
-    case "business":
-      return <div>{/* <BusinessSetting /> */}</div>;
+    case "roles":
+      return (
+        <div>
+          <RolesPermissions />
+        </div>
+      );
+    case "payment":
+      return (
+        <div>
+          <PaymentSettings />
+        </div>
+      );
     case "notifications":
       return (
         <div>
           <NotificationSettings />
         </div>
       );
-    case "language":
-      return <div>{/* <LanguageSettings /> */}</div>;
-    case "support":
-      return <div>{/* <SupportSettings /> */}</div>;
     case "personal-info":
     default:
       return <PersonalInfo />;

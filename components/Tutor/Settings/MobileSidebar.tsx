@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { User, Bell, Shield, CreditCard } from "lucide-react";
 
 export default function MobileSidebar({
   activeSection,
@@ -12,70 +13,82 @@ export default function MobileSidebar({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="sm:hidden flex flex-col items-start gap-4 p-4 w-full ">
+    <div className="sm:hidden flex flex-col items-start gap-4 p-4 w-full">
       <Button
         variant="outline"
         onClick={() => setIsOpen(!isOpen)}
-        className="text-muted-foreground w-full bg-[#0a1929] p-4 rounded-2xl"
+        className="w-full bg-[#0a1929] text-white border-none rounded-xl h-11"
       >
         Menu
       </Button>
+
       {isOpen && (
-        <ul className="flex flex-col gap-4 mt-4">
+        <ul className="flex flex-col gap-3 w-full bg-[#0a1929] p-3 rounded-xl">
+          {/* Personal Info */}
           <li
+            onClick={() => {
+              setActiveSection("personal-info");
+              setIsOpen(false);
+            }}
             className={cn(
-              "py-3 px-4 rounded-lg cursor-pointer text-sm font-semibold",
-              activeSection === "account"
-                ? "bg-gray-300 text-black"
-                : "text-muted-foreground hover:bg-muted/30",
+              "flex items-center gap-3 py-3 px-4 rounded-xl cursor-pointer text-sm font-medium transition",
+              activeSection === "personal-info"
+                ? "bg-[#5f6ea8] text-white"
+                : "text-[#7c8db5] hover:bg-[#13263f]",
             )}
-            onClick={() => setActiveSection("personal-info")}
           >
+            <User size={18} />
             Personal Info
           </li>
+
+          {/*  Roles & Permissions */}
           <li
+            onClick={() => {
+              setActiveSection("roles");
+              setIsOpen(false);
+            }}
             className={cn(
-              "py-3 px-4 rounded-lg cursor-pointer text-sm font-semibold",
-              activeSection === "business"
-                ? "bg-gray-300 text-black"
-                : "text-muted-foreground hover:bg-muted/30",
+              "flex items-center gap-3 py-3 px-4 rounded-xl cursor-pointer text-sm font-medium transition",
+              activeSection === "roles"
+                ? "bg-[#5f6ea8] text-white"
+                : "text-[#7c8db5] hover:bg-[#13263f]",
             )}
-            onClick={() => setActiveSection("business")}
           >
-            Business
+            <Shield size={18} />
+            Roles & Permissions
           </li>
-          {/* <li
+          {/* Payment Settings */}
+          <li
+            onClick={() => {
+              setActiveSection("payment");
+              setIsOpen(false);
+            }}
             className={cn(
-              "py-3 px-4 rounded-lg cursor-pointer text-sm font-semibold",
+              "flex items-center gap-3 py-3 px-4 rounded-xl cursor-pointer text-sm font-medium transition",
+              activeSection === "payment"
+                ? "bg-[#5f6ea8] text-white"
+                : "text-[#7c8db5] hover:bg-[#13263f]",
+            )}
+          >
+            <CreditCard size={18} />
+            Payment Settings
+          </li>
+
+          {/* Notifications */}
+          <li
+            onClick={() => {
+              setActiveSection("notifications");
+              setIsOpen(false);
+            }}
+            className={cn(
+              "flex items-center gap-3 py-3 px-4 rounded-xl cursor-pointer text-sm font-medium transition",
               activeSection === "notifications"
-                ? "bg-gray-300 text-black"
-                : "text-muted-foreground hover:bg-muted/30",
+                ? "bg-[#5f6ea8] text-white"
+                : "text-[#7c8db5] hover:bg-[#13263f]",
             )}
-            onClick={() => setActiveSection("notifications")}
           >
+            <Bell size={18} />
             Notifications
-          </li> */}
-          <li
-            className={cn(
-              "py-3 px-4 rounded-lg cursor-pointer text-sm font-semibold",
-              activeSection === "language"
-                ? "bg-gray-300 text-black"
-                : "text-muted-foreground hover:bg-muted/30",
-            )}
-            onClick={() => setActiveSection("language")}
-          >
-            Language
-          </li>
-          <li
-            className={cn(
-              "py-3 px-4 rounded-lg cursor-pointer text-sm font-semibold",
-              activeSection === "support"
-                ? "bg-gray-300 text-black"
-                : "text-muted-foreground hover:bg-muted/30",
-            )}
-            onClick={() => setActiveSection("support")}
-          >
-            Support
           </li>
         </ul>
       )}
