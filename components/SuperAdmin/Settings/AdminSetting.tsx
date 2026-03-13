@@ -4,6 +4,7 @@ import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import Sidebar from "./Sidebar";
 import ProfileAccount from "./ProfileAccount";
+import GeneralSettings from "./GeneralSettings";
 
 // Dynamic content based on active section
 function getActiveSectionContent(activeSection: string) {
@@ -20,9 +21,9 @@ function getActiveSectionContent(activeSection: string) {
       return <div>{/* <PaymentSetting /> */}</div>;
     case "notifications":
       return <div>{/* <NotificationSettings /> */}</div>;
-    case "personal-info":
+    case "general-settings":
     default:
-    //   return <PersonalInfo />;
+      return <GeneralSettings />;
   }
 }
 
