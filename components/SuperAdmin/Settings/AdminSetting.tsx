@@ -3,10 +3,17 @@
 import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import Sidebar from "./Sidebar";
+import ProfileAccount from "./ProfileAccount";
 
 // Dynamic content based on active section
 function getActiveSectionContent(activeSection: string) {
   switch (activeSection) {
+    case "profile-account":
+      return (
+        <div>
+          <ProfileAccount />
+        </div>
+      );
     case "roles":
       return <div>{/* <RolesPermissions /> */}</div>;
     case "payment":
