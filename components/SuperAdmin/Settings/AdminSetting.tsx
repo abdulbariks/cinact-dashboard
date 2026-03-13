@@ -6,6 +6,7 @@ import Sidebar from "./Sidebar";
 import ProfileAccount from "./ProfileAccount";
 import GeneralSettings from "./GeneralSettings";
 import NotificationSettings from "./NotificationSettings";
+import PaymentMethods from "./PaymentMethods";
 
 // Dynamic content based on active section
 function getActiveSectionContent(activeSection: string) {
@@ -19,7 +20,7 @@ function getActiveSectionContent(activeSection: string) {
     case "roles":
       return <div>{/* <RolesPermissions /> */}</div>;
     case "payment":
-      return <div>{/* <PaymentSetting /> */}</div>;
+      return <PaymentMethods />;
     case "notifications":
       return <NotificationSettings />;
     case "general-settings":
