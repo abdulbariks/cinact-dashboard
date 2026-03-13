@@ -3,7 +3,7 @@ import StatCards from "./StateCards";
 import DashboardUserTable from "./DashboardUserTable";
 
 function DashboardPage() {
-    const statCards = [
+  const statCards = [
     {
       title: "Pre Application",
       value: 195,
@@ -24,7 +24,6 @@ function DashboardPage() {
       value: 635,
       percentage: "72.6%",
     },
-   
   ];
   return (
     <div className="flex flex-col justify-between h-full">
