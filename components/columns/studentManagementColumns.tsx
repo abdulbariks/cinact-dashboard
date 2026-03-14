@@ -5,6 +5,16 @@ import avatar3 from '@/public/admin-dashboard/avatar-3.png'
 import EditIcon from "../icons/SuperAdmindashboard/EditIcon";
 import EyeIcon from "../icons/SuperAdmindashboard/EyeIcon";
 import RestrictIcon from "../icons/SuperAdmindashboard/RestrictIcon";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import Link from "next/link";
 
 // Status color mapping
@@ -121,12 +131,42 @@ export const studentManagementColumns = [
          <Link href='#' className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
             <EditIcon/>
          </Link>
-         <button className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
+         <Link href='/dashboard/student-management/student-details' className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
             <EyeIcon/>
-         </button>
-         <button className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
-            <RestrictIcon/>
-         </button>
+         </Link>
+         <Dialog>
+           <DialogTrigger asChild>
+             <button className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer" type="button">
+               <RestrictIcon/>
+             </button>
+           </DialogTrigger>
+           <DialogContent className=" border-none bg-[#0A1726] text-white [&>button]:hidden">
+             <DialogHeader>
+               <DialogTitle>Restrict Student</DialogTitle>
+               <DialogDescription className="text-[#B6C2ED]">
+                 Are you sure you want to restrict this student account?
+               </DialogDescription>
+             </DialogHeader>
+             <DialogFooter>
+               <DialogClose asChild>
+                 <button
+                   type="button"
+                   className="rounded-xl border border-[#3D4566] px-4 py-2 text-sm text-white"
+                 >
+                   Cancel
+                 </button>
+               </DialogClose>
+               <DialogClose asChild>
+                 <button
+                   type="button"
+                   className="rounded-xl bg-[#E9201D] px-4 py-2 text-sm font-medium text-white hover:bg-[#e9201d]/90"
+                 >
+                   Restrict
+                 </button>
+               </DialogClose>
+             </DialogFooter>
+           </DialogContent>
+         </Dialog>
         
       </div>
     ),
