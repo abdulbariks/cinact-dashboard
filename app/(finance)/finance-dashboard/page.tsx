@@ -1,4 +1,4 @@
-import FinanceDashboard from "@/components/Finance/FinanceDashboard/FinanceDashboard";
+import FinanceDashboard from "@/components/Finance/FinanceDashboar/FinanceDashboard";
 import React from "react";
 
 export default function FinanceDashboardPage() {
