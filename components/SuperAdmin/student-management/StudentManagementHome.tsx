@@ -5,8 +5,11 @@ import SearchIcon from '@/components/icons/SuperAdmindashboard/SearchIcon';
 import { AllStatus } from '@/components/reusable/AllStatus';
 import DynamicTable from '@/components/reusable/DynamicTable'
 import { studentManagementData } from '@/public/demoData/StudentManagementData';
+import Link from 'next/link';
  
 import React, { useState } from 'react'
+import { AllStudentsFilter } from './StudentsFilter';
+import { PaymentTypeFilter } from './PaymentTypeFilter';
 
 export default function StudentManagementHome() {
 
@@ -25,10 +28,12 @@ export default function StudentManagementHome() {
 
     <div className=' flex items-center justify-between'>
       <h2 className=' text-2xl text-[#E6E7E8] font-semibold'>Student Management</h2>
-      <button className=' p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer'>
+      <Link 
+        href="/dashboard/student-management/add-student"
+        className=' p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer'>
         <PlusIcon/>
         Add Student
-      </button>
+      </Link>
     </div>
     
 <div className=' mt-5 p-6  bg-[#0A1726] rounded-2xl'>
@@ -41,7 +46,7 @@ export default function StudentManagementHome() {
         name="search"
         // value={search}
         // onChange={handleChange}
-        className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56]"
+        className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
         placeholder="Search User"
       />
       <button
@@ -51,6 +56,8 @@ export default function StudentManagementHome() {
     <SearchIcon/>
       </button>
       </div>
+      <AllStudentsFilter/>
+      <PaymentTypeFilter/>
       <AllStatus/>
     </div>
   </div>
