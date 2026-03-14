@@ -8,6 +8,7 @@ import { DatePickerButton } from "@/components/reusable/DatePickerButton";
 import StatsCard from "@/components/SuperAdmin/Home/StatssCard";
 import { transactionsData } from "@/public/demoData/transactionsData";
 import DynamicTable from "@/components/reusable/DynamicTable";
+import Link from "next/link";
 
 export default function FinancePayments() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,10 +26,13 @@ export default function FinancePayments() {
         <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
           Finance & Payments
         </h2>
-        <button className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer">
+        <Link
+          href={"/finance-dashboard/finance-payments/add-payment"}
+          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer"
+        >
           <PlusIcon />
           Add Payment
-        </button>
+        </Link>
       </div>
       <div className="mt-5">
         <StatsCard />
