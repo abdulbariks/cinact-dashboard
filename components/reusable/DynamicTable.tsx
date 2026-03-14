@@ -15,13 +15,13 @@ interface ColumnConfig {
 interface DynamicTableProps {
   columns: any;
   data: any[];
-  currentPage: number;
-  itemsPerPage: number;
-  onPageChange: (page: number) => void;
+  currentPage?: number;
+  itemsPerPage?: number;
+  onPageChange?: (page: number) => void;
   onView?: (row: any) => void;
   onDelete?: (id: any) => void;
   noDataMessage?: string;
-  totalpage: number;
+  totalpage?: number;
   totalItems?: number;
   setItemsPerPage?: (n: number) => void;
   loading?: boolean;
@@ -50,11 +50,13 @@ export default function DynamicTable({
   return (
     <div>
       {/* Table Wrapper with Border & Radius */}
-      <div className={`rounded-t-md  
-         `}>
-           {/* ${border ? "border border-gray-200" : ""} */}
+      <div
+        className={`rounded-t-md  
+         `}
+      >
+        {/* ${border ? "border border-gray-200" : ""} */}
         <div className={` overflow-auto  `}>
-           {/* ${border ? "p-2" : ""} */}
+          {/* ${border ? "p-2" : ""} */}
           <table
             className={`min-w-[1000px] w-full text-left bg-[#07121d] rounded-lg ${border ? "p-2" : ""}`}
           >
@@ -90,7 +92,10 @@ export default function DynamicTable({
                 </tr>
               ) : data?.length > 0 ? (
                 data.map((row, i) => (
-                  <tr key={i} className={i !==0 ?'border-t border-[#141B34]':""  } >
+                  <tr
+                    key={i}
+                    className={i !== 0 ? "border-t border-[#141B34]" : ""}
+                  >
                     {/* className="border-t border-gray-100" */}
                     {columns.map((col, idx) => (
                       <td
