@@ -40,6 +40,8 @@ export default function CourseManagementHome() {
                 <div className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8'>
                     {
                         coursesData.map((course, index) => (
+                             
+
                             <div key={index} className=' bg-[#07121d] p-4 rounded-[12px] border-t-[0.5px] border-b-[0.5px] border-r-[0.5px] border-l-3 border-[#8D9CDC]'  >
                                 <h2 className=' text-white text-lg font-medium'>
                                     {course.course_name}
@@ -111,8 +113,17 @@ export default function CourseManagementHome() {
 
 
                             </div>
+                            
+                            
                         ))
                     }
+                    <button
+                        type='button'
+                        className=' bg-[#07121d] p-4 rounded-[12px] border border-dashed border-[#505B86] min-h-[260px] flex  items-center gap-2 justify-center text-center text-white hover:bg-[#0b1b2b] transition-colors cursor-pointer'
+                    >
+                        <span className=' text-3xl leading-none'>+</span>
+                        <span className=' mt-2 text-lg font-medium'>Add Course</span>
+                    </button>
                 </div>
 
             </div>
