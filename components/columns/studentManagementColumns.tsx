@@ -16,6 +16,9 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import Link from "next/link";
+import warnigImg from '@/public/admin-dashboard/warning-img.png'
+import CrossIcon from "../icons/others/CrossIcon";
+import RestrictUserIcon from "../icons/SuperAdmindashboard/RestrictUserIcon";
 
 // Status color mapping
 const statusColors: Record<string, string> = {
@@ -126,12 +129,12 @@ export const studentManagementColumns = [
     label: "Actions",
     accessor: "action",
     width: "120px",
-    formatter: ( ) => (
+    formatter: (_: any, row: any) => (
       <div className=" flex items-center gap-6">
          <Link href='#' className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
             <EditIcon/>
          </Link>
-         <Link href='/dashboard/student-management/student-details' className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
+         <Link href={`/dashboard/student-management/student-details/${row.id}`} className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
             <EyeIcon/>
          </Link>
          <Dialog>
@@ -140,31 +143,20 @@ export const studentManagementColumns = [
                <RestrictIcon/>
              </button>
            </DialogTrigger>
-           <DialogContent className=" border-none bg-[#0A1726] text-white [&>button]:hidden">
-             <DialogHeader>
-               <DialogTitle>Restrict Student</DialogTitle>
-               <DialogDescription className="text-[#B6C2ED]">
-                 Are you sure you want to restrict this student account?
-               </DialogDescription>
-             </DialogHeader>
-             <DialogFooter>
-               <DialogClose asChild>
-                 <button
-                   type="button"
-                   className="rounded-xl border border-[#3D4566] px-4 py-2 text-sm text-white"
-                 >
-                   Cancel
-                 </button>
-               </DialogClose>
-               <DialogClose asChild>
-                 <button
-                   type="button"
-                   className="rounded-xl bg-[#E9201D] px-4 py-2 text-sm font-medium text-white hover:bg-[#e9201d]/90"
-                 >
-                   Restrict
-                 </button>
-               </DialogClose>
-             </DialogFooter>
+           <DialogContent className=" border-none py-14 px-8 rounded-2xl bg-[#0A1726] text-white [&>button]:hidden">
+             <div className=" flex items-center justify-center">
+              <Image src={warnigImg} alt="Warning"   />
+             </div>
+             <h2 className=" text-white text-xl font-semibold text-center mt-4 ">Restrict User</h2>
+             <p className=" text-center text-[#A5A5AB] text-sm ">Are you sure to Restrict the User?</p>
+          <div className=" mt-10 flex items-center justify-center gap-3">
+            <DialogClose asChild>
+              <button className=" text-white text-base font-medium flex items-center gap-2.5 border border-[#3D4566] py-4 px-14 rounded-2xl cursor-pointer"><CrossIcon/> Cancel</button>
+            </DialogClose>
+            <DialogClose asChild>
+              <button className=" text-white text-base font-medium flex items-center gap-2.5 bg-[#e9201d] py-4 px-14 rounded-2xl cursor-pointer"><RestrictUserIcon/> Yes, Restrict</button>
+            </DialogClose>
+          </div>
            </DialogContent>
          </Dialog>
         
