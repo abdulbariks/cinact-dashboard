@@ -1,6 +1,11 @@
-import BreadCrumpRightArrow from '@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow'
-import Link from 'next/link'
 import React from 'react'
+import BreadCrumpRightArrow from '@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow'
+import Image from 'next/image'
+import Link from 'next/link'
+import teacherImg from '@/public/admin-dashboard/teacher-profile.png'
+import EmailIcon from '@/components/icons/others/EmailIcon'
+import PhoneIcon from '@/components/icons/others/PhoneIcon'
+import CalenderIcon3 from '@/components/icons/others/CalenderIcon3'
 
 export default function TeacherDetails() {
   return (
@@ -12,6 +17,62 @@ export default function TeacherDetails() {
         <BreadCrumpRightArrow />
         <p className='text-base font-medium text-[#8D9CDC]'>Teacher Details</p>
       </div>
+
+      <h2 className=' text-2xl text-[#E6E7E8] font-semibold mt-[30px] mb-5'>Teacher Details</h2>
+
+      <div  className=' bg-[#0a1929] p-4 rounded-2xl'>
+        <h3 className=' text-lg text-white font-medium'>Personal Information</h3>
+
+        <div className=' bg-[#07121d] p-4 mt-4 rounded-[10px] '>
+          <div className=' flex items-center justify-between'>
+          <div className=' flex items-center gap-3'>
+            <Image src={teacherImg} alt='Teacher Image' />
+            <div>
+              <h3 className=' text-lg text-white font-medium'>Sophie Lambert <span className=' text-xs text-[#18CC3F] bg-[#2a3d2e] py-2 px-2.5 rounded-full'>Active</span> </h3>
+              <div className=' flex items-center gap-1.5 mt-1'>
+                <EmailIcon/>
+                <p className=' text-sm text-[#A5A5AB] '>emma.witson@email.cam</p>
+              </div>
+            </div>
+          </div>
+
+          <div className=' space-y-2'>
+            <div className=' flex items-center gap-1.5'>
+              <PhoneIcon/>
+              <p className=' text-sm text-[#A5A5AB] '>+1 (555) 123-4567</p>
+            </div>
+            <div className=' flex items-center gap-1.5'>
+              <CalenderIcon3/>
+              <p className=' text-sm text-[#A5A5AB] '>2024-08-01 </p>
+            </div>
+            <div className=' flex items-center gap-1.5'>
+              <CalenderIcon3/>
+              <p className=' text-sm text-[#A5A5AB] '>6 years</p>
+            </div>
+          </div>
+
+          </div>
+
+          <div className=' mt-4'>
+            <p className=' text-xs text-[#585E66] font-medium mb-1.5 '>course</p>
+            <h3 className=' text-sm text-[#DFE1E7]'>1 year program ( adult)</h3>
+
+          </div>
+
+        </div>
+      </div>
+
+
+      <div className=' p-4 bg-[#0a1929] rounded-2xl mt-4.5'>
+
+        <h1 className=' text-white text-xl font-medium'>1 year program ( adult)</h1>
+        <div className=' bg-[#07121d] p-4 rounded-[10px] mt-4'>
+
+        </div>
+
+      </div>
+
+
     </div>
   )
 }
