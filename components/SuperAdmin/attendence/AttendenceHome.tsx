@@ -9,6 +9,7 @@ import { AllStatus } from '@/components/reusable/AllStatus'
 import DynamicTable from '@/components/reusable/DynamicTable'
 import attendenceListData from '@/public/demoData/AttendenceListData'
 import { attendenceListColumns } from '@/components/columns/AttendenceListColumn'
+import VerticalAttendenceCalendar from './VerticalAttendenceCalendar'
 
 
 const statsData = [
@@ -83,7 +84,7 @@ export default function AttendenceHome() {
                     </div>
                 </div>
 
-                <div className=' mt-6 w-3/4'>
+                <div className=' mt-6 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start'>
                     <DynamicTable
                         columns={attendenceListColumns}
                         data={attendenceListData}
@@ -96,6 +97,9 @@ export default function AttendenceHome() {
                         noDataMessage='No attendance found'
                         loading={false}
                     />
+                    <div className='xl:sticky xl:top-4'>
+                        <VerticalAttendenceCalendar />
+                    </div>
                 </div>
             </div>
         </div>
