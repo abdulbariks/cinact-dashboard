@@ -185,33 +185,16 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
       description: 'Manage students',
       category: 'Academic'
     },
-
-    // Financial Category
+    // administration Category
     {
-      id: 'invoices',
-      name: 'Invoices',
-      href: '/dashboard/invoices',
-      icon: FileText,
-      description: 'Manage invoices',
-      category: 'Financial'
+      id: 'finance',
+      name: 'Finance & Payments',
+      href: '/finance-dashboard/finance-payments',
+      icon: PaymentIcon,
+      description: 'finance and payments',
+      category: 'Administration'
     },
-    {
-      id: 'payments',
-      name: 'Payments',
-      href: '/dashboard/payments',
-      icon: DollarSign,
-      description: 'Track payments',
-      category: 'Financial'
-    },
-    {
-      id: 'reports',
-      name: 'Reports',
-      href: '/dashboard/reports',
-      icon: BarChart,
-      description: 'Financial reports',
-      category: 'Financial'
-    },
-    
+  
     // Settings Category
     {
       id: 'budget',
