@@ -6,6 +6,12 @@ import teacherImg from '@/public/admin-dashboard/teacher-profile.png'
 import EmailIcon from '@/components/icons/others/EmailIcon'
 import PhoneIcon from '@/components/icons/others/PhoneIcon'
 import CalenderIcon3 from '@/components/icons/others/CalenderIcon3'
+import UserIcon from '@/components/icons/others/UserIcon'
+ 
+import UsersWhiteIcon from '@/components/icons/others/UsersWhiteIcon'
+ 
+import ClockWhiteIcon from '@/components/icons/others/ClockWhiteIcon'
+ 
 
 export default function TeacherDetails() {
   return (
@@ -66,7 +72,58 @@ export default function TeacherDetails() {
       <div className=' p-4 bg-[#0a1929] rounded-2xl mt-4.5'>
 
         <h1 className=' text-white text-xl font-medium'>1 year program ( adult)</h1>
-        <div className=' bg-[#07121d] p-4 rounded-[10px] mt-4'>
+        <div className=' bg-[#07121d] p-4 rounded-[10px] mt-4 space-y-4'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:flex lg:justify-between lg:gap-0'>
+            <div>
+            <div className=' flex items-center  gap-1'>
+              <UserIcon/>
+              <p className=' text-[#A5A5AB] text-xs  font-medium'>Teacher</p>
+            </div>
+            <h4 className=' text-sm text-white font-medium mt-1.5'>Wade Warren</h4>
+
+            </div>
+            <div>
+            <div className=' flex items-center  gap-1'>
+              <UsersWhiteIcon/>
+              <p className=' text-[#A5A5AB] text-xs  font-medium'>Students</p>
+            </div>
+            <h4 className=' text-sm text-white font-medium mt-1.5'>45 students</h4>
+
+            </div>
+            <div>
+            <div className=' flex items-center  gap-1'>
+              <ClockWhiteIcon/>
+              <p className=' text-[#A5A5AB] text-xs  font-medium'>Duration</p>
+            </div>
+            <h4 className=' text-sm text-white font-medium mt-1.5'>45 Min</h4>
+
+            </div>
+            <div>
+            <div className=' flex items-center  gap-1'>
+              <CalenderIcon3/>
+              <p className=' text-[#A5A5AB] text-xs  font-medium'>Date</p>
+            </div>
+            <h4 className=' text-sm text-white font-medium mt-1.5'>2024-08-01</h4>
+
+            </div>
+          </div>
+
+          <div  >
+            <h3 className=' text-lg text-white font-medium'>Course Overview</h3>
+            <p className=' text-sm text-[#D2D2D5] mt-2.5'>This course consists of a 2-year period trajectory that runs 1 day a week on Sunday takes place.</p>
+
+          </div>
+
+          <div>
+            <div className=' flex items-center justify-between'>
+              <h3 className=' text-lg text-white font-medium'>Course Progress</h3>
+              <p className=' text-sm text-white'>65%</p>
+            </div>
+       {/* progress bar  */}
+              <div className=' w-full bg-[#343847] h-2 rounded-full mt-2'>
+                <div className=' bg-[#FFC943] h-2 rounded-full' style={{ width: '65%' }}></div>
+              </div>
+          </div>
 
         </div>
 
