@@ -87,7 +87,7 @@ export default function VerticalAttendenceCalendar() {
 
   return (
     <div className="bg-[#07121d]   rounded-2xl w-full max-w-80 max-h-[calc(100vh-220px)] flex flex-col overflow-hidden">
-      <div className="h-10 px-3 bg-[#2A314C] flex items-center justify-between">
+      <div className="h-10 px-3 bg-[#2A314C] flex items-center justify-between py-4">
         <Select value={String(displayMonth.getFullYear())} onValueChange={handleYearChange}>
           <SelectTrigger icon={<span />} className="h-8 w-auto gap-1 border-none bg-transparent px-0 text-[#A9B4DE] text-base font-medium shadow-none hover:bg-transparent focus:ring-0 cursor-pointer">
             <span className="inline-flex items-center gap-2">
