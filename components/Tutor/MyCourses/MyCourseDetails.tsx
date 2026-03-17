@@ -2,15 +2,15 @@ import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCr
 import Link from "next/link";
 import React from "react";
 
-export default function CourseDetails() {
+export default function MyCourseDetails() {
   return (
     <div>
       <div className="flex items-center gap-2">
         <Link
-          href="/dashboard/course-management"
+          href="/tutor-dashboard/my-courses"
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
-          Student Management
+          My Courses
         </Link>
         <BreadCrumpRightArrow />
         <p className="text-base font-medium text-[#8D9CDC]">Course Details</p>

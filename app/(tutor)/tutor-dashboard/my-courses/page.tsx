@@ -1,9 +1,10 @@
+import MyCourses from "@/components/Tutor/MyCourses/MyCourses";
 import React from "react";
 
 export default function MyCoursesPage() {
   return (
     <div>
-      <p>My Courses Page</p>
+      <MyCourses />
     </div>
   );
 }

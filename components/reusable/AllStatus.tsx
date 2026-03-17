@@ -19,9 +19,12 @@ export function AllStatus() {
     <DropdownMenu>
       <DropdownMenuTrigger
         asChild
-        className=" bg-[#505B86] border-none text-white text-sm font-medium cursor-pointer hover:bg-[#505B86]/90 hover:text-white/90 py-5"
+        className=" border-none text-white text-sm font-medium cursor-pointer  hover:text-white/90 py-5"
       >
-        <Button variant="outline" className=" flex items-center gap-5">
+        <Button
+          variant="outline"
+          className=" flex items-center gap-5 bg-[#505B86] hover:bg-[#505B86]/90"
+        >
           All Status <DropDownIcon />
         </Button>
       </DropdownMenuTrigger>
