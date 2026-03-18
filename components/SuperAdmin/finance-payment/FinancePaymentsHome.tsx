@@ -61,7 +61,7 @@ const statsData: StatItem[] = [
 export default function FinancePaymentsHome() {
 
 
- const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Use studentManagementData instead of demoData
@@ -73,38 +73,38 @@ export default function FinancePaymentsHome() {
 
   return (
     <div>
-         <div className=' flex items-center justify-between'>
-      <h2 className=' text-2xl text-[#E6E7E8] font-semibold'>Finance & Payments</h2>
-      <Link
-        href="/dashboard/finance-payments/add-payment"
-        className=' p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer'>
-        <PlusIcon/>
-       Add Payment
-      </Link>
-    </div>
- <div className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5'>
-    {
-        statsData.map((stat,index)=>(
+      <div className=' flex items-center justify-between'>
+        <h2 className=' text-2xl text-[#E6E7E8] font-semibold'>Finance & Payments</h2>
+        <Link
+          href="/dashboard/finance-payments/add-payment"
+          className=' p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer'>
+          <PlusIcon />
+          Add Payment
+        </Link>
+      </div>
+      <div className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5'>
+        {
+          statsData.map((stat, index) => (
             <div key={index} className=' p-6 bg-[#0A1A29] rounded-2xl relative overflow-hidden'>
-                <Image src={statBg} alt='Stat Background' className=' absolute top-0 right-0  ' />
-                      <div className=' flex items-center justify-between'>
-                        <p className=' text-white text-base'>{stat.title}</p>
-                        <stat.icon/>
-                      </div>
-                      <div className=' mt-6 '>
-                        <h2 className=' text-[32px] text-white font-semibold'>{stat.value}</h2>
-                      </div>
-                      <div className=' mt-1 flex items-center gap-2'>
-                        <p className=' text-xs text-[#E9201D] font-semibold py-1 px-2.5 rounded-full bg-[#1c273b] inline-block'>{stat.percentage}</p>
+              <Image src={statBg} alt='Stat Background' className=' absolute top-0 right-0  ' />
+              <div className=' flex items-center justify-between'>
+                <p className=' text-white text-base'>{stat.title}</p>
+                <stat.icon />
+              </div>
+              <div className=' mt-6 '>
+                <h2 className=' text-[32px] text-white font-semibold'>{stat.value}</h2>
+              </div>
+              <div className=' mt-1 flex items-center gap-2'>
+                <p className=' text-xs text-[#E9201D] font-semibold py-1 px-2.5 rounded-full bg-[#1c273b] inline-block'>{stat.percentage}</p>
 
-                        <p className=' text-base text-[#8D9CDC]'>vs last month</p>
-                      </div>
+                <p className=' text-base text-[#8D9CDC]'>vs last month</p>
+              </div>
             </div>
-        ))
-    }
- </div>
+          ))
+        }
+      </div>
 
- <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
+      <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
         <div className=" flex flex-col lg:flex-row items-center justify-between mb-6">
           <h3 className=" text-white text-xl font-semibold">
             Transactions (44)

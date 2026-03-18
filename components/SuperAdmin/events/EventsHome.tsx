@@ -75,27 +75,48 @@ export default function EventsHome() {
                         </div>
                     ))}
 
-                    <button
+                    <Link
+                    href='/dashboard/events/add-event'
                         type='button'
                         className='rounded-2xl border border-dashed border-[#3D4566] bg-[#07121d] p-4 flex items-center justify-center gap-2 text-[#8D9CDC] hover:bg-[#0d1b2b] transition-colors min-h-40'
                     >
                         <PlusIcon />
                         <span className='text-base font-medium'>Add Event</span>
-                    </button>
+                    </Link>
                 </div>
             </div>
 
-            <div className=' bg-[#0a1726] p-6 rounded-2xl mt-5'>
+            <div className=' bg-[#0a1726] p-6 rounded-2xl mt-5 '>
                 <h3 className=' text-xl text-white font-semibold'>Completed Events</h3>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-5'>
                     {completedEvents.map((event) => (
-                        <div key={event.id} className='rounded-2xl border border-[#20304A] bg-[#07121d] p-4'>
-                            <p className='text-xs text-[#8D9CDC] uppercase'>Completed</p>
-                            <h4 className='text-white text-base font-semibold mt-2'>{event.event_name}</h4>
-                            <p className='text-sm text-[#A5A5AB] mt-2'>{event.schedule}</p>
-                            <p className='text-sm text-[#A5A5AB] mt-1'>{event.location}</p>
-                            <p className='text-sm text-[#18CC3F] font-medium mt-2'>{event.amount}</p>
+                        <div key={event.id} className='  border border-[#20304A] bg-[#07121d] p-3 rounded-[12px]'>
+                            <div className=' flex items-center gap-2'>
+                                <h3 className=' text-base text-white font-semibold'>{event.event_name}</h3>
+                                <p className=' text-xs text-[#18CC3F] font-medium bg-[#082420] rounded-full py-1 px-2.5'>{event.status}</p>
+                            </div>
+                            <div className=' my-5 space-y-1.5'>
+                                  <div className=' flex itmes-center gap-1'>
+                                    <CalenderIcon/>
+                                    <p className=' text-white text-sm '>{event.schedule}</p>
+                                </div>
+                                <div className=' flex itmes-center gap-1'>
+                                    <LocationIcon/>
+                                    <p className=' text-white text-sm '>{event.location}</p>
+                                </div>
+                                <div className=' flex itmes-center gap-1'>
+                                    <DollerIcon/>
+                                    <p className=' text-white text-sm '>{event.amount}</p>
+                                </div>
+                            </div>
+
+                            <p className=' text-xs text-[#D2D2D5] '>{event.description}</p>
+
+                            <Link href='/dashboard/events/event-details' className='w-full flex items-center justify-center text-white border border-[#3D4566] py-4 rounded-[12px] cursor-pointer mt-6'>
+                                View Details
+                            </Link>
+                          
                         </div>
                     ))}
                 </div>
