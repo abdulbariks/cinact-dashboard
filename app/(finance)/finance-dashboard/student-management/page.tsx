@@ -1,5 +1,10 @@
+import StudentManagement from "@/components/Finance/StudentManagement/StudentManagement";
 import React from "react";
 
 export default function StudentManagementPage() {
-  return <div>Student Management Page</div>;
+  return (
+    <div>
+      <StudentManagement />
+    </div>
+  );
 }

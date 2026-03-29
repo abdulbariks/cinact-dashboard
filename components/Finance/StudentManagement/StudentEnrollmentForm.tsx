@@ -1,0 +1,370 @@
+"use client";
+import React, { useState } from "react";
+
+import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
+import ContractDocumentForm from "@/components/SuperAdmin/student-management/ContractDocumentForm";
+import PaymentInformationForm from "@/components/SuperAdmin/student-management/PaymentInformationForm";
+import StudentInformationForm from "@/components/SuperAdmin/student-management/StudentInformationForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import Image from "next/image";
+import Link from "next/link";
+import confirmImg from "@/public/admin-dashboard/confirm-img.png";
+import BackIcon from "@/components/icons/others/BackIcon";
+
+type FormData = {
+  course: string;
+  studentName: string;
+  email: string;
+  address: string;
+  dateOfBirth: string;
+  experienceLevel: string;
+  actingGoalsInterests: string;
+  transactionId: string;
+  paymentDate: string;
+  paymentAmount: string;
+};
+
+type FormErrors = Partial<Record<keyof FormData, string>>;
+
+const courseOptions = [
+  "Acting Fundamentals",
+  "Screen Acting",
+  "Stage Performance",
+  "Voice and Expression",
+  "Improvisation",
+];
+
+const experienceOptions = ["Beginner", "Intermediate", "Advanced"];
+
+const initialFormData: FormData = {
+  course: "",
+  studentName: "",
+  email: "",
+  address: "",
+  dateOfBirth: "",
+  experienceLevel: "",
+  actingGoalsInterests: "",
+  transactionId: "",
+  paymentDate: "",
+  paymentAmount: "",
+};
+
+export default function StudentEnrollmentForm() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [rulesAndRegulationFile, setRulesAndRegulationFile] =
+    useState<File | null>(null);
+  const [digitalContractFile, setDigitalContractFile] = useState<File | null>(
+    null,
+  );
+  const [activeDropZone, setActiveDropZone] = useState<
+    "rules" | "contract" | null
+  >(null);
+  const [fileErrors, setFileErrors] = useState<{
+    rulesAndRegulationFile?: string;
+    digitalContractFile?: string;
+  }>({});
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name as keyof FormData]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateStep = (step: number) => {
+    const nextErrors: FormErrors = {};
+    const nextFileErrors: {
+      rulesAndRegulationFile?: string;
+      digitalContractFile?: string;
+    } = {};
+
+    if (step === 1) {
+      if (!formData.course.trim()) nextErrors.course = "Course is required";
+      if (!formData.studentName.trim())
+        nextErrors.studentName = "Student name is required";
+      if (!formData.email.trim()) nextErrors.email = "Email is required";
+      if (!formData.address.trim()) nextErrors.address = "Address is required";
+      if (!formData.dateOfBirth.trim())
+        nextErrors.dateOfBirth = "Date of birth is required";
+      if (!formData.experienceLevel.trim())
+        nextErrors.experienceLevel = "Experience level is required";
+      if (!formData.actingGoalsInterests.trim())
+        nextErrors.actingGoalsInterests = "Acting goals/interests is required";
+    }
+
+    if (step === 2) {
+      if (!formData.transactionId.trim())
+        nextErrors.transactionId = "Transaction ID is required";
+      if (!formData.paymentDate.trim())
+        nextErrors.paymentDate = "Payment date is required";
+      if (!formData.paymentAmount.trim())
+        nextErrors.paymentAmount = "Payment amount is required";
+    }
+
+    if (step === 3) {
+      if (!rulesAndRegulationFile)
+        nextFileErrors.rulesAndRegulationFile =
+          "Rules and regulation signing file is required";
+      if (!digitalContractFile)
+        nextFileErrors.digitalContractFile =
+          "Digital contract signing file is required";
+    }
+
+    setErrors(nextErrors);
+    setFileErrors(nextFileErrors);
+    return (
+      Object.keys(nextErrors).length === 0 &&
+      Object.keys(nextFileErrors).length === 0
+    );
+  };
+
+  const handleNext = () => {
+    const isStepValid = validateStep(currentStep);
+    if (!isStepValid) return;
+    setCurrentStep((prev) => Math.min(prev + 1, 3));
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const isStepValid = validateStep(3);
+    if (!isStepValid) return;
+
+    // Replace with API integration when backend endpoint is available.
+    console.log("Student enrolled:", {
+      formData,
+      rulesAndRegulationFile,
+      digitalContractFile,
+    });
+    setIsSuccessDialogOpen(true);
+    setFormData(initialFormData);
+    setRulesAndRegulationFile(null);
+    setDigitalContractFile(null);
+    setErrors({});
+    setFileErrors({});
+    setCurrentStep(1);
+  };
+
+  const handleFileSelect = (field: "rules" | "contract", file: File | null) => {
+    if (field === "rules") {
+      setRulesAndRegulationFile(file);
+      if (fileErrors.rulesAndRegulationFile) {
+        setFileErrors((prev) => ({
+          ...prev,
+          rulesAndRegulationFile: undefined,
+        }));
+      }
+      return;
+    }
+
+    setDigitalContractFile(file);
+    if (fileErrors.digitalContractFile) {
+      setFileErrors((prev) => ({ ...prev, digitalContractFile: undefined }));
+    }
+  };
+
+  const handleDrop = (
+    field: "rules" | "contract",
+    e: React.DragEvent<HTMLLabelElement>,
+  ) => {
+    e.preventDefault();
+    setActiveDropZone(null);
+    handleFileSelect(field, e.dataTransfer.files?.[0] ?? null);
+  };
+
+  const inputClassName =
+    "w-full rounded-[16px] border border-[#3D4566]   p-4 text-white outline-none placeholder:text-[#3D4566] focus:border-[#8D9CDC]";
+
+  const labelClassName = "mb-2 block text-xs  text-[#B2B5B8]";
+
+  return (
+    <div>
+      <div className="flex items-center gap-2">
+        <Link
+          href="/finance-dashboard/student-management"
+          className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
+        >
+          Student Management
+        </Link>
+        <BreadCrumpRightArrow />
+        <p className="text-base font-medium text-[#8D9CDC]">
+          Manual Student Enrollment
+        </p>
+      </div>
+      <div className="flex justify-center">
+        <div className="mt-6 w-[696px] rounded-2xl bg-[#0A1726] p-6">
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-2xl font-semibold text-white">
+              Manual Student Enrollment
+            </h2>
+            {currentStep === 3 && (
+              <button
+                type="button"
+                className="rounded-[8px] bg-[#070707] border border-[#3D4566] px-3 py-2 text-base font-medium text-white transition-colors hover:bg-[#101c2d] cursor-pointer"
+              >
+                Preview Document
+              </button>
+            )}
+          </div>
+          <div className="mt-3 flex items-center  gap-3">
+            <p className="text-xl font-medium text-[#8D9CDC]">
+              {currentStep === 1
+                ? "Student Information"
+                : currentStep === 2
+                  ? "Payment Information"
+                  : "Contract Document"}
+            </p>
+            <p className="text-base font-medium text-[#8D9CDC]">
+              ({currentStep}/3)
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            {currentStep === 1 && (
+              <StudentInformationForm
+                formData={formData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                handleCourseChange={(value) => {
+                  setFormData((prev) => ({ ...prev, course: value }));
+                  if (errors.course)
+                    setErrors((prev) => ({ ...prev, course: "" }));
+                }}
+                handleExperienceLevelChange={(value) => {
+                  setFormData((prev) => ({ ...prev, experienceLevel: value }));
+                  if (errors.experienceLevel)
+                    setErrors((prev) => ({ ...prev, experienceLevel: "" }));
+                }}
+                inputClassName={inputClassName}
+                labelClassName={labelClassName}
+                courseOptions={courseOptions}
+                experienceOptions={experienceOptions}
+              />
+            )}
+
+            {currentStep === 2 && (
+              <PaymentInformationForm
+                formData={formData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                inputClassName={inputClassName}
+                labelClassName={labelClassName}
+              />
+            )}
+
+            {currentStep === 3 && (
+              <ContractDocumentForm
+                labelClassName={labelClassName}
+                activeDropZone={activeDropZone}
+                rulesAndRegulationFile={rulesAndRegulationFile}
+                digitalContractFile={digitalContractFile}
+                fileErrors={fileErrors}
+                handleRulesDragOver={(e) => {
+                  e.preventDefault();
+                  setActiveDropZone("rules");
+                }}
+                handleContractDragOver={(e) => {
+                  e.preventDefault();
+                  setActiveDropZone("contract");
+                }}
+                handleRulesDragLeave={() =>
+                  setActiveDropZone((prev) => (prev === "rules" ? null : prev))
+                }
+                handleContractDragLeave={() =>
+                  setActiveDropZone((prev) =>
+                    prev === "contract" ? null : prev,
+                  )
+                }
+                handleRulesDrop={(e) => handleDrop("rules", e)}
+                handleContractDrop={(e) => handleDrop("contract", e)}
+                handleRulesFileChange={(e) =>
+                  handleFileSelect("rules", e.target.files?.[0] ?? null)
+                }
+                handleContractFileChange={(e) =>
+                  handleFileSelect("contract", e.target.files?.[0] ?? null)
+                }
+              />
+            )}
+
+            <div className="mt-8 flex items-center justify-end gap-4">
+              <button
+                type="button"
+                onClick={handleBack}
+                disabled={currentStep === 1}
+                className="rounded-2xl bg-[#3d4566] px-10 py-4 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+              >
+                Back
+              </button>
+
+              {currentStep < 3 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="rounded-2xl bg-[#E9201D] px-10 py-4 text-sm font-medium text-white hover:bg-[#e9201d]/90 cursor-pointer"
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="rounded-2xl bg-[#E9201D] px-10 py-4 text-sm font-medium text-white hover:bg-[#e9201d]/90 cursor-pointer"
+                >
+                  Enroll Student
+                </button>
+              )}
+            </div>
+          </form>
+
+          <Dialog
+            open={isSuccessDialogOpen}
+            onOpenChange={setIsSuccessDialogOpen}
+          >
+            <DialogContent className=" border-none bg-[#0A1726] text-white rounded-4xl p-8 w-[500px]">
+              {/* <DialogHeader>
+                <DialogTitle>Enrollment Successful</DialogTitle>
+                <DialogDescription className='text-[#B6C2ED]'>
+                  Student enrollment has been completed and saved successfully.
+                </DialogDescription>
+              </DialogHeader> */}
+              <div className=" flex items-center justify-center">
+                <div>
+                  <div className=" flex items-center justify-center">
+                    <Image src={confirmImg} alt="Confirm" />
+                  </div>
+                  <h2 className=" text-white text-xl font-semibold py-6 text-center">
+                    Manual Enrollment Complete
+                  </h2>
+
+                  <Link
+                    href="/finance-dashboard"
+                    className="flex items-center justify-center gap-2.5 text-base text-[#8D9CDC] font-medium cursor-pointer"
+                  >
+                    <BackIcon />
+                    Back to Home
+                  </Link>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+    </div>
+  );
+}
