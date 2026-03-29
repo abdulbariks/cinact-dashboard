@@ -220,9 +220,12 @@ export default function AddPayments() {
               </CardContent>
               <CardFooter className="flex justify-end gap-3">
                 {/* Cancel Button */}
-                <Button className="bg-[#3D4566] hover:bg-[#3D4566]/70 cursor-pointer text-white px-8 h-11 rounded-xl">
-                  Cancel
-                </Button>
+                <Link href={"/finance-dashboard/finance-payments"}>
+                  {" "}
+                  <Button className="bg-[#3D4566] hover:bg-[#3D4566]/70 cursor-pointer text-white px-8 h-11 rounded-xl">
+                    Cancel
+                  </Button>
+                </Link>
                 {/* Save Button */}
                 <Button
                   type="submit"
