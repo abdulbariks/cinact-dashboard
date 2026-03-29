@@ -17,16 +17,16 @@ export default function MyCourses() {
     <div>
       <h2 className=" text-2xl text-[#E6E7E8] font-semibold">My Courses</h2>
       <div className=" bg-[#0a1726] p-6 rounded-2xl mt-5">
-        <div className=" flex items-center justify-between">
+        <div className=" flex flex-col gap-5 md:flex-row items-center justify-between">
           <h3 className=" text-white text-xl font-semibold">All Courses</h3>
-          <div className=" flex items-center gap-2">
+          <div className=" flex flex-col gap-5 md:flex-row items-center">
             <div className=" relative w-80">
               <input
                 type="text"
                 name="search"
                 // value={search}
                 // onChange={handleChange}
-                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
+                className=" w-full  py-2 px-4 rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search Course`"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
@@ -59,7 +59,7 @@ export default function MyCourses() {
                   </p>
                 </div>
               </div>
-              <div className=" flex items-center justify-between">
+              <div className=" flex flex-col gap-5 md:flex-row items-center justify-between">
                 <div className="mt-9 flex items-center gap-10">
                   <div>
                     <div className=" flex items-center gap-1">
