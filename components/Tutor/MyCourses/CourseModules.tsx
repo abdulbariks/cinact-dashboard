@@ -55,7 +55,7 @@ const modules = [
   },
 ];
 
-export default function CourseModules() {
+export default function CourseModules({ classDetails, setClassDetails }) {
   return (
     <div className="space-y-4">
       {modules.map((module) => (
@@ -111,7 +111,8 @@ export default function CourseModules() {
                 {module.class?.map((c, i) => (
                   <div
                     key={i}
-                    className="bg-[#07121d] p-4 rounded-[12px] border-t-[0.5px] border-b-[0.5px] border-r-[0.5px] border-l-3 border-[#8D9CDC]"
+                    onClick={() => setClassDetails(c.className)}
+                    className="bg-[#07121d] p-4 rounded-[12px] border-t-[0.5px] border-b-[0.5px] border-r-[0.5px] border-l-3 border-[#8D9CDC] cursor-pointer"
                   >
                     <div className="flex justify-between items-center p-3">
                       {" "}
