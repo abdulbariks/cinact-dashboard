@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import { AddClassModal } from "./AddClassModal";
 
 const modules = [
   {
@@ -130,13 +131,14 @@ export default function CourseModules() {
                   </div>
                 ))}
 
-                <button
+                {/* <button
                   type="button"
                   className=" bg-[#07121d] p-4 rounded-[12px] border border-dashed border-[#505B86] min-h-30 flex  items-center gap-2 justify-center text-center text-white hover:bg-[#0b1b2b] transition-colors cursor-pointer"
                 >
                   <span className=" text-3xl leading-none">+</span>
                   <span className=" mt-2 text-lg font-medium">Add Class</span>
-                </button>
+                </button> */}
+                <AddClassModal />
               </div>
             </AccordionContent>
           </AccordionItem>
