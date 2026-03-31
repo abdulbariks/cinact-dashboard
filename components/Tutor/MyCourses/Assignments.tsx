@@ -6,11 +6,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { MoreVertical, ChevronRight, Plus } from "lucide-react";
-import { AddAssignmentModal } from "./AddAssignmentModal";
+import { AddAssignmentModal } from "./modal/AddAssignmentModal";
 
 const assignments = [1, 2, 3];
 
-export default function Assignments() {
+export default function Assignments({
+  assignmentDetails,
+  setAssignmentDetails,
+}) {
   return (
     <div>
       <h3 className="text-2xl text-white my-5">All Assignments</h3>
@@ -45,6 +48,7 @@ export default function Assignments() {
               {assignments.map((item) => (
                 <div
                   key={item}
+                  onClick={() => setAssignmentDetails(item)}
                   className="bg-[#0A121E] border border-[#1E2638] p-5 rounded-[12px] hover:border-[#3E4766] transition-all cursor-pointer group"
                 >
                   <div className="flex justify-between items-start mb-3">

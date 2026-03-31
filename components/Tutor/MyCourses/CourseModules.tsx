@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { AddClassModal } from "./AddClassModal";
+import { AddClassModal } from "./modal/AddClassModal";
 
 const modules = [
   {
