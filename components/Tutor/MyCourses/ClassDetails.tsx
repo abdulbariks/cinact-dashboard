@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import TeacherIcon from "@/components/icons/course-management/TeacherIcon";
 import CameraIcon from "@/components/icons/others/CameraIcon";
 import { UsersIcon } from "@/components/icons/sidebar.tsx/SidebarIcons";
@@ -5,11 +6,11 @@ import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCr
 import CalenderIcon from "@/components/icons/SuperAdmindashboard/CalenderIcon";
 import ClockIcon from "@/components/icons/SuperAdmindashboard/ClockIcon";
 import Link from "next/link";
-import React, { useState } from "react";
 import Assignments from "./Assignments";
 import Attendence from "./Attendence";
+import Assets from "./Assets";
 
-const tabs = ["Assignments", " Assets", "Attendence"];
+const tabs = ["Assignments", "Assets", "Attendence"];
 export default function ClassDetails({ classDetails, setClassDetails }) {
   const [activeTab, setActiveTab] = useState("Assignments");
   return (
@@ -133,6 +134,7 @@ export default function ClassDetails({ classDetails, setClassDetails }) {
         {/* Content */}
         <div className="mt-6">
           {activeTab === "Assignments" && <Assignments />}
+          {activeTab === "Assets" && <Assets />}
           {activeTab === "Attendence" && <Attendence />}
         </div>
       </div>
