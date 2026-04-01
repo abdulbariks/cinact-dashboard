@@ -56,7 +56,7 @@ const initialFormData: FormData = {
 }
 
 export default function StudentEnrollmentMuiltiForm() {
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(3)
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [errors, setErrors] = useState<FormErrors>({})
   const [rulesAndRegulationFile, setRulesAndRegulationFile] = useState<File | null>(null)
@@ -64,6 +64,7 @@ export default function StudentEnrollmentMuiltiForm() {
   const [activeDropZone, setActiveDropZone] = useState<'rules' | 'contract' | null>(null)
   const [fileErrors, setFileErrors] = useState<{ rulesAndRegulationFile?: string; digitalContractFile?: string }>({})
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false)
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -173,6 +174,7 @@ export default function StudentEnrollmentMuiltiForm() {
             {currentStep === 3 && (
               <button
                 type='button'
+                onClick={() => setIsPreviewDialogOpen(true)}
                 className='rounded-[8px] bg-[#070707] border border-[#3D4566] px-3 py-2 text-base font-medium text-white transition-colors hover:bg-[#101c2d] cursor-pointer'
               >
                 Preview Document
@@ -269,6 +271,28 @@ export default function StudentEnrollmentMuiltiForm() {
               )}
             </div>
           </form>
+
+          <Dialog open={isPreviewDialogOpen} onOpenChange={setIsPreviewDialogOpen}>
+            <DialogContent className='border border-[#3D4566] bg-[#0A1726] text-white rounded-3xl p-6 w-[500px]'>
+              <DialogHeader>
+                <DialogTitle>Preview Document</DialogTitle>
+                <DialogDescription className='text-[#B6C2ED]'>
+                  Review selected files before enrollment.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className='mt-4 space-y-3'>
+                <p className='text-sm'>
+                  <span className='text-[#B2B5B8]'>Rules & Regulation:</span>{' '}
+                  {rulesAndRegulationFile?.name ?? 'No file selected'}
+                </p>
+                <p className='text-sm'>
+                  <span className='text-[#B2B5B8]'>Digital Contract:</span>{' '}
+                  {digitalContractFile?.name ?? 'No file selected'}
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <Dialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
             <DialogContent className=' border-none bg-[#0A1726] text-white rounded-4xl p-8 w-[500px]'>
