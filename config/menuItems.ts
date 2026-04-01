@@ -196,14 +196,14 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
     },
   
     // Settings Category
-    {
-      id: 'budget',
-      name: 'Budget',
-      href: '/dashboard/budget',
-      icon: CreditCard,
-      description: 'Budget planning',
-      category: 'Settings'
-    },
+    // {
+    //   id: 'budget',
+    //   name: 'Budget',
+    //   href: '/dashboard/budget',
+    //   icon: CreditCard,
+    //   description: 'Budget planning',
+    //   category: 'Settings'
+    // },
   ],
 
   // Default viewer role
