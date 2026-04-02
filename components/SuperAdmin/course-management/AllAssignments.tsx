@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion'
 import WhiteRightArrowIcon from '@/components/icons/course-management/WhiteRightArrowIcon'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
 
 
@@ -50,6 +51,9 @@ export const assignments = [
 
 export default function AllAssignments() {
   const [openItem, setOpenItem] = useState<string>('class-1')
+  const params = useParams<{ courseId: string; classId: string }>()
+  const courseId = params?.courseId
+  const classId = params?.classId
 
   return (
     <div >
@@ -74,11 +78,11 @@ export default function AllAssignments() {
           </AccordionTrigger>
 
           <AccordionContent className='px-4 text-[#A5A5AB]'>
-            <Link href='#' className=' grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 mt-3'>
+            <div  className=' grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 mt-3'>
               {
                 assignments.map((assignment) => (
 
-                  <div key={assignment.id} className=' p-4 rounded-[12px] bg-[#0a1d2e] hover:bg-[#12283d] transition-colors duration-200 border-l border-[#5F6CA0]'>
+                  <Link href={courseId && classId ? `/dashboard/course-management/course-details/${courseId}/${classId}/${assignment.id}` : '#'} key={assignment.id} className=' p-4 rounded-[12px] bg-[#0a1d2e] hover:bg-[#12283d] transition-colors duration-200 border-l border-[#5F6CA0]'>
                     <div className=' flex items-center justify-between'>
                       <div className=' flex items-center gap-2.5'>
                         <h3 className=' text-base text-white font-medium'>Assignment {assignment.assignmentNo}</h3>
@@ -90,11 +94,11 @@ export default function AllAssignments() {
 
                     <p className=' text-sm text-[#D2D2D5] mt-1'>{assignment.details}</p>
                     <h4 className=' text-base text-[#18CC3F] mt-2'>Submissions: {assignment.submissionCount} | Graded: {assignment.gradedCount}</h4>
-                  </div>
+                  </Link>
                 ))
               }
 
-            </Link>
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
