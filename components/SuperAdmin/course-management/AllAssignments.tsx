@@ -12,38 +12,38 @@ import Link from 'next/link'
 
 
 
-export const assignments=[
+export const assignments = [
   {
-    id:'3300',
-    assignmentNo:'1',
-    due:'2 days',
-    details:'Write a 500-word reflection on your current confidence level and areas for improvement.',
-    submissionCount:22,
-    gradedCount:18
+    id: '3300',
+    assignmentNo: '1',
+    due: '2 days',
+    details: 'Write a 500-word reflection on your current confidence level and areas for improvement.',
+    submissionCount: 22,
+    gradedCount: 18
   },
   {
-    id:'3301',
-    assignmentNo:'2',
-    due:'4 days',
-    details:'Record and submit a 3-minute monologue focusing on breath support and vocal clarity.',
-    submissionCount:19,
-    gradedCount:12
+    id: '3301',
+    assignmentNo: '2',
+    due: '4 days',
+    details: 'Record and submit a 3-minute monologue focusing on breath support and vocal clarity.',
+    submissionCount: 19,
+    gradedCount: 12
   },
   {
-    id:'3302',
-    assignmentNo:'3',
-    due:'1 week',
-    details:'Perform a partner exercise and submit feedback on listening and response timing.',
-    submissionCount:17,
-    gradedCount:10
+    id: '3302',
+    assignmentNo: '3',
+    due: '1 week',
+    details: 'Perform a partner exercise and submit feedback on listening and response timing.',
+    submissionCount: 17,
+    gradedCount: 10
   },
   {
-    id:'3303',
-    assignmentNo:'4',
-    due:'10 days',
-    details:'Prepare a short scene presentation and attach your rehearsal notes with objectives.',
-    submissionCount:14,
-    gradedCount:6
+    id: '3303',
+    assignmentNo: '4',
+    due: '10 days',
+    details: 'Prepare a short scene presentation and attach your rehearsal notes with objectives.',
+    submissionCount: 14,
+    gradedCount: 6
   }
 ]
 
@@ -52,7 +52,7 @@ export default function AllAssignments() {
   const [openItem, setOpenItem] = useState<string>('class-1')
 
   return (
-    <div>
+    <div >
       <h2 className='text-xl font-medium text-white mb-4'>All Assignments</h2>
 
       <Accordion
@@ -76,21 +76,21 @@ export default function AllAssignments() {
           <AccordionContent className='px-4 text-[#A5A5AB]'>
             <Link href='#' className=' grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 mt-3'>
               {
-                assignments.map((assignment)=>(
+                assignments.map((assignment) => (
 
-          <div key={assignment.id} className=' p-4 rounded-[12px] bg-[#0a1d2e] hover:bg-[#12283d] transition-colors duration-200 border-l border-[#5F6CA0]'>
-              <div className=' flex items-center justify-between'>
-                <div className=' flex items-center gap-2.5'>
-                  <h3 className=' text-base text-white font-medium'>Assignment {assignment.assignmentNo}</h3>
-                  <p className=' py-1 px-2.5 rounded-full bg-[#f9c80e] text-xs text-[#030C15] font-medium '>Due {assignment.due}</p>
-                </div>
+                  <div key={assignment.id} className=' p-4 rounded-[12px] bg-[#0a1d2e] hover:bg-[#12283d] transition-colors duration-200 border-l border-[#5F6CA0]'>
+                    <div className=' flex items-center justify-between'>
+                      <div className=' flex items-center gap-2.5'>
+                        <h3 className=' text-base text-white font-medium'>Assignment {assignment.assignmentNo}</h3>
+                        <p className=' py-1 px-2.5 rounded-full bg-[#f9c80e] text-xs text-[#030C15] font-medium '>Due {assignment.due}</p>
+                      </div>
 
-                <WhiteRightArrowIcon/>
-              </div>
+                      <WhiteRightArrowIcon />
+                    </div>
 
-              <p className=' text-sm text-[#D2D2D5] mt-1'>{assignment.details}</p>
-               <h4 className=' text-base text-[#18CC3F] mt-2'>Submissions: {assignment.submissionCount} | Graded: {assignment.gradedCount}</h4>
-          </div>
+                    <p className=' text-sm text-[#D2D2D5] mt-1'>{assignment.details}</p>
+                    <h4 className=' text-base text-[#18CC3F] mt-2'>Submissions: {assignment.submissionCount} | Graded: {assignment.gradedCount}</h4>
+                  </div>
                 ))
               }
 

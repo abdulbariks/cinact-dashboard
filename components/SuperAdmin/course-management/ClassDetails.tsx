@@ -22,8 +22,9 @@ import AssetsIconSecondary from '@/components/icons/course-management/AssetsIcon
 import AttendenceIcon from './AttendenceIcon'
 import AttendenceIconSecondary from './AttendenceIconSecondary'
 import AllAssignments from './AllAssignments'
-import Assets from './Assets'
+ 
 import ClassAttendence from './ClassAttendence'
+import Assets from './Assets'
 
 export default function ClassDetails() {
   const [activeTab, setActiveTab] = useState('assignments')
@@ -139,9 +140,9 @@ export default function ClassDetails() {
              </div>
 
              <div className="mt-6 rounded-2xl bg-[#0a1929] p-4">
-               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                 <div className="flex justify-start border-b border-[#5F6CA0]">
-                   <TabsList className="h-auto w-auto justify-start bg-transparent p-0 rounded-none">
+               <Tabs value={activeTab} onValueChange={setActiveTab}  >
+                 <div className="flex justify-start border-b border-[#5F6CA0]  ">
+                   <TabsList className="  h-auto w-auto justify-start bg-transparent p-0 rounded-none">
                      {navItems.map((item) => {
                        const isActive = activeTab === item.value
 
@@ -149,7 +150,7 @@ export default function ClassDetails() {
                          <TabsTrigger
                            key={item.value}
                            value={item.value}
-                           className="px-5 py-5 flex items-center gap-2 whitespace-nowrap text-base font-medium rounded-none bg-transparent shadow-none border-0 border-b-2 border-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white data-[state=active]:border-[#E9201D] text-[#8D9CDC] hover:text-white"
+                           className="px-5 py-5 flex items-center gap-2 whitespace-nowrap text-base font-medium rounded-none bg-transparent shadow-none border-0 border-b-2 border-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white data-[state=active]:border-[#E9201D] text-[#8D9CDC] hover:text-white  "
                          >
                            {isActive ? item.activeIcon : item.icon}
                            <span>{item.label}</span>
