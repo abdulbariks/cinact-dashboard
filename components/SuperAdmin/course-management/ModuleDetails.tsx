@@ -1,103 +1,102 @@
  
-import React from 'react'
+import React, { use } from 'react'
 import RightArrowModuleIcon from '@/components/icons/course-management/RightArrowModuleIcon';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 
-const classes=[
+export const classes=[
   {
     id:'2200',
-    classNo:'Class-1',
+    classNo:'1',
     className:'Voice & Breath Control',
     status:'complete'
   },
   {
     id:'2201',
-    classNo:'Class-2',
+    classNo:'2',
     className:'Physical Awareness',
-    status:'next class'
+    status:'complete'
   },
   {
     id:'2202',
-    classNo:'Class-3',
+    classNo:'3',
     className:'Breathing Techniques',
-    status:null
+    status:'complete'
   },
   {
     id:'2203',
-    classNo:'Class-4',
+    classNo:'4',
     className:'Posture and Presence',
-    status:null
+    status:'complete'
   },
   {
     id:'2204',
-    classNo:'Class-5',
+    classNo:'5',
     className:'Vocal Projection',
-    status:null
+    status:'complete'
   },
   {
     id:'2205',
-    classNo:'Class-6',
+    classNo:'6',
     className:'Articulation Practice',
-    status:null
+    status:'complete'
   },
   {
     id:'2206',
-    classNo:'Class-7',
+    classNo:'7',
     className:'Movement Flow',
-    status:null
+    status:'next class'
   },
   {
     id:'2207',
-    classNo:'Class-8',
+    classNo:'8',
     className:'Listening Skills',
     status:null
   },
   {
     id:'2208',
-    classNo:'Class-9',
+    classNo:'9',
     className:'Partner Work',
     status:null
   },
   {
     id:'2209',
-    classNo:'Class-10',
+    classNo:'10',
     className:'Emotional Recall',
     status:null
   },
   {
     id:'2210',
-    classNo:'Class-11',
+    classNo:'11',
     className:'Scene Objectives',
     status:null
   },
   {
     id:'2211',
-    classNo:'Class-12',
+    classNo:'12',
     className:'Improvisation Basics',
     status:null
   },
   {
     id:'2212',
-    classNo:'Class-13',
+    classNo:'13',
     className:'Character Exploration',
     status:null
   },
   {
     id:'2213',
-    classNo:'Class-14',
+    classNo:'14',
     className:'Performance Review',
-    status:null
-  },
-  {
-    id:'2214',
-    classNo:'Class-15',
-    className:'Final Presentation',
     status:null
   }
 ]
 
 export default function ModuleDetails() {
+
+const path =usePathname();
+const courseId = path.split('/')[4]; // Extract courseId from the URL
+
   return (
     <div className='  mt-3'>
         <div className=' px-4 pt-4 pb-8 border  border-[#3D4566] rounded-[12px] bg-[#07121d]'>
@@ -117,7 +116,7 @@ export default function ModuleDetails() {
           <div className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {classes.map((cls) => (
               <Link
-                href='#'
+                href={`/dashboard/course-management/course-details/${courseId}/${cls.id}`}
                 key={cls.id}
                 className={`p-4 border-l-2 rounded-[12px] flex items-center justify-between ${
                   cls.status === 'next class'
@@ -127,7 +126,7 @@ export default function ModuleDetails() {
               >
                 <div>
                 <div className=' flex items-center gap-2'>
-                 <h3 className=' text-sm text-[#8D9CDC] '>{cls.classNo}</h3>
+                 <h3 className=' text-sm text-[#8D9CDC] '>Class-{cls.classNo}</h3>
                  {
                   cls.status && (
                     <p
