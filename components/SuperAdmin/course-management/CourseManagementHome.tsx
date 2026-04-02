@@ -7,6 +7,7 @@ import SearchIcon from '@/components/icons/SuperAdmindashboard/SearchIcon'
 import { AllStatus } from '@/components/reusable/AllStatus'
 import { coursesData } from '@/public/demoData/CoursesData'
 import Link from 'next/link'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 export default function CourseManagementHome() {
     return (
@@ -117,13 +118,25 @@ export default function CourseManagementHome() {
                             
                         ))
                     }
-                    <button
-                        type='button'
-                        className=' bg-[#07121d] p-4 rounded-[12px] border border-dashed border-[#505B86] min-h-[260px] flex  items-center gap-2 justify-center text-center text-white hover:bg-[#0b1b2b] transition-colors cursor-pointer'
-                    >
-                        <span className=' text-3xl leading-none'>+</span>
-                        <span className=' mt-2 text-lg font-medium'>Add Course</span>
-                    </button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <button
+                                type='button'
+                                className=' bg-[#07121d] p-4 rounded-[12px] border border-dashed border-[#505B86] min-h-[260px] flex  items-center gap-2 justify-center text-center text-white hover:bg-[#0b1b2b] transition-colors cursor-pointer'
+                            >
+                                <span className=' text-3xl leading-none'>+</span>
+                                <span className=' mt-2 text-lg font-medium'>Add Course</span>
+                            </button>
+                        </DialogTrigger>
+
+                        <DialogContent className='border-none rounded-2xl bg-[#0A1726] text-white max-w-[520px]'>
+                            <DialogHeader>
+                                <DialogTitle className='text-xl font-semibold text-white'>Add Course</DialogTitle>
+                             
+                            </DialogHeader>
+                            
+                        </DialogContent>
+                    </Dialog>
                 </div>
 
             </div>
