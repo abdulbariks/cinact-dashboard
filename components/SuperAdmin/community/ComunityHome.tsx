@@ -5,6 +5,7 @@ import SearchIcon from '../../icons/SuperAdmindashboard/SearchIcon'
 import CommunityType from './CommunityType'
 import CommunityStatus from './CommunityStatus'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs'
+import AllPosts from './AllPosts'
 
 export default function ComunityHome() {
   return (
@@ -15,14 +16,14 @@ export default function ComunityHome() {
         <div className=' flex items-center gap-5'>
           <Link
             href="/dashboard/community/view-announcements"
-            className=' p-3 bg-[#3d4566] hover:bg-[#3d4566]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer'>
+            className=' p-3 bg-[#3d4566] hover:bg-[#3d4566]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer'>
 
 
             View Announcements
           </Link>
           <Link
             href="#"
-            className=' p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer'>
+            className=' p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer'>
             <PlusIcon />
             Create Announcement
           </Link>
@@ -33,16 +34,16 @@ export default function ComunityHome() {
       <div className=' bg-[#0a1726] p-6 rounded-2xl mt-5'>
         <Tabs defaultValue='all-posts' className='w-full'>
           <div className=' flex items-center justify-between'>
-            <TabsList className='inline-flex items-center h-auto rounded-[8px] bg-[#31333e] p-1 border   border-[#5F6CA0]'>
+            <TabsList className='inline-flex items-center h-auto rounded-[6px] bg-[#31333e] p-1'>
               <TabsTrigger
                 value='all-posts'
-                className='px-4 py-2   text-sm font-medium text-[#8D9CDC] data-[state=active]:text-white data-[state=active]:bg-[#505B86] rounded-[6px] cursor-pointer'
+                className='px-4 py-2 border-0 shadow-none text-sm font-medium text-[#8D9CDC] data-[state=active]:text-white data-[state=active]:bg-[#505B86] rounded-[6px] cursor-pointer'
               >
                 All posts
               </TabsTrigger>
               <TabsTrigger
                 value='modaration-request'
-                className='px-4 py-2 rounded-[6px] text-sm font-medium text-[#8D9CDC] data-[state=active]:text-white data-[state=active]:bg-[#505B86] cursor-pointer'
+                className='px-4 py-2 border-0 shadow-none rounded-[6px] text-sm font-medium text-[#8D9CDC] data-[state=active]:text-white data-[state=active]:bg-[#505B86] cursor-pointer'
               >
                 Modaration Request
               </TabsTrigger>
@@ -71,7 +72,7 @@ export default function ComunityHome() {
           </div>
 
           <TabsContent value='all-posts' className='mt-4' >
-            <h3 className=' text-2xl font-semibold text-white'>All Posts</h3>
+            <AllPosts />
           </TabsContent>
           <TabsContent value='modaration-request' className='mt-4' >
             <h3 className=' text-2xl font-semibold text-white'>Moderation Requests</h3>

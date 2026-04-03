@@ -1,7 +1,8 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import PlusIcon from '@/components/icons/SuperAdmindashboard/PlusIcon'
 import RightArrowModuleIcon from '@/components/icons/course-management/RightArrowModuleIcon';
+import AddClassModal from './AddClassModal'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -94,6 +95,15 @@ export const classes=[
 ]
 
 export default function ModuleDetails() {
+const [isAddClassOpen, setIsAddClassOpen] = useState(false)
+const [classData, setClassData] = useState({
+  classTitle: '',
+  className: '',
+  classOverview: '',
+  duration: '',
+  date: '',
+  time: '',
+})
 
 const path =usePathname();
 const courseId = path.split('/')[4]; // Extract courseId from the URL
@@ -155,6 +165,7 @@ const courseId = path.split('/')[4]; // Extract courseId from the URL
 
             <button
               type='button'
+              onClick={() => setIsAddClassOpen(true)}
               className='py-6 px-4 border border-dashed border-[#5F6CA0] rounded-[12px] flex items-center justify-center gap-2 text-[#8D9CDC] font-medium hover:text-white hover:border-[#8D9CDC] transition-colors cursor-pointer'
             >
               <PlusIcon />
@@ -163,6 +174,13 @@ const courseId = path.split('/')[4]; // Extract courseId from the URL
         
           </div>
         </div>
+
+        <AddClassModal
+          open={isAddClassOpen}
+          onOpenChange={setIsAddClassOpen}
+          classData={classData}
+          setClassData={setClassData}
+        />
     </div>
   )
 }

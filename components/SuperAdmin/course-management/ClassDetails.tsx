@@ -22,12 +22,22 @@ import AssetsIconSecondary from '@/components/icons/course-management/AssetsIcon
 import AttendenceIcon from './AttendenceIcon'
 import AttendenceIconSecondary from './AttendenceIconSecondary'
 import AllAssignments from './AllAssignments'
+import EditClassModal from './EditClassModal'
  
 import ClassAttendence from './ClassAttendence'
 import Assets from './Assets'
 
 export default function ClassDetails() {
   const [activeTab, setActiveTab] = useState('assignments')
+  const [isEditClassOpen, setIsEditClassOpen] = useState(false)
+  const [classData, setClassData] = useState({
+    classTitle: '',
+    className: '',
+    classOverview: '',
+    duration: '',
+    date: '',
+    time: '',
+  })
 
   const path = usePathname();
   const courseId = path.split('/')[4];
@@ -79,7 +89,12 @@ export default function ClassDetails() {
       <h2 className=' text-2xl text-[#E6E7E8] font-semibold'>Class {classNo} Details</h2>
 
       <div className=' flex items-center gap-3'>
-        <button className=' p-3 rounded-2xl flex items-center gap-3 bg-[#5f6ca0] text-white font-medium cursor-pointer'><PlusIcon/> Edit Class</button>
+          <button
+            onClick={() => setIsEditClassOpen(true)}
+            className=' p-3 rounded-2xl flex items-center gap-3 bg-[#5f6ca0] text-white font-medium cursor-pointer'
+          >
+            <PlusIcon/> Edit Class
+          </button>
         <button className='p-3 rounded-2xl flex items-center gap-3 bg-[#e9201d] text-white font-medium cursor-pointer'><PlusIcon/> Reschedule</button>
       </div>
 
@@ -174,6 +189,13 @@ export default function ClassDetails() {
                </Tabs>
              </div>
  
+      <EditClassModal
+        open={isEditClassOpen}
+        onOpenChange={setIsEditClassOpen}
+        classData={classData}
+        setClassData={setClassData}
+      />
+
    
 </div>
     

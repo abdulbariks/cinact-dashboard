@@ -12,6 +12,11 @@ import PdfIcon from '@/components/icons/student-management/PdfIcon'
 import PdfIconWhite from '@/components/icons/course-management/PdfIconWhite'
 import VideoIconSecondary from '@/components/icons/course-management/VideoIconSecondary'
 import TrashIconRed from '@/components/icons/course-management/TrashIconRed'
+import warnigImg from '@/public/admin-dashboard/warning-img.png'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import Image from 'next/image'
+import TrashIcon from '@/components/icons/others/TrashIcon'
+import CrossIcon from '@/components/icons/others/CrossIcon'
 
 export const assets = [
   {
@@ -80,6 +85,13 @@ export const assets = [
 
 export default function Assets() {
   const [openItem, setOpenItem] = useState<string>('asset-1')
+  const [isWarningOpen, setIsWarningOpen] = useState(false)
+  const [selectedAssetName, setSelectedAssetName] = useState('')
+
+  const openWarningModal = (assetName: string) => {
+    setSelectedAssetName(assetName)
+    setIsWarningOpen(true)
+  }
 
   return (
     <div className=' p-4 bg-[#07121d] rounded-[12px]'>
@@ -130,9 +142,13 @@ export default function Assets() {
                               <h4>{video}</h4>
                             </div>
                           </div>
-                          <div className=' pr-3'>
+                          <button
+                            type='button'
+                            onClick={() => openWarningModal(video)}
+                            className=' pr-3 cursor-pointer'
+                          >
                             <TrashIconRed />
-                          </div>
+                          </button>
                         </div>
                       ))
                     }
@@ -164,9 +180,13 @@ export default function Assets() {
                               <h4>{file}</h4>
                             </div>
                           </div>
-                          <div className=' pr-3'>
+                          <button
+                            type='button'
+                            onClick={() => openWarningModal(file)}
+                            className=' pr-3 cursor-pointer'
+                          >
                             <TrashIconRed />
-                          </div>
+                          </button>
                         </div>
                       ))
                     }
@@ -179,6 +199,39 @@ export default function Assets() {
           </AccordionItem>
         ))}
       </Accordion>
+{/* ========================================================================================= */}
+{/* ========================================================================================= */}
+      <Dialog open={isWarningOpen} onOpenChange={setIsWarningOpen}>
+        <DialogContent hideCloseButton className='w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-8 text-white'>
+          <div className='flex flex-col items-center text-center'>
+            <Image src={warnigImg} alt='Warning'   />
+            <h3 className='mt-4 text-xl font-semibold text-white'>Delete Asset?</h3>
+            <p className='mt-2 text-sm text-[#B2B5B8]'>
+              Are you sure you want to delete
+              <span className='text-white'> {selectedAssetName}</span>?
+            </p>
+
+            <div className='mt-6 flex items-center gap-3'>
+              <button
+                type='button'
+                onClick={() => setIsWarningOpen(false)}
+                className='rounded-2xl  border border-[#3D4566] px-11 py-4 text-sm font-medium text-white hover:bg-[#5F6CA0] flex items-center gap-2.5'
+              >
+                <CrossIcon/>
+                Cancel
+              </button>
+              <button
+                type='button'
+                onClick={() => setIsWarningOpen(false)}
+                className='rounded-2xl bg-[#E9201D] px-11 py-4 text-sm font-medium text-white hover:bg-[#ff3b1f] flex items-center gap-2.5'
+              >
+                <TrashIcon/>
+                Delete
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
