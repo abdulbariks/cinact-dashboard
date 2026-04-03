@@ -7,6 +7,7 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import ModuleDetails from './ModuleDetails'
+import PlusIcon from '@/components/icons/SuperAdmindashboard/PlusIcon'
 
 export default function Modules() {
     const [openItem, setOpenItem] = useState<string>('')
@@ -57,6 +58,11 @@ export default function Modules() {
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
+           
+           <button className=' mt-4 bg-[#07121d] border border-[#3D4566] border-dashed rounded-[10px] py-6 flex items-center justify-center gap-2 cursor-pointer w-full'>
+            <PlusIcon/>
+            <p className=' text-base  text-white font-medium'>Add Module</p>
+           </button>
         </div>
     )
 }

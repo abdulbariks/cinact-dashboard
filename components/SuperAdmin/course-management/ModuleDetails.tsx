@@ -1,5 +1,6 @@
- 
-import React, { use } from 'react'
+
+import React from 'react'
+import PlusIcon from '@/components/icons/SuperAdmindashboard/PlusIcon'
 import RightArrowModuleIcon from '@/components/icons/course-management/RightArrowModuleIcon';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -151,6 +152,14 @@ const courseId = path.split('/')[4]; // Extract courseId from the URL
 
               </Link>
             ))}
+
+            <button
+              type='button'
+              className='py-6 px-4 border border-dashed border-[#5F6CA0] rounded-[12px] flex items-center justify-center gap-2 text-[#8D9CDC] font-medium hover:text-white hover:border-[#8D9CDC] transition-colors cursor-pointer'
+            >
+              <PlusIcon />
+              Add Class
+            </button>
         
           </div>
         </div>
