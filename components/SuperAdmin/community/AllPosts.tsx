@@ -6,6 +6,7 @@ import EyeIcon from '@/components/icons/SuperAdmindashboard/EyeIcon'
 import { allPostsData } from '@/public/demoData/AllPostsData'
  
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 
@@ -66,6 +67,18 @@ import React from 'react'
   }
 }
 
+const CONTENT_WORD_LIMIT = 18
+
+const truncateByWords = (text: string, limit: number): string => {
+  const words = text.trim().split(/\s+/)
+
+  if (words.length <= limit) {
+    return text
+  }
+
+  return `${words.slice(0, limit).join(' ')}...`
+}
+
 
 export default function AllPosts() {
   return (
@@ -85,7 +98,7 @@ export default function AllPosts() {
                             <p className={` text-sm py-0.5 px-1.5 rounded-[4px] inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}>{post.status}</p>
                             <p className=' text-sm text-[#777980] py-0.5 px-1.5   inline-block '>{post.date}</p>
                         </div>
-                        <p className=' text-[#A5A5AB] text-sm mt-3'>{post.content}</p>
+                        <p className=' text-[#A5A5AB] text-sm mt-3'>{truncateByWords(post.content, CONTENT_WORD_LIMIT)}</p>
                         <div className=' flex items-center gap-6 mt-3'>
                             <div className=' flex items-center gap-1'>
                                 <LikeIcon/>
@@ -101,9 +114,9 @@ export default function AllPosts() {
                     </div>
 
                     <div className=' flex items-center gap-2'>
-                        <button className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-[4px]'>
+                        <Link href={`/dashboard/community/${post.id}`} className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-[4px]'>
                             <EyeIcon/>
-                        </button>
+                        </Link>
                         <button className=' cursor-pointer p-2.5 bg-[#0e1825] rounded-[4px]'>
                             <FlagIcon/>
                         </button>

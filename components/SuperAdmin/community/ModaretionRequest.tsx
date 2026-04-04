@@ -1,13 +1,15 @@
-import CommentIcon from '@/components/icons/Community/CommentIcon'
+ 
+import React from 'react'
 import FlagIcon from '@/components/icons/Community/FlagIcon'
-import LikeIcon from '@/components/icons/Community/LikeIcon'
+ 
 import TrashIconRed from '@/components/icons/course-management/TrashIconRed'
 import EyeIcon from '@/components/icons/SuperAdmindashboard/EyeIcon'
-import { allPostsData } from '@/public/demoData/AllPostsData'
+ 
 import { moderationRequestData } from '@/public/demoData/modaretionRequestData'
  
 import Image from 'next/image'
-import React from 'react'
+import GreenTikIcon from '@/components/icons/Community/GreenTikIcon'
+import RedCross from '@/components/icons/Community/RedCross'
 
 
 // Type badge colors
@@ -96,11 +98,11 @@ export default function ModaretionRequest() {
                         <button className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-[4px]'>
                             <EyeIcon/>
                         </button>
-                        <button className=' cursor-pointer p-2.5 bg-[#0e1825] rounded-[4px]'>
-                            <FlagIcon/>
+                        <button className=' cursor-pointer p-[7px] bg-[#0e1825] rounded-[4px]'>
+                            <GreenTikIcon/>
                         </button>
-                        <button className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-[4px]'>
-                            <TrashIconRed/>
+                        <button className=' cursor-pointer p-3 bg-[#0e1825] rounded-[4px]'>
+                            <RedCross/>
                         </button>
                     </div>
 

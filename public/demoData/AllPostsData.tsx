@@ -13,7 +13,7 @@ export const allPostsData=[
         date:"5 min ago",
         likes:24,
         comments:6,
-        content:'Just finished the JavaScript assignment! The closures concept finally clicked for me. Thanks to everyone who helped in the study group.'
+        content:'Just finished the JavaScript assignment and finally understood closures after multiple attempts in practice. I rewrote two examples and shared them with my classmates to confirm I got the logic right. Thanks again to everyone from the study group who reviewed my code and explained where I was getting confused.'
     },
     {
         id:'5501',
@@ -24,7 +24,7 @@ export const allPostsData=[
         date:"12 min ago",
         likes:31,
         comments:9,
-        content:'Sharing a quick update from the alumni mentorship session. We covered portfolio tips, interview prep, and how to stay consistent with practice.'
+        content:'Sharing a quick update from the alumni mentorship session where we focused on practical portfolio improvements and interview structure. We also discussed how to set a weekly routine that stays realistic during busy schedules and keeps steady momentum. I can share the notes in the community thread if anyone wants the checklist we used during the session.'
     },
     {
         id:'5502',
@@ -35,7 +35,7 @@ export const allPostsData=[
         date:"18 min ago",
         likes:18,
         comments:4,
-        content:'New community announcement: the weekly feedback review will now happen every Friday at 4 PM. Please check the schedule before posting new updates.'
+        content:'New community announcement: the weekly feedback review will now happen every Friday at 4 PM starting this week. Please check the updated calendar before posting new updates so your items are included in the right review cycle. We are also adding a short Q and A window at the end to quickly resolve pending moderation questions.'
     },
     {
         id:'5503',
@@ -46,7 +46,7 @@ export const allPostsData=[
         date:"24 min ago",
         likes:12,
         comments:3,
-        content:'Flagging this post for review because the external link appears broken. Please verify the attachment before approving it.'
+        content:'Flagging this post for review because the external link appears broken on both desktop and mobile views. Please verify the attachment before approving it so members do not lose context while reading the thread. Once the correct file is uploaded, I can recheck the link and confirm everything opens as expected.'
     },
     {
         id:'5504',
@@ -57,7 +57,7 @@ export const allPostsData=[
         date:"31 min ago",
         likes:45,
         comments:11,
-        content:'The alumni showcase went really well today. It was great to see the newer students presenting with confidence and clarity.'
+        content:'The alumni showcase went really well today and the overall flow felt organized from start to finish. It was great to see the newer students presenting with confidence, clearer pacing, and stronger stage presence. Several attendees asked for another showcase next month, so we should consider opening another presentation slot soon.'
     },
     {
         id:'5505',
@@ -68,7 +68,7 @@ export const allPostsData=[
         date:"38 min ago",
         likes:27,
         comments:8,
-        content:'Requesting approval for the upcoming workshop post. The event details are finalized and ready to be shared with the community.'
+        content:'Requesting approval for the upcoming workshop post because all event details are now finalized and reviewed. The agenda, timing, and registration link are complete, and the speaker confirmation has already been received. Once approved, I will publish the post immediately so students have enough time to register in advance.'
     },
     {
         id:'5506',
@@ -79,7 +79,7 @@ export const allPostsData=[
         date:"45 min ago",
         likes:38,
         comments:13,
-        content:'Announcement: study buddies for the acting practice session are now open. Anyone interested can comment and join the group.'
+        content:'Announcement: study buddies for the acting practice session are now open for this week and next week. Anyone interested can comment and join the group, and we will pair members based on preferred practice times. Please include your availability in the comments so we can create balanced groups without scheduling conflicts.'
     },
     {
         id:'5507',
@@ -90,7 +90,7 @@ export const allPostsData=[
         date:"52 min ago",
         likes:9,
         comments:2,
-        content:'This post should be reviewed for tone and accuracy before it stays visible. Some of the details need a quick check.'
+        content:'This post should be reviewed for tone and accuracy before it remains visible in the community feed. Some of the details need a quick check because a few points appear unclear and may be interpreted incorrectly. After edits are made, we can publish it again with corrected wording and a cleaner summary.'
     },
     {
         id:'5508',
@@ -101,7 +101,7 @@ export const allPostsData=[
         date:"1 hour ago",
         likes:54,
         comments:15,
-        content:'Approved community notice: the guest speaker session has been confirmed. Please make sure to join five minutes early.'
+        content:'Approved community notice: the guest speaker session has been confirmed and all logistics are now in place. Please make sure to join five minutes early so we can begin on time and avoid interrupting the introduction. The discussion segment will include live questions, so prepare your topics before entering the session.'
     },
     {
         id:'5509',
@@ -112,7 +112,7 @@ export const allPostsData=[
         date:"1 hour ago",
         likes:21,
         comments:7,
-        content:'Requesting approval for my progress update post. I included the new monologue practice notes and feedback from last class.'
+        content:'Requesting approval for my progress update post with the latest monologue practice notes attached for review. I included feedback from last class, the revision points I applied, and a short reflection on what improved. If approved, I will post the next update after the weekend rehearsal with an updated performance clip.'
     },
     {
         id:'5510',
@@ -123,7 +123,7 @@ export const allPostsData=[
         date:"1 hour ago",
         likes:33,
         comments:10,
-        content:'Alumni announcement: we are hosting a casual online meetup next week to talk about auditions, career growth, and practice routines.'
+        content:'Alumni announcement: we are hosting a casual online meetup next week to discuss auditions and career growth. We will also share personal practice routines that helped us stay consistent while balancing work and training. Please drop your preferred time in comments so we can choose a slot that works for most members.'
     },
     {
         id:'5511',
@@ -134,7 +134,7 @@ export const allPostsData=[
         date:"2 hours ago",
         likes:8,
         comments:1,
-        content:'Flag this update for moderation. It contains duplicated information that should be cleaned up before it is published.'
+        content:'Flag this update for moderation because it contains duplicated information across multiple sentences. The post should be cleaned up before publication so the message stays concise and easier for readers to follow. After a quick rewrite, the core details can be approved without changing the original intent.'
     },
     {
         id:'5512',
@@ -145,7 +145,7 @@ export const allPostsData=[
         date:"2 hours ago",
         likes:29,
         comments:5,
-        content:'Approved post: my rehearsal reflections are finally posted, and I got some great notes from the group on emotional delivery.'
+        content:'Approved post: my rehearsal reflections are finally posted with clearer notes on pacing and emotional delivery. I also summarized the most useful feedback from the group so others can apply similar techniques in practice. Next week I will upload a follow-up clip to show how those adjustments improved the final performance.'
     },
     {
         id:'5513',
@@ -156,7 +156,7 @@ export const allPostsData=[
         date:"3 hours ago",
         likes:16,
         comments:4,
-        content:'Requesting review for a new alumni success story. It highlights how the training helped with confidence in auditions.'
+        content:'Requesting review for a new alumni success story that outlines the full preparation journey before auditions. It highlights how structured training improved confidence, focus, and delivery under pressure during callbacks. If approved, I will add a short timeline section so readers can follow each milestone more easily.'
     },
     {
         id:'5514',
@@ -167,6 +167,6 @@ export const allPostsData=[
         date:"3 hours ago",
         likes:41,
         comments:12,
-        content:'Community announcement: please update your profile photos before the end of the week so the directory stays current.'
+        content:'Community announcement: please update your profile photos before the end of the week so the directory stays current. Clear profile images help mentors and classmates identify participants quickly during sessions and group activities. If you need help resizing photos, we will share a simple upload guide in the next admin post.'
     }
 ]
