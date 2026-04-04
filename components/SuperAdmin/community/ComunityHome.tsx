@@ -6,6 +6,7 @@ import CommunityType from './CommunityType'
 import CommunityStatus from './CommunityStatus'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs'
 import AllPosts from './AllPosts'
+import ModaretionRequest from './ModaretionRequest'
 
 export default function ComunityHome() {
   return (
@@ -75,7 +76,7 @@ export default function ComunityHome() {
             <AllPosts />
           </TabsContent>
           <TabsContent value='modaration-request' className='mt-4' >
-            <h3 className=' text-2xl font-semibold text-white'>Moderation Requests</h3>
+           <ModaretionRequest/>
           </TabsContent>
         </Tabs>
       </div>
