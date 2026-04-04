@@ -84,8 +84,8 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
             <div className=' flex items-center gap-6 mt-6'>
                 <div className=' flex-1 bg-white rounded-[12px] border '>1</div>
-                <div className=' flex-1 bg-white rounded-[12px] border '>1</div>
-                <div className=' flex-1 bg-white rounded-[12px] border '>1</div>
+                <div className=' flex-1 bg-white rounded-[12px] border '>2</div>
+                <div className=' flex-1 bg-white rounded-[12px] border '>3</div>
               
            
                  
