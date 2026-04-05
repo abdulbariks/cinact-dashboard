@@ -205,3 +205,46 @@ input:checked ~ .checkmark {
       background: #0000;
   border-radius: 10px;
   } */
+
+
+/* jodit */
+  /* Hide the 'Powered by Jodit' branding and the entire status bar */
+.jodit-status-bar {
+  display: none !important;
+}
+
+/* If you want to keep the status bar but ONLY hide the branding link: */
+.jodit-status-bar__item--right {
+  display: none !important;
+}
+ .jodit-container {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.jodit-toolbar {
+  background-color: #111e2d !important;
+  border-bottom: 1px solid #242d3d !important;
+}
+
+.jodit-wysiwyg {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.jodit-toolbar__box {
+  background-color: #111e2d !important;
+}
+
+/* Scrollbar for the modal */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #242D3D;
+  border-radius: 10px;
+}
+
+.jodit-container:not(.jodit_inline) .jodit-workplace {
+  background-color: #111e2d !important; ;
+}

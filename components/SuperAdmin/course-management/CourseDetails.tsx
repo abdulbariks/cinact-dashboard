@@ -46,7 +46,12 @@ export default function CourseDetails() {
     moduleOverview: "",
   });
 
-  const instructorOptions = ["Wade Warren", "Jane Cooper", "Devon Lane", "Bessie Cooper"];
+  const instructorOptions = [
+    "Wade Warren",
+    "Jane Cooper",
+    "Devon Lane",
+    "Bessie Cooper",
+  ];
 
   const inputClassName =
     "w-full rounded-2xl border border-[#3D4566] bg-transparent px-4 py-3 text-white placeholder:text-[#3D4566] outline-none focus:border-[#5F6CA0]";
@@ -99,50 +104,62 @@ export default function CourseDetails() {
                 Edit Course
               </button>
             </div>
-         {/* item-2 */}
+            {/* item-2 */}
             <div className=" flex items-center justify-between flex-wrap gap-4">
               <div>
                 <div className=" flex items-center gap-1">
-                  <TeacherIcon/>
+                  <TeacherIcon />
                   <p className=" text-xs text-[#A5A5AB] ">Teacher</p>
                 </div>
-                <h3 className=" text-sm text-white font-medium mt-1.5">Wade Warren</h3>
+                <h3 className=" text-sm text-white font-medium mt-1.5">
+                  Wade Warren
+                </h3>
               </div>
               <div>
                 <div className=" flex items-center gap-1">
-                  <EnrollmentIcon/>
+                  <EnrollmentIcon />
                   <p className=" text-xs text-[#A5A5AB] ">Enrollment</p>
                 </div>
-                <h3 className=" text-sm text-white font-medium mt-1.5">45 students</h3>
+                <h3 className=" text-sm text-white font-medium mt-1.5">
+                  45 students
+                </h3>
               </div>
               <div>
                 <div className=" flex items-center gap-1">
-                  <PeriodIcon/>
+                  <PeriodIcon />
                   <p className=" text-xs text-[#A5A5AB] ">Duration</p>
                 </div>
-                <h3 className=" text-sm text-white font-medium mt-1.5">12 weeks</h3>
+                <h3 className=" text-sm text-white font-medium mt-1.5">
+                  12 weeks
+                </h3>
               </div>
               <div>
                 <div className=" flex items-center gap-1">
-                 <ClockIcon/>
+                  <ClockIcon />
                   <p className=" text-xs text-[#A5A5AB] ">Period</p>
                 </div>
-                <h3 className=" text-sm text-white font-medium mt-1.5">2024-08-01 - 2024-10-24</h3>
+                <h3 className=" text-sm text-white font-medium mt-1.5">
+                  2024-08-01 - 2024-10-24
+                </h3>
               </div>
             </div>
-          {/* item-3 */}
+            {/* item-3 */}
             <div>
-                <h3 className=" text-xl text-white font-medium">
-               Course Overview
+              <h3 className=" text-xl text-white font-medium">
+                Course Overview
               </h3>
-              <p className=" mt-2.5 text-sm text-[#D2D2D5]">This course consists of a 2-year period trajectory that runs 1 day a week on Sunday takes place.</p>
+              <p className=" mt-2.5 text-sm text-[#D2D2D5]">
+                This course consists of a 2-year period trajectory that runs 1
+                day a week on Sunday takes place.
+              </p>
             </div>
             {/* item-4 */}
             <div>
               <div className=" flex items-center justify-between mt-4">
-              <h4 className=" text-base text-white font-medium">Course Progress</h4>
-              <p className=" text-sm text-white ">65%</p>
-
+                <h4 className=" text-base text-white font-medium">
+                  Course Progress
+                </h4>
+                <p className=" text-sm text-white ">65%</p>
               </div>
 
               <div className="mt-3 h-2 w-full rounded-full bg-[#202a3f] overflow-hidden">
@@ -153,7 +170,6 @@ export default function CourseDetails() {
               </div>
             </div>
           </div>
-         
         </div>
         {/* last section  */}
         <div className="mt-6 rounded-2xl bg-[#0a1929] p-4">
@@ -194,11 +210,11 @@ export default function CourseDetails() {
             </div>
 
             <TabsContent value="modules" className="mt-4">
-            <Modules/>
+              <Modules />
             </TabsContent>
 
             <TabsContent value="students" className="mt-4">
-            <Students/>
+              <Students />
             </TabsContent>
           </Tabs>
         </div>
@@ -225,8 +241,6 @@ export default function CourseDetails() {
         moduleData={moduleData}
         setModuleData={setModuleData}
       />
-
-      
     </div>
   );
 }
