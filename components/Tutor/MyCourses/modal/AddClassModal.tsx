@@ -1,127 +1,185 @@
+"use client";
+
+import React from "react";
+import ClockIcon from "@/components/icons/course-management/ClockIcon";
+import CalenderIcon2 from "@/components/icons/others/CalenderIcon2";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { X, Calendar, Clock } from "lucide-react";
 
-export function AddClassModal() {
-  const inputStyles =
-    "w-full bg-transparent border border-[#242D3D] rounded-[12px] p-4 text-[#505B86] placeholder:text-[#374261] focus:outline-none focus:border-[#505B86] transition-all";
-  const labelStyles = "text-[#A1AAB3] text-sm mb-2 block";
+type AddClassData = {
+  classTitle: string;
+  className: string;
+  classOverview: string;
+  duration: string;
+  date: string;
+  time: string;
+};
+
+type AddClassModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  classData: AddClassData;
+  setClassData: React.Dispatch<React.SetStateAction<AddClassData>>;
+};
+
+export default function AddClassModal({
+  open,
+  onOpenChange,
+  classData,
+  setClassData,
+}: AddClassModalProps) {
+  const inputClassName =
+    "w-full rounded-2xl border border-[#3D4566] bg-transparent px-4 py-3 text-white placeholder:text-[#3D4566] outline-none focus:border-[#5F6CA0]";
+  const labelClassName = "mb-2 block text-sm text-[#B2B5B8]";
 
   return (
-    <Dialog>
-      {/* Trigger Button (Your provided code) */}
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className="w-full bg-[#07121d] p-4 rounded-[12px] border border-dashed border-[#505B86] min-h-30 flex flex-col items-center justify-center text-white hover:bg-[#0b1b2b] transition-colors cursor-pointer"
-        >
-          <span className="text-3xl leading-none">+</span>
-          <span className="mt-2 text-lg font-medium">Add Class</span>
-        </button>
-      </DialogTrigger>
-
-      {/* Modal Content */}
-      <DialogContent className="sm:max-w-137.5 bg-[#07121D] border-none text-white p-8 rounded-[20px]">
-        <DialogHeader className="flex flex-row items-center justify-between border-b border-[#1C2632] pb-4 mb-6">
-          <DialogTitle className="text-2xl font-semibold">
-            Add New Class
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="w-170 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-6 text-white">
+        <DialogHeader className="mb-2 border-b border-[#141B34] pb-4">
+          <DialogTitle className="text-xl font-semibold text-white">
+            Add Class
           </DialogTitle>
-          <DialogClose className="bg-[#414B6F]/30 p-2 rounded-md hover:bg-[#414B6F]/50 transition-colors">
-            <X className="h-5 w-5 text-[#8D9CDC]" />
-          </DialogClose>
         </DialogHeader>
 
-        <form className="space-y-5">
-          {/* Class Title */}
+        <div className="mt-4 flex flex-col gap-5">
           <div>
-            <label className={labelStyles}>Class Title</label>
+            <label className={labelClassName}>Class Title</label>
             <input
-              type="text"
-              placeholder="Enter Class Title"
-              className={inputStyles}
+              name="classTitle"
+              value={classData.classTitle}
+              onChange={(e) =>
+                setClassData((prev) => ({
+                  ...prev,
+                  classTitle: e.target.value,
+                }))
+              }
+              placeholder="Enter class title"
+              className={inputClassName}
             />
           </div>
 
-          {/* Class Name */}
           <div>
-            <label className={labelStyles}>Class Name</label>
+            <label className={labelClassName}>Class Name</label>
             <input
-              type="text"
-              placeholder="Enter Class Name"
-              className={inputStyles}
+              name="className"
+              value={classData.className}
+              onChange={(e) =>
+                setClassData((prev) => ({ ...prev, className: e.target.value }))
+              }
+              placeholder="Enter class name"
+              className={inputClassName}
             />
           </div>
 
-          {/* Class Overview */}
           <div>
-            <label className={labelStyles}>Class Overview</label>
+            <label className={labelClassName}>Class Overview</label>
             <textarea
-              placeholder="Describe the Class overview..."
+              name="classOverview"
+              value={classData.classOverview}
+              onChange={(e) =>
+                setClassData((prev) => ({
+                  ...prev,
+                  classOverview: e.target.value,
+                }))
+              }
               rows={4}
-              className={`${inputStyles} resize-none`}
+              placeholder="Describe the Class overview..."
+              className={`${inputClassName} resize-none py-4`}
             />
           </div>
 
-          {/* Duration */}
           <div>
-            <label className={labelStyles}>Duration</label>
+            <label className={labelClassName}>Duration</label>
             <input
-              type="text"
-              placeholder="Enter Class Duration"
-              className={inputStyles}
+              name="duration"
+              value={classData.duration}
+              onChange={(e) =>
+                setClassData((prev) => ({ ...prev, duration: e.target.value }))
+              }
+              placeholder="Enter duration"
+              className={inputClassName}
             />
           </div>
 
-          {/* Date and Time Row */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className={labelStyles}>Start Date</label>
+              <label className={labelClassName}>Date</label>
               <div className="relative">
                 <input
-                  type="text"
-                  placeholder="mm/ dd /yyyy"
-                  className={inputStyles}
+                  type="date"
+                  value={classData.date}
+                  onChange={(e) =>
+                    setClassData((prev) => ({ ...prev, date: e.target.value }))
+                  }
+                  onClick={(e) => {
+                    const input = e.currentTarget as HTMLInputElement & {
+                      showPicker?: () => void;
+                    };
+                    input.showPicker?.();
+                  }}
+                  onFocus={(e) => {
+                    const input = e.currentTarget as HTMLInputElement & {
+                      showPicker?: () => void;
+                    };
+                    input.showPicker?.();
+                  }}
+                  className={`${inputClassName} pr-12 scheme-dark [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
                 />
-                <Calendar className="absolute right-4 top-4 h-5 w-5 text-[#505B86]" />
+                <CalenderIcon2 className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2" />
               </div>
             </div>
+
             <div>
-              <label className={labelStyles}>Class Time</label>
+              <label className={labelClassName}>Time</label>
               <div className="relative">
                 <input
-                  type="text"
-                  placeholder="00.00"
-                  className={inputStyles}
+                  type="time"
+                  value={classData.time}
+                  onChange={(e) =>
+                    setClassData((prev) => ({ ...prev, time: e.target.value }))
+                  }
+                  onClick={(e) => {
+                    const input = e.currentTarget as HTMLInputElement & {
+                      showPicker?: () => void;
+                    };
+                    input.showPicker?.();
+                  }}
+                  onFocus={(e) => {
+                    const input = e.currentTarget as HTMLInputElement & {
+                      showPicker?: () => void;
+                    };
+                    input.showPicker?.();
+                  }}
+                  className={`${inputClassName} pr-12 scheme-dark [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
                 />
-                <Clock className="absolute right-4 top-4 h-5 w-5 text-[#505B86]" />
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+                  <ClockIcon />
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Footer Buttons */}
-          <div className="flex justify-end gap-4 mt-8">
-            <DialogClose asChild>
-              <button
-                type="button"
-                className="px-10 py-3 bg-[#414B6F]/40 hover:bg-[#414B6F]/60 rounded-[12px] font-medium transition-colors"
-              >
-                Cancel
-              </button>
-            </DialogClose>
+          <div className="mt-2 flex items-center justify-end gap-3">
             <button
-              type="submit"
-              className="px-10 py-3 bg-[#EE2D24] hover:bg-[#d12820] rounded-[12px] font-medium transition-colors"
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="rounded-2xl bg-[#3D4566] px-11 py-4 text-base font-medium text-white transition-colors cursor-pointer hover:bg-[#5F6CA0]"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="flex cursor-pointer items-center gap-2 rounded-2xl bg-[#E9201D] px-11 py-4 text-base font-medium text-white transition-colors hover:bg-[#ff3b1f]"
             >
               Add Class
             </button>
           </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
