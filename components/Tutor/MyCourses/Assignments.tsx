@@ -1,79 +1,123 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { MoreVertical, ChevronRight, Plus } from "lucide-react";
+import WhiteRightArrowIcon from "@/components/icons/course-management/WhiteRightArrowIcon";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { Plus } from "lucide-react";
 import { AddAssignmentModal } from "./modal/AddAssignmentModal";
 
-const assignments = [1, 2, 3];
+export const assignments = [
+  {
+    id: "3300",
+    assignmentNo: "1",
+    due: "2 days",
+    details:
+      "Write a 500-word reflection on your current confidence level and areas for improvement.",
+    submissionCount: 22,
+    gradedCount: 18,
+  },
+  {
+    id: "3301",
+    assignmentNo: "2",
+    due: "4 days",
+    details:
+      "Record and submit a 3-minute monologue focusing on breath support and vocal clarity.",
+    submissionCount: 19,
+    gradedCount: 12,
+  },
+  {
+    id: "3302",
+    assignmentNo: "3",
+    due: "1 week",
+    details:
+      "Perform a partner exercise and submit feedback on listening and response timing.",
+    submissionCount: 17,
+    gradedCount: 10,
+  },
+  {
+    id: "3303",
+    assignmentNo: "4",
+    due: "10 days",
+    details:
+      "Prepare a short scene presentation and attach your rehearsal notes with objectives.",
+    submissionCount: 14,
+    gradedCount: 6,
+  },
+];
 
-export default function Assignments({
-  assignmentDetails,
-  setAssignmentDetails,
-}) {
+export default function Assignments() {
+  const [openItem, setOpenItem] = useState<string>("class-1");
+  const params = useParams<{ id: string; classId: string }>();
+  const courseId = params?.id;
+  const classId = params?.classId;
+
   return (
     <div>
-      <h3 className="text-2xl text-white my-5">All Assignments</h3>
-      <Accordion type="single" collapsible className="w-full border-none">
-        <AccordionItem
-          value="item-1"
-          className="bg-[#121A2C] rounded-[12px] border-none overflow-hidden"
-        >
-          {/* Accordion Header */}
-          <div className="flex items-center justify-between bg-[#1E2638] px-6 py-4">
-            <div className="flex items-center gap-4">
-              <AccordionTrigger className="p-0 hover:no-underline text-white">
-                {/* Custom Trigger content */}
-              </AccordionTrigger>
-              <div className="flex flex-col text-left">
-                <span className="text-[#8D9CDC] text-sm font-medium">
-                  Class-I
-                </span>
-                <h3 className="text-white text-lg font-semibold">
-                  Voice & Breath Control
-                </h3>
-              </div>
-            </div>
-            <button className="text-[#8D9CDC] hover:text-white transition-colors">
-              <MoreVertical className="h-5 w-5" />
-            </button>
-          </div>
+      <h2 className="text-xl font-medium text-white mb-4">All Assignments</h2>
 
-          <AccordionContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Assignment Cards */}
-              {assignments.map((item) => (
-                <div
-                  key={item}
-                  onClick={() => setAssignmentDetails(item)}
-                  className="bg-[#0A121E] border border-[#1E2638] p-5 rounded-[12px] hover:border-[#3E4766] transition-all cursor-pointer group"
+      <Accordion
+        type="single"
+        collapsible
+        value={openItem}
+        onValueChange={(v) => setOpenItem(v)}
+        className="flex w-full flex-col gap-3"
+      >
+        <AccordionItem
+          value="class-1"
+          className="rounded-2xl border border-[#3D4566] [&_[data-slot=accordion-trigger]>svg]:hidden"
+        >
+          <AccordionTrigger className="flex cursor-pointer items-center justify-between rounded-t-2xl rounded-b-none px-4 text-left text-white hover:no-underline data-[state=open]:bg-[#262b40]">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm text-[#8D9CDC]">Class-1</p>
+              <h3 className="text-base font-medium text-white">
+                Voice & Breath Control
+              </h3>
+            </div>
+          </AccordionTrigger>
+
+          <AccordionContent className="px-4 text-[#A5A5AB]">
+            <div className=" grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 mt-3">
+              {assignments.map((assignment) => (
+                <Link
+                  href={
+                    courseId && classId
+                      ? `/tutor-dashboard/my-courses/my-courses-details/${courseId}/${classId}/${assignment.id}`
+                      : "#"
+                  }
+                  key={assignment.id}
+                  className=" p-4 rounded-[12px] bg-[#0a1d2e] hover:bg-[#12283d] transition-colors duration-200 border-l border-[#5F6CA0]"
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-3">
-                      <h4 className="text-white font-medium">Assignment 1</h4>
-                      <span className="bg-[#FFC107] text-black text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                        Due 2 days
-                      </span>
+                  <div className=" flex items-center justify-between">
+                    <div className=" flex items-center gap-2.5">
+                      <h3 className=" text-base text-white font-medium">
+                        Assignment {assignment.assignmentNo}
+                      </h3>
+                      <p className=" py-1 px-2.5 rounded-full bg-[#f9c80e] text-xs text-[#030C15] font-medium ">
+                        Due {assignment.due}
+                      </p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-[#8D9CDC] group-hover:text-white transition-colors" />
+
+                    <WhiteRightArrowIcon />
                   </div>
 
-                  <p className="text-[#A1AAB3] text-sm leading-relaxed mb-4">
-                    Write a 500-word reflection on your current confidence level
-                    and areas for improvement.
+                  <p className=" text-sm text-[#D2D2D5] mt-1">
+                    {assignment.details}
                   </p>
-
-                  <p className="text-[#109334] text-sm font-medium">
-                    Submissions: 22 | Graded: 18
-                  </p>
-                </div>
+                  <h4 className=" text-base text-[#18CC3F] mt-2">
+                    Submissions: {assignment.submissionCount} | Graded:{" "}
+                    {assignment.gradedCount}
+                  </h4>
+                </Link>
               ))}
-
               {/* Add Assignment Dotted Button */}
-              {/* <button className="flex items-center justify-center gap-2 border-2 border-dashed border-[#1E2638] rounded-[12px] p-5 min-h-35 text-[#A1AAB3] hover:text-white hover:border-[#3E4766] transition-all">
+              {/* <button className="flex items-center justify-center gap-2 border-2 border-dashed border-[#1E2638] cursor-pointer rounded-[12px] p-5 min-h-28 text-[#A1AAB3] hover:text-white hover:border-[#3E4766] transition-all">
                 <Plus className="h-5 w-5" />
                 <span className="font-medium">Add Assignment</span>
               </button> */}

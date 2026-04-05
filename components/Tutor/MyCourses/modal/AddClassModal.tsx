@@ -44,7 +44,6 @@ export default function AddClassModal({
             Add Class
           </DialogTitle>
         </DialogHeader>
-
         <div className="mt-4 flex flex-col gap-5">
           <div>
             <label className={labelClassName}>Class Title</label>

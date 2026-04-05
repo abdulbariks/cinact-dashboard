@@ -19,15 +19,15 @@ const remarkSchema = z.object({
   feedback: z.string().min(5, "Feedback must be at least 5 characters"),
 });
 
-type RemarkAssignmentModalProps = {
+type UpdateRemarkAssignmentModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function RemarkAssignmentModal({
+export function UpdateRemarkAssignmentModal({
   open,
   onOpenChange,
-}: RemarkAssignmentModalProps) {
+}: UpdateRemarkAssignmentModalProps) {
   const {
     register,
     handleSubmit,
@@ -54,15 +54,15 @@ export function RemarkAssignmentModal({
     <Dialog onOpenChange={(open) => !open && reset()}>
       {/* Trigger: Connect this to your 'Remark Assignment' button */}
       <DialogTrigger asChild>
-        <button className="bg-[#F23030] text-white text-xs px-6 py-2.5 rounded-lg hover:bg-red-700 transition-colors cursor-pointer">
-          Remark Assignment
+        <button className="bg-[#414B6F] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#505B86] transition-colors cursor-pointer">
+          Update Remark
         </button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-125 bg-[#0A1726] border-none text-white p-8 rounded-[20px] shadow-2xl">
         <div className="flex items-center justify-between border-b border-[#1C2632] pb-6 mb-6">
           <DialogTitle className="text-2xl font-semibold">
-            Remark Assignment
+            Update Remark Assignment
           </DialogTitle>
         </div>
 

@@ -38,10 +38,10 @@ export default function CourseDetails() {
     <div>
       <div className="flex items-center gap-2">
         <Link
-          href="/dashboard/course-management"
+          href="/tutor-dashboard/my-courses"
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
-          Course Management
+          My Courses
         </Link>
         <BreadCrumpRightArrow />
         <p className="text-base font-medium text-[#8D9CDC]">Course Details</p>

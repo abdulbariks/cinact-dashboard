@@ -1,165 +1,196 @@
+"use client";
+
 import React, { useState } from "react";
-import TeacherIcon from "@/components/icons/course-management/TeacherIcon";
-import CameraIcon from "@/components/icons/others/CameraIcon";
-import { UsersIcon } from "@/components/icons/sidebar.tsx/SidebarIcons";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
-import CalenderIcon from "@/components/icons/SuperAdmindashboard/CalenderIcon";
-import ClockIcon from "@/components/icons/SuperAdmindashboard/ClockIcon";
 import Link from "next/link";
-import Assignments from "./Assignments";
+import { usePathname } from "next/navigation";
+import { classes } from "./ModuleDetails";
+import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
+import TeacherIcon from "@/components/icons/course-management/TeacherIcon";
+import EnrollmentIcon from "@/components/icons/course-management/EnrollmentIcon";
+import PeriodIcon from "@/components/icons/course-management/PeriodIcon";
+import ClockIcon from "@/components/icons/SuperAdmindashboard/ClockIcon";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AssignmentIcon from "@/components/icons/course-management/AssignmentIcon";
+import AssignmentIconSecondary from "@/components/icons/course-management/AssignmentIconSecondary";
+import AssetsIcon from "@/components/icons/course-management/AssetsIcon";
+import AssetsIconSecondary from "@/components/icons/course-management/AssetsIconSecondary";
+import AttendenceIcon from "@/components/SuperAdmin/course-management/AttendenceIcon";
+import AttendenceIconSecondary from "@/components/SuperAdmin/course-management/AttendenceIconSecondary";
 import Attendence from "./Attendence";
 import Assets from "./Assets";
-import AssignmentDetails from "./AssignmentDetails";
+import CameraIcon from "@/components/icons/others/CameraIcon";
+import Assignments from "./Assignments";
 
-const tabs = ["Assignments", "Assets", "Attendence"];
-export default function ClassDetails({ classDetails, setClassDetails }) {
-  const [activeTab, setActiveTab] = useState("Assignments");
-  const [assignmentDetails, setAssignmentDetails] = useState(null);
+export default function ClassDetails() {
+  const [activeTab, setActiveTab] = useState("assignments");
+  const [isEditClassOpen, setIsEditClassOpen] = useState(false);
+  const [classData, setClassData] = useState({
+    classTitle: "",
+    className: "",
+    classOverview: "",
+    duration: "",
+    date: "",
+    time: "",
+  });
+
+  const path = usePathname();
+  const courseId = path.split("/")[4];
+  const classNo =
+    classes.find((cls) => cls.id === path.split("/")[5])?.classNo ||
+    "Class Details";
+
+  const navItems = [
+    {
+      value: "assignments",
+      label: "Assignments",
+      icon: <AssignmentIcon />,
+      activeIcon: <AssignmentIconSecondary />,
+    },
+    {
+      value: "assets",
+      label: "Assets",
+      icon: <AssetsIcon />,
+      activeIcon: <AssetsIconSecondary />,
+    },
+    {
+      value: "attendence",
+      label: "Attendence",
+      icon: <AttendenceIcon />,
+      activeIcon: <AttendenceIconSecondary />,
+    },
+  ];
 
   return (
     <div>
-      {!assignmentDetails ? (
-        <div>
-          {" "}
-          <div className="flex items-center gap-2">
-            <Link
-              href={"/tutor-dashboard/my-courses"}
-              className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
-            >
-              My Courses
-            </Link>
-            <BreadCrumpRightArrow />
-            <div
-              onClick={() => setClassDetails(null)}
-              className="text-base text-[#5F6CA0] hover:text-[#8D9CDC] cursor-pointer"
-            >
-              Course Details
+      <div className="flex items-center gap-2">
+        <Link
+          href="/tutor-dashboard/my-courses"
+          className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
+        >
+          My Courses
+        </Link>
+        <BreadCrumpRightArrow />
+        <Link
+          href={`/tutor-dashboard/my-courses/my-courses-details/${courseId}`}
+          className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
+        >
+          Course Details
+        </Link>
+        <BreadCrumpRightArrow />
+        <p className="text-base font-medium text-[#8D9CDC]">
+          class -{classNo} Details{" "}
+        </p>
+      </div>
+      <div className=" flex items-center justify-between mt-8">
+        <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
+          Class {classNo} Details
+        </h2>
+
+        <div className=" flex items-center gap-3">
+          <button
+            // onClick={() => setIsEditClassOpen(true)}
+            className=" p-3 rounded-2xl flex items-center gap-3 bg-[#5f6ca0] text-white font-medium cursor-pointer"
+          >
+            <PlusIcon /> Reschedule Class
+          </button>
+          <button className="p-3 rounded-2xl flex items-center gap-3 bg-[#e9201d] text-white font-medium cursor-pointer">
+            <CameraIcon /> Start Class
+          </button>
+        </div>
+      </div>
+
+      <div className=" bg-[#0a1929] p-4 rounded-2xl mt-5">
+        <h3 className=" text-xl text-white font-medium mb-4.5">
+          Voice & Breath Control
+        </h3>
+        <div className=" bg-[#07121d] p-4 rounded-[10px] space-y-4">
+          {/* item-1 */}
+          <div className=" flex items-center justify-between"></div>
+          {/* item-2 */}
+          <div className=" flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <div className=" flex items-center gap-1">
+                <TeacherIcon />
+                <p className=" text-xs text-[#A5A5AB] ">Teacher</p>
+              </div>
+              <h3 className=" text-sm text-white font-medium mt-1.5">
+                Wade Warren
+              </h3>
             </div>
-            <BreadCrumpRightArrow />
-            <p className="text-base font-medium text-[#8D9CDC]">
-              {classDetails} Details
+            <div>
+              <div className=" flex items-center gap-1">
+                <EnrollmentIcon />
+                <p className=" text-xs text-[#A5A5AB] ">Enrollment</p>
+              </div>
+              <h3 className=" text-sm text-white font-medium mt-1.5">
+                45 students
+              </h3>
+            </div>
+            <div>
+              <div className=" flex items-center gap-1">
+                <PeriodIcon />
+                <p className=" text-xs text-[#A5A5AB] ">Duration</p>
+              </div>
+              <h3 className=" text-sm text-white font-medium mt-1.5">
+                12 weeks
+              </h3>
+            </div>
+            <div>
+              <div className=" flex items-center gap-1">
+                <ClockIcon />
+                <p className=" text-xs text-[#A5A5AB] ">Period</p>
+              </div>
+              <h3 className=" text-sm text-white font-medium mt-1.5">
+                2024-08-01 - 2024-10-24
+              </h3>
+            </div>
+          </div>
+          {/* item-3 */}
+          <div>
+            <h3 className=" text-xl text-white font-medium">Class Overview</h3>
+            <p className=" mt-2.5 text-sm text-[#D2D2D5]">
+              This course consists of a 2-year period trajectory that runs 1 day
+              a week on Sunday takes place.
             </p>
           </div>
-          <div className="flex justify-between  items-center">
-            {" "}
-            {/* Title */}
-            <h2 className="text-2xl text-[#E6E7E8] font-semibold mt-5">
-              {classDetails} Details
-            </h2>
-            <div className="flex gap-2">
-              <button className="bg-[#505B86] hover:bg-[#505B86]/50 text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
-                <span className=" text-xl leading-none">+</span> Reschedule
-                Class
-              </button>
-              <button className="bg-[#E9201D] hover:bg-[#E9201D]/50 text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
-                <CameraIcon /> Start Class
-              </button>
-            </div>
-          </div>
-          {/* Card */}
-          <div className="mt-5 bg-[#0A1929] rounded-2xl p-6 border border-[#0f1f35]">
-            {/* Info Row */}
-            <h3 className="text-2xl text-[#FFFFFF] my-4">
-              Voice & Breath Control
-            </h3>
-            <div className="bg-[#07121D] rounded-2xl p-6 border border-[#0f1f35]">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {/* Teacher */}
-                <div className="flex items-start gap-2">
-                  <TeacherIcon />
-                  <div>
-                    <p className="text-xs text-[#A5A5AB]">Teacher</p>
-                    <p className="text-sm text-white font-medium">
-                      {/* {course.ins_name} */}
-                      Wade Warren
-                    </p>
-                  </div>
-                </div>
-                {/* Enrollment */}
-                <div className="flex items-start gap-2">
-                  <UsersIcon />
-                  <div>
-                    <p className="text-xs text-[#A5A5AB]">Enrollment</p>
-                    <p className="text-sm text-white font-medium">
-                      {/* {course.students} students */}
-                      45 students
-                    </p>
-                  </div>
-                </div>
-
-                {/* Duration */}
-                <div className="flex items-start gap-2">
-                  <ClockIcon />
-                  <div>
-                    <p className="text-xs text-[#A5A5AB]">Duration</p>
-                    <p className="text-sm text-white font-medium">
-                      {/* {course.duration} */}
-                      45 Min
-                    </p>
-                  </div>
-                </div>
-
-                {/* Period */}
-                <div className="flex items-start gap-2">
-                  <CalenderIcon />
-                  <div>
-                    <p className="text-xs text-[#A5A5AB]">Date & Time</p>
-                    <p className="text-sm text-white font-medium">
-                      {/* {course.start_date} - 2024-10-24 */}
-                      2024-08-01 ,1:30 PM
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* Overview */}
-              <div className="mt-6">
-                <h4 className="text-white font-medium">Course Overview</h4>
-                <p className="text-sm text-[#A5A5AB] mt-2">
-                  This course consists of a 2-year period trajectory that runs 1
-                  day a week on Sunday takes place.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="mt-5 bg-[#0A1929] rounded-2xl p-6 border border-[#0f1f35]">
-            {/* Tabs */}
-            <div className="flex gap-6 border-b border-[#1c2a3f]">
-              {tabs.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`pb-3 text-sm font-medium cursor-pointer ${
-                    activeTab === tab
-                      ? "text-white border-b-2 border-[#E9201D]"
-                      : "text-[#A5A5AB]"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            {/* Content */}
-            <div className="mt-6">
-              {activeTab === "Assignments" && (
-                <Assignments
-                  assignmentDetails={assignmentDetails}
-                  setAssignmentDetails={setAssignmentDetails}
-                />
-              )}
-              {activeTab === "Assets" && <Assets />}
-              {activeTab === "Attendence" && <Attendence />}
-            </div>
-          </div>
         </div>
-      ) : (
-        <AssignmentDetails
-          classDetails={classDetails}
-          setClassDetails={setClassDetails}
-          assignmentDetails={assignmentDetails}
-          setAssignmentDetails={setAssignmentDetails}
-        />
-      )}
+      </div>
+
+      <div className="mt-6 rounded-2xl bg-[#0a1929] p-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <div className="flex justify-start border-b border-[#5F6CA0]  ">
+            <TabsList className="  h-auto w-auto justify-start bg-transparent p-0 rounded-none">
+              {navItems.map((item) => {
+                const isActive = activeTab === item.value;
+
+                return (
+                  <TabsTrigger
+                    key={item.value}
+                    value={item.value}
+                    className="px-5 py-5 flex items-center gap-2 whitespace-nowrap text-base font-medium rounded-none bg-transparent shadow-none border-0 border-b-2 border-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white data-[state=active]:border-[#E9201D] text-[#8D9CDC] hover:text-white  "
+                  >
+                    {isActive ? item.activeIcon : item.icon}
+                    <span>{item.label}</span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </div>
+
+          <TabsContent value="assignments" className="mt-4">
+            <Assignments />
+          </TabsContent>
+
+          <TabsContent value="assets" className="mt-4">
+            <Assets />
+          </TabsContent>
+
+          <TabsContent value="attendence" className="mt-4">
+            <Attendence />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

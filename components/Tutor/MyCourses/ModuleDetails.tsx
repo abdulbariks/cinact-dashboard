@@ -139,7 +139,7 @@ export default function ModuleDetails() {
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {classes.map((cls) => (
             <Link
-              href={`/dashboard/course-management/course-details/${courseId}/${cls.id}`}
+              href={`/tutor-dashboard/my-courses/my-courses-details/${courseId}/${cls.id}`}
               key={cls.id}
               className={`p-4 border-l-2 rounded-[12px] flex items-center justify-between ${
                 cls.status === "next class"

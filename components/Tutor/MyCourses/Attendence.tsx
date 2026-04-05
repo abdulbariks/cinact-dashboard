@@ -10,12 +10,6 @@ export default function Attendence() {
       <DynamicTable
         columns={MyCourseClassAttendenceColumns}
         data={attendenceListData}
-        // currentPage={currentPage}
-        // itemsPerPage={itemsPerPage}
-        // totalpage={totalPages}
-        // totalItems={totalItems}
-        // onPageChange={setCurrentPage}
-        // setItemsPerPage={setItemsPerPage}
         noDataMessage="No attendance found"
         loading={false}
       />
