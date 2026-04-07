@@ -36,7 +36,9 @@ export default function NewMessage() {
 
         <Link href='/dashboard/create-group' className='block w-full text-center text-sm text-white font-medium rounded-[12px] bg-[#E9201D] py-4 px-8 cursor-pointer'>Create Group Chat</Link>
 
-        <Tabs defaultValue='students' className='mt-4'>
+        <p className=' text-sm text-[#B2B5B8] my-4'>Suggested</p>
+
+        <Tabs defaultValue='students'  >
           <TabsList className='grid h-auto   grid-cols-2 bg-transparent p-1 gap-1.5'>
             <TabsTrigger
               value='students'
@@ -52,7 +54,7 @@ export default function NewMessage() {
             </TabsTrigger>
           </TabsList>
 
-          <div className='mt-4 max-h-[46vh] overflow-y-auto pr-1'>
+          <div className='mt-4 max-h-[40vh] overflow-y-auto pr-1'>
             <TabsContent value='students' className='mt-0'>
               <div className='space-y-4'>
                 {students.map((student) => (
