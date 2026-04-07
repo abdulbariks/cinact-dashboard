@@ -1,14 +1,9 @@
 import React from 'react'
 
-type ChatsLayoutProps = {
-  children: React.ReactNode
-}
+import ChatsLayoutShell from '@/components/chats/ChatsLayoutShell'
 
-export default function Layout({ children }: ChatsLayoutProps) {
+export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
-        <h1 className=' text-white'>common</h1>
-        {children}
-        </div>
+    <ChatsLayoutShell>{children}</ChatsLayoutShell>
   )
 }
