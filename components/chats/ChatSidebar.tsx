@@ -54,7 +54,7 @@ export default function ChatSidebar() {
             <div className=" flex items-center gap-2 my-5">
                 <div className="relative  flex-1">
                     <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input className="pl-12 pr-4 py-3.5 w-full border border-[#3D4566] rounded-full placeholder:text-[#3D4566]" type="text" name="" id="" placeholder="Search conversations..." />
+                    <input className="pl-12 pr-4 py-3.5 w-full border border-[#3D4566] rounded-full placeholder:text-[#3D4566] text-white" type="text" name="" id="" placeholder="Search conversations..." />
                 </div>
 
                 <button className=" cursor-pointer">

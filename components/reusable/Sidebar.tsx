@@ -95,6 +95,14 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
       return pathname === href;
     }
 
+    if (
+      href === "/dashboard/chats" &&
+      (pathname.startsWith("/dashboard/new-message") ||
+        pathname.startsWith("/dashboard/create-group"))
+    ) {
+      return true;
+    }
+
     if (pathname.startsWith(href)) {
       const remainingPath = pathname.slice(href.length);
       return remainingPath === "" || remainingPath.startsWith("/");
