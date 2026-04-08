@@ -3,44 +3,34 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { setCookie } from 'nookies';
-import { UserRole } from '@/config/menuItems';
 import Image from 'next/image';
+import { UserService } from '@/service/user/user.service';
+import { showSuccessToast } from '@/lib/hotToast';
 import authImg from '@/public/auth/auth-img.png'; 
 import logo from '@/public/auth/logo.png'
 
-// Define User interface
-interface DemoUser {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-}
+const normalizeClientRole = (role?: string): 'admin' | 'tutor' | 'finance' | 'viewer' => {
+  if (!role) return 'viewer';
 
-// Demo login credentials for different roles
-const demoUsers: DemoUser[] = [
-  {
-    id: 1,
-    name: 'Super Admin',
-    email: 'admin@school.com',
-    password: 'admin123',
-    role: 'admin',
-  },
-  {
-    id: 2,
-    name: 'Dr. Sarah Tutor',
-    email: 'tutor@school.com',
-    password: 'tutor123',
-    role: 'tutor',
-  },
-  {
-    id: 3,
-    name: 'Mr. Finance',
-    email: 'finance@school.com',
-    password: 'finance123',
-    role: 'finance',
+  const currentRole = role.toLowerCase().trim();
+  if (currentRole === 'su_admin' || currentRole === 'admin' || currentRole === 'superadmin') {
+    return 'admin';
   }
-];
+  if (currentRole === 'tutor' || currentRole === 'teacher') {
+    return 'tutor';
+  }
+  if (currentRole === 'finance' || currentRole === 'accountant') {
+    return 'finance';
+  }
+  return 'viewer';
+};
+
+const getRedirectPath = (role: 'admin' | 'tutor' | 'finance' | 'viewer'): string => {
+  if (role === 'admin') return '/dashboard';
+  if (role === 'tutor') return '/tutor-dashboard';
+  if (role === 'finance') return '/finance-dashboard';
+  return '/';
+};
 
 export default function Login() {
   const router = useRouter();
@@ -50,45 +40,67 @@ export default function Login() {
   const [loading, setLoading] = useState<boolean>(false);
 
   // Handle login form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Find user with matching email and password
-    const user = demoUsers.find(
-      (u) => u.email === email && u.password === password
-    );
+    try {
+      const res = await UserService.login({ email, password });
+      const apiRes = res?.data;
 
-    if (user) {
-      // Store user data in cookies using nookies
-      setCookie(null, 'user', JSON.stringify({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      }), {
-        maxAge: 30 * 24 * 60 * 60, // 30 days
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-      });
-      
-      // Also set a simpler role cookie for easy access
-      setCookie(null, 'userRole', user.role, {
+      if (!apiRes?.success) {
+        throw new Error(apiRes?.message || 'Login failed');
+      }
+
+      const token = apiRes?.authorization?.access_token;
+      const refreshToken = apiRes?.authorization?.refresh_token;
+      const apiRole = apiRes?.type;
+      const userId = apiRes?.userId;
+      const userRole = normalizeClientRole(apiRole);
+
+      if (!token) {
+        throw new Error('Access token missing in login response');
+      }
+
+      const cookieOptions = {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-      });
-      
-      // Redirect to dashboard with role in URL
-      router.push(`/dashboard?role=${user.role}`);
-    } else {
-      setError('Invalid email or password');
+        sameSite: 'strict' as const,
+      };
+
+      setCookie(null, 'token', token, cookieOptions);
+      setCookie(null, 'accessToken', token, cookieOptions);
+
+      if (refreshToken) {
+        setCookie(null, 'refreshToken', refreshToken, cookieOptions);
+      }
+
+      setCookie(
+        null,
+        'user',
+        JSON.stringify({
+          id: userId,
+          email,
+          role: userRole,
+          apiRole,
+        }),
+        cookieOptions
+      );
+
+      setCookie(null, 'userRole', userRole, cookieOptions);
+
+      showSuccessToast(apiRes?.message || 'Logged in successfully');
+
+      router.push(getRedirectPath(userRole));
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message || err?.message || 'Invalid email or password'
+      );
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (
@@ -204,20 +216,6 @@ export default function Login() {
             </button>
           </form>
 
-          <div className=' text-white'>
-            {
-              demoUsers.map((item,index)=>(
-                <div key={index}>
-                 <p>
-                  {item.email}  - {item.password}
-                  </p> 
-                
-                </div>
-              ))
-            }
-          </div>
-
-         
         </div>
       </div>
     </div>

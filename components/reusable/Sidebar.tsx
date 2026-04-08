@@ -1,12 +1,11 @@
 "use client";
 
 import { CookieHelper } from "@/helper/cookie.helper";
-import { ChevronLeft, ChevronRight, LogOutIcon } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
-  getMenuItemsByRole,
   getMenuItemsGroupedByCategory,
   MenuItem,
   UserRole,
@@ -16,6 +15,7 @@ import { parseCookies } from "nookies";
 import CollapseIcon from "../icons/sidebar.tsx/CollapseIcon";
 import logo from "@/public/admin-dashboard/mainLogo.png";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 // import '@/app/'
 
 interface SidebarProps {
@@ -35,6 +35,30 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
     Record<string, MenuItem[]>
   >({});
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const normalizeRole = (value?: string): UserRole => {
+    if (!value) return "viewer";
+
+    const role = value.toLowerCase().trim();
+    if (role === "admin" || role === "su_admin" || role === "superadmin") {
+      return "admin";
+    }
+    if (role === "tutor" || role === "teacher") {
+      return "tutor";
+    }
+    if (role === "finance" || role === "accountant") {
+      return "finance";
+    }
+
+    return "viewer";
+  };
+
+  const getRoleHome = (role: UserRole) => {
+    if (role === "tutor") return "/tutor-dashboard";
+    if (role === "finance") return "/finance-dashboard";
+    return "/dashboard";
+  };
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -48,6 +72,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     // Get user role from cookies
     const cookies = parseCookies();
     const userCookie = cookies.user;
@@ -58,27 +83,31 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
     if (userCookie) {
       try {
         const userData = JSON.parse(userCookie);
-        if (isValidRole(userData.role)) {
-          role = userData.role;
+        const normalizedUserRole = normalizeRole(
+          userData?.role || userData?.apiRole || userData?.type
+        );
+        if (isValidRole(normalizedUserRole)) {
+          role = normalizedUserRole;
         }
       } catch (e) {
-        if (roleCookie && isValidRole(roleCookie)) {
-          role = roleCookie as UserRole;
+        if (roleCookie) {
+          role = normalizeRole(roleCookie);
         }
       }
-    } else if (roleCookie && isValidRole(roleCookie)) {
-      role = roleCookie as UserRole;
+    } else if (roleCookie) {
+      role = normalizeRole(roleCookie);
     } else {
       const urlParams = new URLSearchParams(window.location.search);
       const roleParam = urlParams.get("role");
-      if (roleParam && isValidRole(roleParam)) {
-        role = roleParam as UserRole;
+      if (roleParam) {
+        role = normalizeRole(roleParam);
       }
     }
 
     setUserRole(role);
     // Get menu items grouped by category
     setGroupedMenuItems(getMenuItemsGroupedByCategory(role));
+    setIsLoading(false);
   }, [pathname]);
 
   const toggleCollapse = () => {
@@ -112,7 +141,17 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
   };
 
   const handleLogout = () => {
+    CookieHelper.destroy({ key: "token" });
     CookieHelper.destroy({ key: "accessToken" });
+    CookieHelper.destroy({ key: "refreshToken" });
+    CookieHelper.destroy({ key: "user" });
+    CookieHelper.destroy({ key: "userRole" });
+    document.cookie =
+      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    document.cookie =
+      "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    document.cookie =
+      "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     document.cookie =
       "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
@@ -141,7 +180,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
         {/* Header with Logo and Toggle Button */}
         <div className="flex items-center justify-between mb-9">
           <Link
-            href={"/dashboard"}
+            href={getRoleHome(userRole)}
             className={`flex items-center transition-all duration-300 overflow-hidden ${
               effectiveCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
             }`}
@@ -183,7 +222,34 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
 
         {/* Navigation Section with Categories */}
         <div className="flex-1">
-          {Object.entries(groupedMenuItems).map(([category, items]) => (
+          {isLoading && (
+            <div className="space-y-6">
+              {Array.from({ length: 3 }).map((_, groupIndex) => (
+                <div key={groupIndex} className="space-y-3">
+                  {!effectiveCollapsed && (
+                    <Skeleton className="h-4 w-24 bg-[#1d2a3e] mx-3" />
+                  )}
+                  <div className="space-y-2">
+                    {Array.from({ length: 3 }).map((__, itemIndex) => (
+                      <div
+                        key={`${groupIndex}-${itemIndex}`}
+                        className={`flex items-center gap-3 px-3 py-2.5 lg:py-3 rounded-lg ${
+                          effectiveCollapsed ? "justify-center" : ""
+                        }`}
+                      >
+                        <Skeleton className="w-[30px] h-[30px] rounded-md bg-[#1d2a3e]" />
+                        {(isMobile || !effectiveCollapsed) && (
+                          <Skeleton className="h-4 w-28 bg-[#1d2a3e]" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!isLoading && Object.entries(groupedMenuItems).map(([category, items]) => (
             <div key={category} className="mb-6">
               {/* Category Title - Hidden when collapsed on desktop */}
               {!effectiveCollapsed && (
@@ -246,6 +312,20 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
 
         {/* Log out section */}
         <div className="pt-4 mt-auto border-t border-gray-100">
+          {isLoading && (
+            <div
+              className={`flex items-center gap-3 px-3 py-3 ${
+                effectiveCollapsed ? "justify-center" : ""
+              }`}
+            >
+              <Skeleton className="w-[30px] h-[30px] rounded-md bg-[#1d2a3e]" />
+              {(isMobile || !effectiveCollapsed) && (
+                <Skeleton className="h-4 w-24 bg-[#1d2a3e]" />
+              )}
+            </div>
+          )}
+
+          {!isLoading && (
           <button
             onClick={handleLogout}
             className={`
@@ -269,6 +349,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
               </span>
             )}
           </button>
+          )}
         </div>
       </div>
     </div>

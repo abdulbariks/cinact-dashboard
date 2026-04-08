@@ -1,20 +1,116 @@
 import { CookieHelper } from "../../helper/cookie.helper";
 import { Fetch } from "../../lib/Fetch";
 
-const config = {
+const jsonConfig = {
   headers: {
     "Content-Type": "application/json",
   },
 };
 
+const resolveToken = ({ token = "", context = null }: { token?: string; context?: any } = {}) => {
+  return token || CookieHelper.get({ key: "token", context }) || "";
+};
+
+const withAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + resolveToken({ token, context }),
+  },
+});
+
+const withMultipartAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + resolveToken({ token, context }),
+    "content-type": "multipart/form-data",
+  },
+});
+
+const withFormDataAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+  headers: {
+    Authorization: "Bearer " + resolveToken({ token, context }),
+  },
+});
+
 export const UserService = {
+  // login 
   login: async ({ email, password }: { email: string; password: string }) => {
     const data = {
       email: email,
       password: password,
     };
-    return await Fetch.post("/auth/login", data, config);
+    return await Fetch.post("/auth/login/", data, jsonConfig);
   },
+
+  // super admin overview
+  getDashboardOverview: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/dashboard`, withAuthConfig({ token, context }));
+  },
+
+  // get all courses
+  getAllCourses: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/course/all`, withAuthConfig({ token, context }));
+  },
+
+  createManualEnrollment: async ({
+    token = "",
+    context = null,
+    courseId,
+    full_name,
+    email,
+    phone,
+    address,
+    date_of_birth,
+    experience_level,
+    acting_goals,
+    transaction_id,
+    currncy,
+    amount,
+    payment_date,
+    rules_signing,
+    contract_signing,
+  }: {
+    token?: string;
+    context?: any;
+    courseId: string;
+    full_name: string;
+    email: string;
+    phone: string;
+    address: string;
+    date_of_birth: string;
+    experience_level: string;
+    acting_goals: string;
+    transaction_id: string;
+    currncy: string;
+    amount: string;
+    payment_date: string;
+    rules_signing: File;
+    contract_signing: File;
+  }) => {
+    const formData = new FormData();
+
+    formData.append("courseId", courseId);
+    formData.append("full_name", full_name);
+    formData.append("email", email);
+    formData.append("phone", phone);
+    formData.append("address", address);
+    formData.append("date_of_birth", date_of_birth);
+    formData.append("experience_level", experience_level);
+    formData.append("acting_goals", acting_goals);
+    formData.append("transaction_id", transaction_id);
+    formData.append("currncy", currncy);
+    formData.append("amount", amount);
+    formData.append("payment_date", payment_date);
+    formData.append("rules_signing", rules_signing);
+    formData.append("contract_signing", contract_signing);
+
+    return await Fetch.post(
+      "/admin/student-management/manual-enrollment",
+      formData,
+      withFormDataAuthConfig({ token, context })
+    );
+  },
+
 
   register: async ({
     username,
@@ -30,51 +126,27 @@ export const UserService = {
       email: email,
       password: password,
     };
-    return await Fetch.post("/auth/register", data, config);
+    return await Fetch.post("/auth/register", data, jsonConfig);
   },
 
   logout: (context = null) => {
     CookieHelper.destroy({ key: "token", context });
+    CookieHelper.destroy({ key: "accessToken", context });
+    CookieHelper.destroy({ key: "refreshToken", context });
+    CookieHelper.destroy({ key: "user", context });
+    CookieHelper.destroy({ key: "userRole", context });
   },
   // get user details
   getUserDetails: async ({ token = "", context = null }) => {
-    // const userToken = CookieHelper.get({ key: "token", context });
-    const userToken = token;
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    return await Fetch.get(`/user/me`, _config);
+    return await Fetch.get(`/user/me`, withAuthConfig({ token, context }));
   },
 
   findAll: async (context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    return await Fetch.get(`/user`, _config);
+    return await Fetch.get(`/user`, withAuthConfig({ context }));
   },
 
   findOne: async (id: number, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    return await Fetch.get(`/user/${id}`, _config);
+    return await Fetch.get(`/user/${id}`, withAuthConfig({ context }));
   },
 
   findOneByUsername: async ({
@@ -86,17 +158,7 @@ export const UserService = {
     token?: string;
     context?: any;
   }) => {
-    // const userToken = CookieHelper.get({ key: "token", context });
-    const userToken = token || CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    return await Fetch.get(`/user/profile/${username}`, _config);
+    return await Fetch.get(`/user/profile/${username}`, withAuthConfig({ token, context }));
   },
 
   update: async (
@@ -131,15 +193,6 @@ export const UserService = {
     },
     context = null
   ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
     const data = {
       fname: fname,
       lname: lname,
@@ -156,21 +209,11 @@ export const UserService = {
       recipient_phone_number: recipient_phone_number,
     };
 
-    return await Fetch.patch(`/user`, data, _config);
+    return await Fetch.patch(`/user`, data, withAuthConfig({ context }));
   },
 
   updateAvatar: async (data: any, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-        "content-type": "multipart/form-data",
-      },
-    };
-
-    return await Fetch.patch(`/user/avatar`, data, _config);
+    return await Fetch.patch(`/user/avatar`, data, withMultipartAuthConfig({ context }));
   },
 
   //
@@ -190,14 +233,6 @@ export const UserService = {
     },
     context: any = null
   ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
     const data = {
       fname: fname,
       lname: lname,
@@ -206,7 +241,7 @@ export const UserService = {
       role_id: role_id,
     };
 
-    return await Fetch.post(`/user`, data, _config);
+    return await Fetch.post(`/user`, data, withAuthConfig({ context }));
   },
 
   // TODO
@@ -219,15 +254,6 @@ export const UserService = {
     }: { id: number; token: string; email: string; password: string },
     context: any = null
   ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
     const data = {
       id: id,
       token: token,
@@ -235,6 +261,6 @@ export const UserService = {
       password: password,
     };
 
-    return await Fetch.patch(`/user/${id}/password`, data, _config);
+    return await Fetch.patch(`/user/${id}/password`, data, withAuthConfig({ context }));
   },
 };

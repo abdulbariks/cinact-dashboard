@@ -1,6 +1,7 @@
 "use client"
 
 import DropDownIcon from '@/components/icons/others/DropDownIcon'
+import { UserService } from '@/service/user/user.service'
 import {
   Select,
   SelectContent,
@@ -8,12 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import React from 'react'
+import { parseCookies } from 'nookies'
+import React, { useEffect, useMemo, useState } from 'react'
 
 type StudentInformationData = {
   course: string
   studentName: string
   email: string
+  phone: string
   address: string
   dateOfBirth: string
   experienceLevel: string
@@ -34,6 +37,12 @@ type StudentInformationFormProps = {
   experienceOptions: string[]
 }
 
+type ApiCourse = {
+  id: string
+  title: string
+  course_overview?: string
+}
+
 export default function StudentInformationForm({
   formData,
   errors,
@@ -45,6 +54,54 @@ export default function StudentInformationForm({
   courseOptions,
   experienceOptions,
 }: StudentInformationFormProps) {
+  const [apiCourses, setApiCourses] = useState<ApiCourse[]>([])
+  const [isLoadingCourses, setIsLoadingCourses] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadCourses = async () => {
+      try {
+        const cookies = parseCookies()
+        const token = cookies.token || cookies.accessToken || ''
+        const response = await UserService.getAllCourses({ token })
+        const responseData = response?.data?.data || response?.data || []
+
+        if (isMounted && Array.isArray(responseData)) {
+          setApiCourses(responseData)
+        }
+      } catch (error) {
+        if (isMounted) {
+          setApiCourses([])
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingCourses(false)
+        }
+      }
+    }
+
+    loadCourses()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const courseItems = useMemo(() => {
+    if (apiCourses.length > 0) {
+      return apiCourses.map((course) => ({
+        value: course.id,
+        label: course.title,
+      }))
+    }
+
+    return (courseOptions || []).map((course) => ({
+      value: course,
+      label: course,
+    }))
+  }, [apiCourses, courseOptions])
+
   return (
     <div className='mt-6 flex flex-col gap-5'>
       <div>
@@ -53,13 +110,17 @@ export default function StudentInformationForm({
           <SelectTrigger
             icon={<DropDownIcon className='h-4 w-4' />}
             className='w-full rounded-2xl border-[#3D4566] p-6 text-[#3D4566]'
+            disabled={isLoadingCourses}
           >
-            <SelectValue placeholder='Choose a course' className='placeholder:text-[#3D4566] text-[#3D4566]' />
+            <SelectValue
+              placeholder={isLoadingCourses ? 'Loading courses...' : 'Choose a course'}
+              className='placeholder:text-[#3D4566] text-[#3D4566]'
+            />
           </SelectTrigger>
           <SelectContent className='border-[#3D4566] bg-[#07121d] text-white'>
-            {courseOptions.map((course) => (
-              <SelectItem key={course} value={course}>
-                {course}
+            {courseItems.map((course) => (
+              <SelectItem key={course.value} value={course.value}>
+                {course.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -96,6 +157,21 @@ export default function StudentInformationForm({
           className={inputClassName}
         />
         {errors.email && <p className='mt-1 text-xs text-[#ff7a7a]'>{errors.email}</p>}
+      </div>
+
+      <div>
+        <label htmlFor='phone' className={labelClassName}>
+          Phone
+        </label>
+        <input
+          id='phone'
+          name='phone'
+          value={formData.phone}
+          onChange={handleInputChange}
+          placeholder='Enter phone number'
+          className={inputClassName}
+        />
+        {errors.phone && <p className='mt-1 text-xs text-[#ff7a7a]'>{errors.phone}</p>}
       </div>
 
       <div>

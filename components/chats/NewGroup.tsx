@@ -38,7 +38,7 @@ export default function NewGroup() {
             </div>
 
 
-            <div className=' p-8 bg-[#0a1726] rounded-[16px] max-w-[695px] h-[80vh]  mx-auto mt-10'>
+            <div className=' p-8 bg-[#0a1726] rounded-2xl max-w-173.75 h-[80vh]  mx-auto mt-10'>
                 <div className='flex items-center justify-between pb-4 border-b border-[#141B34]'>
                     <h2 className='text-2xl text-white font-semibold'>New Group</h2>
                     {selectedUserIds.length >= 2 && (
