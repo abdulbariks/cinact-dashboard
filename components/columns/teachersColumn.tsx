@@ -45,7 +45,15 @@ export const teachersColumns = [
 		accessor: "joined_date",
 		width: "150px",
 		formatter: (value: string) => {
+			if (!value) {
+				return <span className="text-sm text-white font-medium">-</span>;
+			}
+
 			const date = new Date(value);
+
+			if (Number.isNaN(date.getTime())) {
+				return <span className="text-sm text-white font-medium">-</span>;
+			}
 
 			return (
 				<span className="text-sm text-white font-medium">
@@ -65,10 +73,10 @@ export const teachersColumns = [
 		formatter: (value: string) => (
 			<span
 				className={`capitalize px-2.5 py-1 rounded-full text-sm font-medium ${
-					teacherStatusColors[value] || "bg-[#443c29] text-[#ECAD11]"
+					teacherStatusColors[value?.toLowerCase?.() || value] || "bg-[#443c29] text-[#ECAD11]"
 				}`}
 			>
-				{value}
+				{value || '-'}
 			</span>
 		),
 	},

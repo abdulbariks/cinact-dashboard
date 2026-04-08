@@ -32,6 +32,20 @@ const withFormDataAuthConfig = ({ token = "", context = null }: { token?: string
   },
 });
 
+const buildQueryString = (params: Record<string, string | number | undefined>) => {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      searchParams.set(key, String(value));
+    }
+  });
+
+  const queryString = searchParams.toString();
+
+  return queryString ? `?${queryString}` : "";
+};
+
 export const UserService = {
   // login 
   login: async ({ email, password }: { email: string; password: string }) => {
@@ -50,6 +64,23 @@ export const UserService = {
   // get all courses
   getAllCourses: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/course/all`, withAuthConfig({ token, context }));
+  },
+
+  // get all instructors
+  getAllInstructors: async ({
+    token = "",
+    context = null,
+    page = 1,
+    limit = 10,
+  }: {
+    token?: string;
+    context?: any;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    const queryString = buildQueryString({ page, limit });
+
+    return await Fetch.get(`/instructors${queryString}`, withAuthConfig({ token, context }));
   },
 
   createManualEnrollment: async ({
