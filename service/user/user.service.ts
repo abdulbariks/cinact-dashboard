@@ -146,11 +146,17 @@ export const UserService = {
   getAllCommunityPosts: async ({
     token = "",
     context = null,
+    search = "",
+    status = "",
+    role = "",
     page = 1,
     limit = 10,
   }: {
     token?: string;
     context?: any;
+    search?: string;
+    status?: string;
+    role?: string;
     page?: number;
     limit?: number;
   } = {}) => {
@@ -160,12 +166,12 @@ export const UserService = {
       `/admin/community-management/posts`,
       {
         ...authConfig,
-        params: { page, limit },
+        params: { search, status, role, page, limit },
       }
     );
   },
   
-
+ 
   register: async ({
     username,
     email,

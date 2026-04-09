@@ -1,5 +1,7 @@
+"use client"
+
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import PlusIcon from '../../icons/SuperAdmindashboard/PlusIcon'
 import SearchIcon from '../../icons/SuperAdmindashboard/SearchIcon'
 import CommunityType from './CommunityType'
@@ -9,8 +11,13 @@ import AllPosts from './AllPosts'
 import ModaretionRequest from './ModaretionRequest'
 
 export default function ComunityHome() {
+  const [activeTab, setActiveTab] = useState('all-posts')
+  const [search, setSearch] = useState('')
+  const [communityRole, setCommunityRole] = useState('all-role')
+  const [communityStatus, setCommunityStatus] = useState('all-status')
+
   return (
-    <div  >
+    <div>
 
       <div className=' flex items-center justify-between '>
         <h2 className=' text-2xl text-[#E6E7E8] font-semibold'>Community Management</h2>
@@ -33,7 +40,7 @@ export default function ComunityHome() {
       </div>
 
       <div className=' bg-[#0a1726] p-6 rounded-2xl mt-5'>
-        <Tabs defaultValue='all-posts' className='w-full'>
+        <Tabs defaultValue='all-posts' value={activeTab} onValueChange={setActiveTab} className='w-full'>
           <div className=' flex items-center justify-between'>
             <TabsList className='inline-flex items-center h-auto rounded-[6px] bg-[#31333e] p-1'>
               <TabsTrigger
@@ -54,12 +61,13 @@ export default function ComunityHome() {
                 <input
                   type="text"
                   name="search"
-                  // value={search}
-                  // onChange={handleChange}
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
                   className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                   placeholder="Search User"
                 />
                 <button
+                  type="button"
 
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer"
                 >
@@ -67,16 +75,20 @@ export default function ComunityHome() {
                 </button>
               </div>
 
-              <CommunityType />
-              <CommunityStatus />
+              <CommunityType value={communityRole} onChange={setCommunityRole} />
+              <CommunityStatus value={communityStatus} onChange={setCommunityStatus} />
             </div>
           </div>
 
           <TabsContent value='all-posts' className='mt-4' >
-            <AllPosts />
+            <AllPosts
+              search={search}
+              selectedRole={communityRole}
+              selectedStatus={communityStatus}
+            />
           </TabsContent>
           <TabsContent value='modaration-request' className='mt-4' >
-           <ModaretionRequest/>
+           <ModaretionRequest />
           </TabsContent>
         </Tabs>
       </div>

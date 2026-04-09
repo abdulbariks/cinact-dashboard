@@ -6,40 +6,22 @@ import LikeIcon from '@/components/icons/Community/LikeIcon'
 import TrashIconRed from '@/components/icons/course-management/TrashIconRed'
 import EyeIcon from '@/components/icons/SuperAdmindashboard/EyeIcon'
 import PaginationPage from '@/components/reusable/PaginationPage'
-import { Skeleton } from '@/components/ui/skeleton'
-import { showErrorToast } from '@/lib/hotToast'
-import { UserService } from '@/service/user/user.service'
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { parseCookies } from 'nookies'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { allPostsData } from '@/public/demoData/AllPostsData'
 
-type ApiRoleUser = {
-  role?: {
-    title?: string
-    name?: string
-  }
-}
-
-type ApiPostItem = {
-  id: string
-  content: string
-  status: string
-  createdAt: string
-  author?: {
-    name?: string
-    avatar?: string
-    role_users?: ApiRoleUser[]
-  }
-  comments: number
-  likes: number
+type AllPostsProps = {
+  search?: string
+  selectedRole?: string
+  selectedStatus?: string
 }
 
 type PostCardItem = {
   id: string
   user_name: string
-  avatar: string | null
+  avatar: any
   type: string
   status: string
   date: string
@@ -47,66 +29,16 @@ type PostCardItem = {
   comments: number
   content: string
 }
-
-const ALLOWED_AVATAR_HOSTS = new Set(['192.168.7.12', '192.168.7.14'])
-
-const normalizeAvatarUrl = (avatar?: string) => {
-  if (!avatar) return null
-
-  const lastHttpIndex = Math.max(avatar.lastIndexOf('http://'), avatar.lastIndexOf('https://'))
-  const candidateUrl = lastHttpIndex > 0 ? avatar.slice(lastHttpIndex) : avatar
-
-  try {
-    const parsedUrl = new URL(candidateUrl)
-
-    if (!ALLOWED_AVATAR_HOSTS.has(parsedUrl.hostname)) {
-      return null
-    }
-
-    return candidateUrl
-  } catch {
-    return null
-  }
-}
-
-const formatPostDate = (dateString: string) => {
-  const date = new Date(dateString)
-  if (Number.isNaN(date.getTime())) return '-'
-
-  const diffMs = Date.now() - date.getTime()
-  const diffSeconds = Math.floor(diffMs / 1000)
-
-  if (diffSeconds < 60) return 'just now'
-
-  const minutes = Math.floor(diffSeconds / 60)
-  if (minutes < 60) return `${minutes} min ago`
-
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`
-
-  const days = Math.floor(hours / 24)
-  if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`
-
-  const months = Math.floor(days / 30)
-  if (months < 12) return `${months} month${months > 1 ? 's' : ''} ago`
-
-  const years = Math.floor(months / 12)
-  return `${years} year${years > 1 ? 's' : ''} ago`
-}
-
-const mapApiPostToCard = (post: ApiPostItem): PostCardItem => ({
+const mapDemoPost = (post: any): PostCardItem => ({
   id: post.id,
-  user_name: post.author?.name || 'Unknown User',
-  avatar: normalizeAvatarUrl(post.author?.avatar),
-  type:
-    post.author?.role_users?.[0]?.role?.title ||
-    post.author?.role_users?.[0]?.role?.name ||
-    'Student',
-  status: post.status || 'Approved',
-  date: formatPostDate(post.createdAt),
+  user_name: post.user_name,
+  avatar: post.avatar,
+  type: String(post.type || 'Student'),
+  status: String(post.status || 'Approved'),
+  date: String(post.date || '-'),
   likes: Number(post.likes) || 0,
   comments: Number(post.comments) || 0,
-  content: post.content || '-',
+  content: String(post.content || '-'),
 })
 
 
@@ -150,9 +82,15 @@ const getStatusBadgeColors = (status: string): { bg: string; text: string } => {
         text: 'text-[#fbbf24]' // Light yellow text
       }
     case 'flag':
+    case 'flagged':
       return {
         bg: 'bg-[#1c2213]', // Red background
         text: 'text-[#FFE205]' // Light red text
+      }
+    case 'rejected':
+      return {
+        bg: 'bg-[#1c0b13]',
+        text: 'text-[#E9201D]'
       }
     case 'announcement':
       return {
@@ -196,34 +134,34 @@ const PostListSkeleton = ({ count = 5 }: { count?: number }) => {
   return (
     <>
       {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className='p-4 border border-[#383e57] rounded-[8px] bg-[#030C15] flex items-start justify-between'>
+        <div key={index} className='p-4 border border-[#383e57] rounded-xl bg-[#030C15] flex items-start justify-between animate-pulse'>
           <div className='flex items-start gap-3.5'>
-            <Skeleton className='size-10 rounded-full bg-[#1b2736]' />
+            <div className='size-10 rounded-full bg-[#1b2736]' />
 
             <div>
               <div className='flex items-center gap-2'>
-                <Skeleton className='h-5 w-36 bg-[#1b2736]' />
-                <Skeleton className='h-5 w-16 rounded-[4px] bg-[#1b2736]' />
-                <Skeleton className='h-5 w-20 rounded-[4px] bg-[#1b2736]' />
-                <Skeleton className='h-4 w-20 bg-[#1b2736]' />
+                <div className='h-5 w-36 rounded bg-[#1b2736]' />
+                <div className='h-5 w-16 rounded bg-[#1b2736]' />
+                <div className='h-5 w-20 rounded bg-[#1b2736]' />
+                <div className='h-4 w-20 rounded bg-[#1b2736]' />
               </div>
 
               <div className='mt-3 space-y-2'>
-                <Skeleton className='h-4 w-[480px] max-w-[75vw] bg-[#1b2736]' />
-                <Skeleton className='h-4 w-[420px] max-w-[70vw] bg-[#1b2736]' />
+                <div className='h-4 w-30 max-w-[75vw] rounded bg-[#1b2736]' />
+                <div className='h-4 w-26.25 max-w-[70vw] rounded bg-[#1b2736]' />
               </div>
 
               <div className='flex items-center gap-6 mt-3'>
-                <Skeleton className='h-4 w-12 bg-[#1b2736]' />
-                <Skeleton className='h-4 w-12 bg-[#1b2736]' />
+                <div className='h-4 w-12 rounded bg-[#1b2736]' />
+                <div className='h-4 w-12 rounded bg-[#1b2736]' />
               </div>
             </div>
           </div>
 
           <div className='flex items-center gap-2'>
-            <Skeleton className='size-8 rounded-[4px] bg-[#1b2736]' />
-            <Skeleton className='size-8 rounded-[4px] bg-[#1b2736]' />
-            <Skeleton className='size-8 rounded-[4px] bg-[#1b2736]' />
+            <div className='size-8 rounded bg-[#1b2736]' />
+            <div className='size-8 rounded bg-[#1b2736]' />
+            <div className='size-8 rounded bg-[#1b2736]' />
           </div>
         </div>
       ))}
@@ -232,64 +170,58 @@ const PostListSkeleton = ({ count = 5 }: { count?: number }) => {
 }
 
 
-export default function AllPosts() {
+export default function AllPosts({ search = '', selectedRole = 'all-role', selectedStatus = 'all-status' }: AllPostsProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [posts, setPosts] = useState<PostCardItem[]>([])
   const [failedAvatars, setFailedAvatars] = useState<Record<string, boolean>>({})
-  const [loading, setLoading] = useState(true)
-  const [totalItems, setTotalItems] = useState(0)
-  const [totalPages, setTotalPages] = useState(0)
+
+  const posts = useMemo(() => allPostsData.map(mapDemoPost), [])
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [itemsPerPage])
+  }, [itemsPerPage, search, selectedRole, selectedStatus])
 
-  useEffect(() => {
-    const loadPosts = async () => {
-      setLoading(true)
+  const filteredPosts = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase()
+    const normalizedRole = selectedRole.toLowerCase()
+    const normalizedStatus = selectedStatus.toLowerCase()
 
-      try {
-        const cookies = parseCookies()
-        const token = cookies.token || cookies.accessToken || ''
+    return posts.filter((post) => {
+      const postType = post.type.toLowerCase()
+      const postStatus = post.status.toLowerCase()
+      const searchMatch =
+        normalizedSearch.length === 0 ||
+        post.user_name.toLowerCase().includes(normalizedSearch) ||
+        post.content.toLowerCase().includes(normalizedSearch)
 
-        const response = await UserService.getAllCommunityPosts({
-          token,
-          page: currentPage,
-          limit: itemsPerPage,
-        })
+      const roleMatch =
+        normalizedRole === 'all-role' ||
+        (normalizedRole === 'finance' && postType === 'finance') ||
+        (normalizedRole === 'student' && postType === 'student') ||
+        (normalizedRole === 'admin' && postType === 'admin')
 
-        const postsData = (response?.data?.data || []) as ApiPostItem[]
-        const metaData = response?.data?.meta_data || {}
-        const total = Number(metaData.total) || postsData.length
+      const statusMatch =
+        normalizedStatus === 'all-status' ||
+        postStatus === normalizedStatus
 
-        setPosts(postsData.map(mapApiPostToCard))
-        setFailedAvatars({})
-        setTotalItems(total)
-        setTotalPages(metaData.total_pages || Math.ceil(total / itemsPerPage))
-      } catch (error: any) {
-        setPosts([])
-        setFailedAvatars({})
-        setTotalItems(0)
-        setTotalPages(0)
-        showErrorToast(error?.response?.data?.message || error?.message || 'Failed to load posts')
-      } finally {
-        setLoading(false)
-      }
-    }
+      return searchMatch && roleMatch && statusMatch
+    })
+  }, [posts, search, selectedRole, selectedStatus])
 
-    loadPosts()
-  }, [currentPage, itemsPerPage])
+  const totalItems = filteredPosts.length
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage))
+
+  const visiblePosts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredPosts.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredPosts, currentPage, itemsPerPage])
 
   return (
     <div className=' space-y-3'>
-      {loading ? (
-        <PostListSkeleton count={Math.min(itemsPerPage, 5)} />
-      ) : (
-        <>
-          {
-            posts.map((post) => (
-              <div key={post.id} className='p-4 border border-[#383e57] rounded-[8px] bg-[#030C15] flex items-start justify-between'>
+      <>
+        {
+          visiblePosts.length > 0 ? visiblePosts.map((post) => (
+              <div key={post.id} className='p-4 border border-[#383e57] rounded-xl bg-[#030C15] flex items-start justify-between'>
                 <div className=' flex items-start gap-3.5'>
                   <div>
                     {!post.avatar || failedAvatars[post.id] ? (
@@ -313,8 +245,8 @@ export default function AllPosts() {
                   <div>
                     <div className=' flex items-center gap-2'>
                       <h3 className=' text-base text-[#A5A5AB] font-medium'>{post.user_name}</h3>
-                      <p className={` text-sm py-0.5 px-1.5 rounded-[4px] inline-block ${getTypeBadgeColors(post.type).bg} ${getTypeBadgeColors(post.type).text}`}>{post.type}</p>
-                      <p className={` text-sm py-0.5 px-1.5 rounded-[4px] inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}>{post.status}</p>
+                      <p className={` text-sm py-0.5 px-1.5 rounded-lg inline-block ${getTypeBadgeColors(post.type).bg} ${getTypeBadgeColors(post.type).text}`}>{post.type}</p>
+                      <p className={` text-sm py-0.5 px-1.5 rounded-lg inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}>{post.status}</p>
                       <p className=' text-sm text-[#777980] py-0.5 px-1.5   inline-block '>{post.date}</p>
                     </div>
                     <p className=' text-[#A5A5AB] text-sm mt-3'>{truncateByWords(post.content, CONTENT_WORD_LIMIT)}</p>
@@ -333,34 +265,33 @@ export default function AllPosts() {
                 </div>
 
                 <div className=' flex items-center gap-2'>
-                  <Link href={`/dashboard/community/${post.id}`} className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-[4px]'>
+                  <Link href={`/dashboard/community/${post.id}`} className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-lg'>
                     <EyeIcon />
                   </Link>
-                  <button className=' cursor-pointer p-2.5 bg-[#0e1825] rounded-[4px]'>
+                  <button className=' cursor-pointer p-2.5 bg-[#0e1825] rounded-lg'>
                     <FlagIcon />
                   </button>
-                  <button className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-[4px]'>
+                  <button className=' cursor-pointer p-1.5 bg-[#0e1825] rounded-lg'>
                     <TrashIconRed />
                   </button>
                 </div>
 
               </div>
-            ))
-          }
-        </>
-      )}
+            )) : (
+            <div className='p-4 border border-[#383e57] rounded-xl bg-[#030C15] text-[#A5A5AB]'>No posts found</div>
+          )
+        }
+      </>
 
-      {!loading && (
-        <PaginationPage
-          totalPages={totalPages}
-          dataLength={posts.length}
-          totalItems={totalItems}
-          onPageChange={setCurrentPage}
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          setItemsPerPage={setItemsPerPage}
-        />
-      )}
+      <PaginationPage
+        totalPages={totalPages}
+        dataLength={totalItems}
+        totalItems={totalItems}
+        onPageChange={setCurrentPage}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
+      />
     </div>
   )
 }
