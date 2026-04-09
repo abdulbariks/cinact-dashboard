@@ -3,7 +3,7 @@ import Link from "next/link";
 export const recentTransactionsColumns = [
   {
     label: "User ID",
-    accessor: "user_id",
+    accessor: "userId",
     width: "120px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium">{value}</span>
@@ -11,7 +11,7 @@ export const recentTransactionsColumns = [
   },
   {
     label: "User Name",
-    accessor: "user_name",
+    accessor: "userName",
     width: "220px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium">{value}</span>
@@ -27,7 +27,7 @@ export const recentTransactionsColumns = [
   },
   {
     label: "Date",
-    accessor: "date",
+    accessor: "paymentDate",
     width: "150px",
     formatter: (value: string) => {
       const date = new Date(value);

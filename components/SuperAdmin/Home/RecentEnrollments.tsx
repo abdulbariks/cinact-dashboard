@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -35,11 +36,7 @@ const formatDate = (value: string) => {
 const getInitials = (name?: string | null) => {
   if (!name) return "UU";
 
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2);
+  const words = name.trim().split(/\s+/).filter(Boolean).slice(0, 2);
 
   if (!words.length) return "UU";
 
@@ -75,8 +72,11 @@ export default function RecentEnrollments({
       <div className=" bg-[#0a1929] p-4 rounded-2xl">
         <Skeleton className="h-6 w-44 bg-[#1d2a3e]" />
         <div className="space-y-3 mt-4">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="bg-[#07121d] p-4 rounded-[10px] min-h-[104px]">
+          {Array?.from({ length: 5 })?.map((_, index) => (
+            <div
+              key={index}
+              className="bg-[#07121d] p-4 rounded-[10px] min-h-[104px]"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Skeleton className="w-10 h-10 rounded-full bg-[#1d2a3e]" />
@@ -99,14 +99,17 @@ export default function RecentEnrollments({
     <div className=" bg-[#0a1929] p-4 rounded-2xl">
       <h2 className=" text-lg text-white font-medium">Recent Enrollments</h2>
       <div className=" space-y-3 mt-4">
-        {items.length === 0 && (
+        {items?.length === 0 && (
           <div className="bg-[#07121d] p-4 rounded-[10px] text-sm text-[#D2D2D5]">
             No recent enrollments.
           </div>
         )}
 
-        {items.map((item) => (
-          <div key={item.id} className=" bg-[#07121d] p-4 rounded-[10px] min-h-[104px]">
+        {items?.map((item) => (
+          <div
+            key={item.id}
+            className=" bg-[#07121d] p-4 rounded-[10px] min-h-[104px]"
+          >
             <div>
               <div className=" flex items-center justify-between">
                 <div className=" flex items-center gap-2">
@@ -118,7 +121,10 @@ export default function RecentEnrollments({
                         fill
                         className="object-cover"
                         onError={() => {
-                          setBrokenImages((prev) => ({ ...prev, [item.id]: true }));
+                          setBrokenImages((prev) => ({
+                            ...prev,
+                            [item.id]: true,
+                          }));
                         }}
                       />
                     </div>
