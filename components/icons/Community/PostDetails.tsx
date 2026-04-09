@@ -1,5 +1,7 @@
+"use client"
+
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import BreadCrumpRightArrow from '../SuperAdmindashboard/BreadCrumpRightArrow'
 import Image, { StaticImageData } from 'next/image'
 import LikeIcon from './LikeIcon'
@@ -9,7 +11,7 @@ type PostDetailsProps = {
   post: {
     id: string
     user_name: string
-    avatar: StaticImageData
+    avatar: StaticImageData | string | null
     type: string
     status: string
     date: string
@@ -17,6 +19,20 @@ type PostDetailsProps = {
     comments: number
     content: string
   }
+}
+
+const getNameInitials = (name: string) => {
+  const trimmedName = name.trim()
+
+  if (!trimmedName) return 'NA'
+
+  const words = trimmedName.split(/\s+/)
+
+  if (words.length >= 2) {
+    return `${words[0][0] || ''}${words[1][0] || ''}`.toUpperCase()
+  }
+
+  return trimmedName.slice(0, 2).toUpperCase()
 }
 
 const getTypeBadgeColors = (type: string): { bg: string; text: string } => {
@@ -48,6 +64,8 @@ const getStatusBadgeColors = (status: string): { bg: string; text: string } => {
 }
 
 export default function PostDetails({ post }: PostDetailsProps) {
+  const [avatarError, setAvatarError] = useState(false)
+
   return (
     <div className='space-y-4'>
       <div className='flex items-center gap-2'>
@@ -60,7 +78,20 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
       <div className='p-4 border border-[#383e57] rounded-xl bg-[#030C15]'>
         <div className='flex items-start gap-3.5'>
-          <Image src={post.avatar} alt='Avatar' />
+          {!post.avatar || avatarError ? (
+            <div className='size-10 rounded-full bg-[#1a2432] flex items-center justify-center text-xs text-[#E6E7E8] font-semibold'>
+              {getNameInitials(post.user_name)}
+            </div>
+          ) : (
+            <Image
+              src={post.avatar}
+              alt={post.user_name}
+              width={40}
+              height={40}
+              className='rounded-full object-cover size-10'
+              onError={() => setAvatarError(true)}
+            />
+          )}
 
           <div className='flex-1'>
             
