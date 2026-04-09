@@ -142,6 +142,29 @@ export const UserService = {
     );
   },
 
+  // get all posts ====================================================================
+  getAllCommunityPosts: async ({
+    token = "",
+    context = null,
+    page = 1,
+    limit = 10,
+  }: {
+    token?: string;
+    context?: any;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    const authConfig = withAuthConfig({ token, context });
+
+    return await Fetch.get(
+      `/admin/community-management/posts`,
+      {
+        ...authConfig,
+        params: { page, limit },
+      }
+    );
+  },
+  
 
   register: async ({
     username,
