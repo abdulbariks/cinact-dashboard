@@ -1,3 +1,4 @@
+ 'use client';
 import React, { useState } from "react";
 import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,10 +63,10 @@ const normalizeAvatarUrl = (url?: string | null) => {
 };
 
 export default function RecentEnrollments({
-  items,
+  items = [],
   loading = false,
 }: {
-  items: EnrollmentItem[];
+  items?: EnrollmentItem[];
   loading?: boolean;
 }) {
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});

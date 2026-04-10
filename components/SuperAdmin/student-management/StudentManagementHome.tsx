@@ -103,7 +103,6 @@ export default function StudentManagementHome() {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -142,14 +141,13 @@ export default function StudentManagementHome() {
         showErrorToast(message);
       } finally {
         setLoading(false);
-        setInitialLoading(false);
       }
     };
 
     loadStudents();
   }, [currentPage, itemsPerPage, search, status, paymentStatus]);
 
-  if (initialLoading) {
+  if (loading) {
     return <StudentManagementSkeleton />;
   }
 
@@ -201,7 +199,7 @@ export default function StudentManagementHome() {
         onPageChange={setCurrentPage}
         setItemsPerPage={setItemsPerPage}
         noDataMessage="No students found"
-        loading={loading}
+        loading={false}
         error={error}
         
       />

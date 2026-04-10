@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react'
 import { teachersColumns } from '@/components/columns/teachersColumn'
 import PlusIcon from '@/components/icons/SuperAdmindashboard/PlusIcon'
 import SearchIcon from '@/components/icons/SuperAdmindashboard/SearchIcon'
-import { AllStatus } from '@/components/reusable/AllStatus'
 import DynamicTable from '@/components/reusable/DynamicTable'
 import Link from 'next/link'
 import { parseCookies } from 'nookies'
 import { UserService } from '@/service/user/user.service'
 import { showErrorToast } from '@/lib/hotToast'
 import { Skeleton } from '@/components/ui/skeleton'
+import { TeacherStatus } from './TeacherStatus'
 
 type TeacherApiItem = {
   id: string
@@ -82,6 +82,9 @@ const TeacherManagementSkeleton = () => {
 export default function TeacherManagementHome() {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [status, setStatus] = useState('all')
   const [teachers, setTeachers] = useState<TeacherRow[]>([])
   const [totalItems, setTotalItems] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
@@ -89,8 +92,16 @@ export default function TeacherManagementHome() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search)
+    }, 300)
+
+    return () => clearTimeout(timeout)
+  }, [search])
+
+  useEffect(() => {
     setCurrentPage(1)
-  }, [itemsPerPage])
+  }, [itemsPerPage, debouncedSearch, status])
 
   useEffect(() => {
     const loadTeachers = async () => {
@@ -102,6 +113,8 @@ export default function TeacherManagementHome() {
         const token = cookies.token || cookies.accessToken || ''
         const response = await UserService.getAllInstructors({
           token,
+          search: debouncedSearch,
+          status: status === 'all' ? '' : status,
           page: currentPage,
           limit: itemsPerPage,
         })
@@ -125,9 +138,9 @@ export default function TeacherManagementHome() {
     }
 
     loadTeachers()
-  }, [currentPage, itemsPerPage])
+  }, [currentPage, itemsPerPage, debouncedSearch, status])
 
-  if (loading) {
+  if (loading && teachers.length === 0 && !error) {
     return <TeacherManagementSkeleton />
   }
 
@@ -151,12 +164,13 @@ export default function TeacherManagementHome() {
               <input
                 type="text"
                 name="search"
-                // value={search}
-                // onChange={handleChange}
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
                 className=" w-full  py-2 px-4   rounded-xl bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search Teacher..."
               />
               <button
+                type="button"
 
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer"
               >
@@ -164,7 +178,7 @@ export default function TeacherManagementHome() {
               </button>
             </div>
 
-            <AllStatus />
+            <TeacherStatus value={status} onValueChange={setStatus} />
           </div>
         </div>
         <div className=' mt-6'>

@@ -103,19 +103,24 @@ export const UserService = {
   getAllInstructors: async ({
     token = "",
     context = null,
+    search = "",
+    status = "",
     page = 1,
     limit = 10,
   }: {
     token?: string;
     context?: any;
+    search?: string;
+    status?: string;
     page?: number;
     limit?: number;
   } = {}) => {
-    const queryString = buildQueryString({ page, limit });
+    const queryString = buildQueryString({ status, search, page, limit });
 
     return await Fetch.get(`/instructors${queryString}`, withAuthConfig({ token, context }));
   },
 
+  // student manual enrollment by super admin
   createManualEnrollment: async ({
     token = "",
     context = null,
@@ -204,7 +209,8 @@ export const UserService = {
     );
   },
   
- 
+//  another get all posts for super admin home page ===================================
+
   register: async ({
     username,
     email,
