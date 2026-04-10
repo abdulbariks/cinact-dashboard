@@ -37,6 +37,9 @@ const paymentStatusColors: Record<string, string> = {
   paid: "bg-[#2a3d2e] text-[#18CC3F]",
   overdue: "bg-[#402b2b] text-[#E9201D]",
   due: "bg-[#443c29] text-[#ECAD11]",
+  pending: "bg-[#443c29] text-[#ECAD11]",
+  completed: "bg-[#2a3d2e] text-[#18CC3F]",
+  unpaid: "bg-[#402b2b] text-[#E9201D]",
    
 };
 
@@ -142,7 +145,7 @@ export const studentManagementColumns = [
             </button>
           </DialogTrigger>
 
-          <DialogContent className="border-none py-8 px-6 rounded-2xl bg-[#0A1726] text-white [&>button]:hidden max-w-[520px]">
+          <DialogContent className="border-none py-8 px-6 rounded-2xl bg-[#0A1726] text-white [&>button]:hidden max-w-130">
             <DialogHeader>
               <DialogTitle className="text-white text-xl font-semibold">Edit Student</DialogTitle>
               <DialogDescription className="text-[#A5A5AB]">

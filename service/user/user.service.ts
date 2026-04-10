@@ -66,6 +66,39 @@ export const UserService = {
     return await Fetch.get(`/course/all`, withAuthConfig({ token, context }));
   },
 
+
+  // get all students
+
+  getAllStudentManagement: async ({
+    token = "",
+    context = null,
+    search = "",
+    status = "",
+    paymentStatus = "",
+    page = 1,
+    limit = 10,
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    status?: string;
+    paymentStatus?: string | boolean;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    return await Fetch.get(
+      `/admin/student-management`,{
+        ...withAuthConfig({ token, context }), params: {
+          search,
+          status,
+          paymentStatus,
+          page,
+          limit,
+        },
+      }
+    );
+  },
+
   // get all instructors
   getAllInstructors: async ({
     token = "",
