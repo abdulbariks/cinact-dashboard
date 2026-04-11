@@ -1,18 +1,61 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { transactionsColumns } from "@/components/columns/TransactionsColumns";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllPaymentPlan } from "@/components/reusable/AllPaymentPlan";
 import { DatePickerButton } from "@/components/reusable/DatePickerButton";
-import StatsCard from "@/components/SuperAdmin/Home/StatssCard";
+import StatsCard from "./StatsCard";
 import { transactionsData } from "@/public/demoData/transactionsData";
 import DynamicTable from "@/components/reusable/DynamicTable";
 import Link from "next/link";
+import { parseCookies } from "nookies";
+import { showErrorToast } from "@/lib/hotToast";
+import { FinanceService } from "@/service/finance/finance.service";
+
+type StatsCardData = {
+  current: number;
+  previous: number;
+  percentageChange: number;
+};
+
+export type StatsCard = {
+  courseRevenue: StatsCardData;
+  currentMonthRevenue: StatsCardData;
+  eventsRevenue: StatsCardData;
+  totalRevenueThisYear: StatsCardData;
+};
 
 export default function FinancePayments() {
+  const [statsCardData, setStatsCardData] = useState<StatsCard | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadOverview = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await FinanceService.getFinancePaymentsStats({
+          token,
+        });
+        setStatsCardData(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load dashboard overview",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOverview();
+  }, []);
+
+  console.log("statsCardDatastatsCardData====", statsCardData);
 
   // Use studentManagementData instead of demoData
   const totalItems = transactionsData.length;
@@ -28,14 +71,14 @@ export default function FinancePayments() {
         </h2>
         <Link
           href={"/finance-dashboard/finance-payments/add-payment"}
-          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer"
+          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
         >
           <PlusIcon />
           Add Payment
         </Link>
       </div>
       <div className="mt-5">
-        <StatsCard />
+        <StatsCard data={statsCardData} loading={loading} />
       </div>
 
       <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
@@ -70,7 +113,7 @@ export default function FinancePayments() {
           totalItems={totalItems}
           onPageChange={setCurrentPage}
           setItemsPerPage={setItemsPerPage}
-          noDataMessage="No students found"
+          noDataMessage="No payments found"
           loading={false}
         />
       </div>

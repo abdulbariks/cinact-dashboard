@@ -57,6 +57,10 @@ export const FinanceService = {
     return await Fetch.get(`/course/all`, withAuthConfig({ token, context }));
   },
 
+  getFinancePaymentsStats: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/finance/revenue/stats`, withAuthConfig({ token, context }));
+  }, 
+
   // get all instructors
   getAllInstructors: async ({
     token = "",
