@@ -12,9 +12,12 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "../ui/calendar";
 
-export function DatePickerButton() {
-  const [date, setDate] = React.useState<Date | undefined>();
+type Props = {
+  date: Date | undefined;
+  setDate: (date: Date | undefined) => void;
+};
 
+export function DatePickerButton({ date, setDate }: Props) {
   return (
     <Popover>
       <PopoverTrigger asChild>

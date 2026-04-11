@@ -47,7 +47,9 @@ export default function StatsCard({
     {
       title: "Ongoing Courses",
       value: data?.totalOngoingCourses?.current ?? 0,
-      percentage: formatChange(data?.totalOngoingCourses?.percentageChange ?? 0),
+      percentage: formatChange(
+        data?.totalOngoingCourses?.percentageChange ?? 0,
+      ),
       icon: RedGradHat,
     },
     {
@@ -68,7 +70,10 @@ export default function StatsCard({
     return (
       <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
         {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className=" bg-[#09141f] p-6 rounded-2xl relative overflow-hidden">
+          <div
+            key={index}
+            className=" bg-[#09141f] p-6 rounded-2xl relative overflow-hidden"
+          >
             <Skeleton className="h-4 w-28 bg-[#1d2a3e]" />
             <Skeleton className="h-9 w-24 mt-6 bg-[#1d2a3e]" />
             <div className="mt-4 flex items-center gap-2">
@@ -101,7 +106,9 @@ export default function StatsCard({
               {" "}
               <span
                 className={` text-sm font-semibold py-1 px-2.5 bg-[#323541] rounded-full ${
-                  item.percentage.startsWith("-") ? "text-[#E9201D]" : "text-[#18CC3F]"
+                  item.percentage.startsWith("-")
+                    ? "text-[#E9201D]"
+                    : "text-[#18CC3F]"
                 }`}
               >
                 {item.percentage}

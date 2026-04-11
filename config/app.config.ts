@@ -20,7 +20,7 @@ export const AppConfig = () => ({
   app: {
     // server endpoint
     url: URL,
-    name: "app",
+    name: "CINACT",
     slogan: "app",
     meta: {
       description: "app",

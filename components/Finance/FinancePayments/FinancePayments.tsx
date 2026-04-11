@@ -26,14 +26,33 @@ export type StatsCard = {
   totalRevenueThisYear: StatsCardData;
 };
 
+type AllPaymentsTransactionsRow = {
+  userId: string;
+  username: string;
+  transactionId: string;
+  amount: string | number;
+  date: string;
+  paymentType: string;
+  paymentPlan: string;
+};
+
 export default function FinancePayments() {
   const [statsCardData, setStatsCardData] = useState<StatsCard | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [search, setSearch] = useState("");
+  const [date, setDate] = useState<Date | undefined>();
+  const [paymentPlan, setPaymentStatus] = useState("all");
+  const [allPaymentsTransactions, setAllPaymentsTransactions] = useState<
+    AllPaymentsTransactionsRow[]
+  >([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const loadOverview = async () => {
+    const loadStatsCardData = async () => {
       try {
         const cookies = parseCookies();
         const token = cookies.token || cookies.accessToken || "";
@@ -52,17 +71,66 @@ export default function FinancePayments() {
       }
     };
 
-    loadOverview();
+    loadStatsCardData();
   }, []);
 
-  console.log("statsCardDatastatsCardData====", statsCardData);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage, search, date, paymentPlan]);
 
-  // Use studentManagementData instead of demoData
-  const totalItems = transactionsData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = transactionsData.slice(startIndex, endIndex);
+  useEffect(() => {
+    const loadsetAllPaymentsTransactions = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await FinanceService.getAllPaymentsTransactions({
+          token,
+          search,
+          // date: date === "all" ? "" : date,
+          paymentPlan: paymentPlan === "all" ? "" : paymentPlan,
+          page: currentPage,
+          limit: itemsPerPage,
+        });
+
+        const paymentsTransactionsData = response?.data?.data || [];
+        const pagination = response?.data?.pagination || {};
+        setAllPaymentsTransactions(paymentsTransactionsData);
+
+        // setStudents(studentsData.map(mapStudentRow));
+        setTotalItems(pagination.total ?? paymentsTransactionsData.length);
+        setTotalPages(
+          pagination.totalPages ??
+            Math.ceil(
+              (pagination.total ?? paymentsTransactionsData.length) /
+                itemsPerPage,
+            ),
+        );
+      } catch (err: any) {
+        const message =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to load students";
+        setAllPaymentsTransactions([]);
+        setTotalItems(0);
+        setTotalPages(0);
+        setError(message);
+        showErrorToast(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadsetAllPaymentsTransactions();
+  }, [currentPage, itemsPerPage, search, date, paymentPlan]);
+
+  // console.log("statsCardDatastatsCardData====", statsCardData);
+  // console.log(allPaymentsTransactions);
+  // console.log("plan=========", paymentPlan);
+  // console.log("date=========", date);
+
   return (
     <div>
       <div className=" flex items-center justify-between">
@@ -91,22 +159,25 @@ export default function FinancePayments() {
               <input
                 type="text"
                 name="search"
-                // value={search}
-                // onChange={handleChange}
-                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56]"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search Transaction ID"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
                 <SearchIcon />
               </button>
             </div>
-            <DatePickerButton />
-            <AllPaymentPlan />
+            <DatePickerButton date={date} setDate={setDate} />
+            <AllPaymentPlan
+              paymentPlan={paymentPlan}
+              setPaymentPlan={setPaymentStatus}
+            />
           </div>
         </div>
         <DynamicTable
           columns={transactionsColumns}
-          data={currentData}
+          data={allPaymentsTransactions}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
           totalpage={totalPages}

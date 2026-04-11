@@ -88,15 +88,13 @@ export default function StatsCard({
               {" "}
               <span
                 className={` text-sm font-semibold py-1 px-2.5 bg-[#323541] rounded-full ${
-                  //   item.percentage.startsWith("-")
                   Number(item?.percentage) < 0
                     ? "text-[#E9201D]"
                     : "text-[#18CC3F]"
                 }`}
               >
-                {/* {item.percentage} */}
                 {Number(item?.percentage) > 0 ? "+" : ""}
-                {item.percentage}%
+                {item?.percentage}%
               </span>{" "}
               <span className=" text-base text-[#8D9CDC]"> vs last month</span>
             </p>

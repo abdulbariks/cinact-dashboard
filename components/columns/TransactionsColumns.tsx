@@ -4,7 +4,7 @@ import Link from "next/link";
 export const transactionsColumns = [
   {
     label: "User ID",
-    accessor: "user_id",
+    accessor: "userId",
     width: "120px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium">{value}</span>
@@ -13,7 +13,7 @@ export const transactionsColumns = [
 
   {
     label: "User Name",
-    accessor: "user_name",
+    accessor: "username",
     width: "200px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium">{value}</span>
@@ -21,7 +21,7 @@ export const transactionsColumns = [
   },
   {
     label: "Transaction ID",
-    accessor: "transaction_id",
+    accessor: "transactionId",
     width: "160px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium">{value}</span>
@@ -29,7 +29,7 @@ export const transactionsColumns = [
   },
   {
     label: "Payment Type",
-    accessor: "payment_type",
+    accessor: "paymentType",
     width: "150px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium capitalize">{value}</span>
@@ -62,7 +62,7 @@ export const transactionsColumns = [
   },
   {
     label: "Payment Plan",
-    accessor: "payment_plan",
+    accessor: "paymentPlan",
     width: "180px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium">{value}</span>
