@@ -57,11 +57,46 @@ export const FinanceService = {
     return await Fetch.get(`/course/all`, withAuthConfig({ token, context }));
   },
 
+  // get Finance Student Management
+    getStudentManagement: async ({
+      token = "",
+      context = null,
+      search = "",
+      studentType = "",
+      paymentStatus = "",
+      paymentType="",
+      page = 1,
+      limit = 10,
+    }: {
+      token?: string;
+      context?: any;
+      search?: string;
+      studentType?:string;
+      paymentStatus?:string;
+      paymentType?:string;
+      page?: number;
+      limit?: number;
+    } = {}) => {
+      return await Fetch.get(
+        `/admin/student-management`,{
+          ...withAuthConfig({ token, context }), params: {
+            search,
+            studentType,
+            paymentStatus,
+            paymentType,
+            page,
+            limit,
+          },
+        }
+      );
+    },
+
+
   // get Finance Payments Stats 
   getFinancePaymentsStats: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/finance/revenue/stats`, withAuthConfig({ token, context }));
   }, 
- 
+
   // get Finance Payments Transactions
     getAllPaymentsTransactions: async ({
       token = "",
@@ -75,7 +110,7 @@ export const FinanceService = {
       token?: string;
       context?: any;
       search?: string;
-      // date?: string;
+      // date?:string;
       paymentPlan?: string | boolean;
       page?: number;
       limit?: number;

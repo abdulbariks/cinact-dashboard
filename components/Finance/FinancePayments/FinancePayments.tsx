@@ -89,7 +89,7 @@ export default function FinancePayments() {
         const response = await FinanceService.getAllPaymentsTransactions({
           token,
           search,
-          // date: date === "all" ? "" : date,
+          // date: date === "undefined" ? "" : date,
           paymentPlan: paymentPlan === "all" ? "" : paymentPlan,
           page: currentPage,
           limit: itemsPerPage,

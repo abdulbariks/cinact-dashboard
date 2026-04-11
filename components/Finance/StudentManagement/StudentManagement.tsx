@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllStatus } from "@/components/reusable/AllStatus";
@@ -9,17 +9,102 @@ import { AllStudentsFilter } from "@/components/SuperAdmin/student-management/St
 import { studentManagementData } from "@/public/demoData/StudentManagementData";
 import Link from "next/link";
 import { financeStudentManagementColumns } from "@/components/columns/financeStudentManagementColumns";
+import { parseCookies } from "nookies";
+import { FinanceService } from "@/service/finance/finance.service";
+import { showErrorToast } from "@/lib/hotToast";
+
+type AllStudentRow = {
+  userId: string;
+  username: string;
+  transactionId: string;
+  amount: string | number;
+  date: string;
+  paymentType: string;
+  paymentPlan: string;
+};
 
 export default function StudentManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [search, setSearch] = useState("");
+  const [studentType, setStudentType] = useState("all");
+  const [paymentStatus, setPaymentStatus] = useState("all");
+  const [paymentType, setPaymentType] = useState("all");
+  const [allStudentManagementData, setAllStudentManagementData] = useState<
+    AllStudentRow[]
+  >([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage, search, studentType, paymentStatus, paymentType]);
+
+  useEffect(() => {
+    const loadsetAllPaymentsTransactions = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await FinanceService.getStudentManagement({
+          token,
+          search,
+          studentType,
+          paymentStatus,
+          paymentType,
+          // paymentPlan: paymentPlan === "all" ? "" : paymentPlan,
+          page: currentPage,
+          limit: itemsPerPage,
+        });
+
+        const studentManagementData = response?.data?.data || [];
+        const pagination = response?.data?.pagination || {};
+        setAllStudentManagementData(studentManagementData);
+        // setStudents(studentsData.map(mapStudentRow));
+        setTotalItems(pagination.total ?? studentManagementData.length);
+        setTotalPages(
+          pagination.totalPages ??
+            Math.ceil(
+              (pagination.total ?? studentManagementData.length) / itemsPerPage,
+            ),
+        );
+      } catch (err: any) {
+        const message =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to load students";
+        setAllStudentManagementData([]);
+        setTotalItems(0);
+        setTotalPages(0);
+        setError(message);
+        showErrorToast(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadsetAllPaymentsTransactions();
+  }, [
+    currentPage,
+    itemsPerPage,
+    search,
+    studentType,
+    paymentStatus,
+    paymentType,
+  ]);
+
+  console.log("allStudentManagementData===", allStudentManagementData);
 
   // Use studentManagementData instead of demoData
-  const totalItems = studentManagementData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = studentManagementData.slice(startIndex, endIndex);
+  // const totalItems = studentManagementData.length;
+  // const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // const startIndex = (currentPage - 1) * itemsPerPage;
+  // const endIndex = startIndex + itemsPerPage;
+  // const currentData = studentManagementData.slice(startIndex, endIndex);
 
   return (
     <div>
@@ -60,7 +145,7 @@ export default function StudentManagement() {
         </div>
         <DynamicTable
           columns={financeStudentManagementColumns}
-          data={currentData}
+          data={allStudentManagementData}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
           totalpage={totalPages}
