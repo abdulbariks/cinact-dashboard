@@ -4,6 +4,8 @@ import RedTeacherIcon from "@/components/icons/SuperAdmindashboard/RedTeacherIco
 import RedUsers from "@/components/icons/SuperAdmindashboard/RedUsers";
 import bgImg from "@/public/admin-dashboard/stats-bg.png";
 import Image from "next/image";
+import AssignmentIcon from "@/components/icons/course-management/AssignmentIcon";
+import { TutorDashboardOverviewResponse } from "./TutorDashboard";
 
 type StatItem = {
   title: string;
@@ -12,30 +14,37 @@ type StatItem = {
   icon: React.ComponentType<{ className?: string }>;
 };
 
-const statsData: StatItem[] = [
-  {
-    title: "My Students",
-    value: 127,
-    icon: RedUsers,
-  },
-  {
-    title: "Active Courses",
-    value: 42,
-    icon: RedGradHat,
-  },
-  {
-    title: "Assignments",
-    value: "12",
-    icon: RedGradHat,
-  },
-  {
-    title: "Completion",
-    value: "127",
-    icon: RedTeacherIcon,
-  },
-];
+export default function StatsCard({
+  data,
+  loading = false,
+}: {
+  data: TutorDashboardOverviewResponse | null;
+  loading?: boolean;
+}) {
+  // console.log("data===============", data);
 
-export default function StatsCard() {
+  const statsData: StatItem[] = [
+    {
+      title: "My Students",
+      value: data?.totalStudents ?? 0,
+      icon: RedUsers,
+    },
+    {
+      title: "Active Courses",
+      value: data?.activeCourses ?? 0,
+      icon: RedGradHat,
+    },
+    {
+      title: "Assignments",
+      value: data?.totalAssignments ?? 0,
+      icon: RedTeacherIcon,
+    },
+    {
+      title: "Completion Rate",
+      value: data?.totalAssignments ?? 0,
+      icon: RedTeacherIcon,
+    },
+  ];
   return (
     <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
       {statsData.map((item, index) => (
