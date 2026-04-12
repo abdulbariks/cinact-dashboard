@@ -7,15 +7,6 @@ import { showErrorToast } from "@/lib/hotToast";
 import { parseCookies } from "nookies";
 import { TutorService } from "@/service/tutor/tutor.service";
 
-type DashboardEnrollment = {
-  id: string;
-  userName: string | null;
-  avatar: string | null;
-  courseName: string;
-  status: string;
-  updatedAt: string;
-};
-
 type DashboardClass = {
   classTitle?: string;
   title?: string;
@@ -41,7 +32,6 @@ export type TutorDashboardOverviewResponse = {
   activeCourses: string | number;
   totalAssignments: string | number;
   totalTeachers: string | number;
-  recentEnrollments: DashboardEnrollment[];
   upcomingClasses: DashboardClass[];
   attendanceTracking: DashboardAttendance[];
 };
