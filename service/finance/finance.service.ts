@@ -90,6 +90,65 @@ export const FinanceService = {
         }
       );
     },
+  // student manual enrollment by Finance team
+    createManualStudentEnrollment: async ({
+        token = "",
+        context = null,
+        courseId,
+        full_name,
+        email,
+        phone,
+        address,
+        date_of_birth,
+        experience_level,
+        acting_goals,
+        transaction_id,
+        currncy,
+        amount,
+        payment_date,
+        rules_signing,
+        contract_signing,
+      }: {
+        token?: string;
+        context?: any;
+        courseId: string;
+        full_name: string;
+        email: string;
+        phone: string;
+        address: string;
+        date_of_birth: string;
+        experience_level: string;
+        acting_goals: string;
+        transaction_id: string;
+        currncy: string;
+        amount: string;
+        payment_date: string;
+        rules_signing: File;
+        contract_signing: File;
+      }) => {
+        const formData = new FormData();
+    
+        formData.append("courseId", courseId);
+        formData.append("full_name", full_name);
+        formData.append("email", email);
+        formData.append("phone", phone);
+        formData.append("address", address);
+        formData.append("date_of_birth", date_of_birth);
+        formData.append("experience_level", experience_level);
+        formData.append("acting_goals", acting_goals);
+        formData.append("transaction_id", transaction_id);
+        formData.append("currncy", currncy);
+        formData.append("amount", amount);
+        formData.append("payment_date", payment_date);
+        formData.append("rules_signing", rules_signing);
+        formData.append("contract_signing", contract_signing);
+    
+        return await Fetch.post(
+          "/admin/student-management/manual-enrollment",
+          formData,
+          withFormDataAuthConfig({ token, context })
+        );
+      },
 
 
   // get Finance Payments Stats 
@@ -143,65 +202,6 @@ export const FinanceService = {
     const queryString = buildQueryString({ page, limit });
 
     return await Fetch.get(`/instructors${queryString}`, withAuthConfig({ token, context }));
-  },
-
-  createManualEnrollment: async ({
-    token = "",
-    context = null,
-    courseId,
-    full_name,
-    email,
-    phone,
-    address,
-    date_of_birth,
-    experience_level,
-    acting_goals,
-    transaction_id,
-    currncy,
-    amount,
-    payment_date,
-    rules_signing,
-    contract_signing,
-  }: {
-    token?: string;
-    context?: any;
-    courseId: string;
-    full_name: string;
-    email: string;
-    phone: string;
-    address: string;
-    date_of_birth: string;
-    experience_level: string;
-    acting_goals: string;
-    transaction_id: string;
-    currncy: string;
-    amount: string;
-    payment_date: string;
-    rules_signing: File;
-    contract_signing: File;
-  }) => {
-    const formData = new FormData();
-
-    formData.append("courseId", courseId);
-    formData.append("full_name", full_name);
-    formData.append("email", email);
-    formData.append("phone", phone);
-    formData.append("address", address);
-    formData.append("date_of_birth", date_of_birth);
-    formData.append("experience_level", experience_level);
-    formData.append("acting_goals", acting_goals);
-    formData.append("transaction_id", transaction_id);
-    formData.append("currncy", currncy);
-    formData.append("amount", amount);
-    formData.append("payment_date", payment_date);
-    formData.append("rules_signing", rules_signing);
-    formData.append("contract_signing", contract_signing);
-
-    return await Fetch.post(
-      "/admin/student-management/manual-enrollment",
-      formData,
-      withFormDataAuthConfig({ token, context })
-    );
   },
 
   // get user details

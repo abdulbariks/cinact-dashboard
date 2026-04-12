@@ -16,11 +16,15 @@ import Image from "next/image";
 import Link from "next/link";
 import confirmImg from "@/public/admin-dashboard/confirm-img.png";
 import BackIcon from "@/components/icons/others/BackIcon";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
+import { parseCookies } from "nookies";
+import { FinanceService } from "@/service/finance/finance.service";
 
 type FormData = {
   course: string;
   studentName: string;
   email: string;
+  phone: string;
   address: string;
   dateOfBirth: string;
   experienceLevel: string;
@@ -46,6 +50,7 @@ const initialFormData: FormData = {
   course: "",
   studentName: "",
   email: "",
+  phone: "",
   address: "",
   dateOfBirth: "",
   experienceLevel: "",
@@ -72,6 +77,8 @@ export default function StudentEnrollmentForm() {
     digitalContractFile?: string;
   }>({});
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -97,6 +104,7 @@ export default function StudentEnrollmentForm() {
       if (!formData.studentName.trim())
         nextErrors.studentName = "Student name is required";
       if (!formData.email.trim()) nextErrors.email = "Email is required";
+      if (!formData.phone.trim()) nextErrors.phone = "Phone is required";
       if (!formData.address.trim()) nextErrors.address = "Address is required";
       if (!formData.dateOfBirth.trim())
         nextErrors.dateOfBirth = "Date of birth is required";
@@ -142,24 +150,59 @@ export default function StudentEnrollmentForm() {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isStepValid = validateStep(3);
     if (!isStepValid) return;
 
-    // Replace with API integration when backend endpoint is available.
-    console.log("Student enrolled:", {
-      formData,
-      rulesAndRegulationFile,
-      digitalContractFile,
-    });
-    setIsSuccessDialogOpen(true);
-    setFormData(initialFormData);
-    setRulesAndRegulationFile(null);
-    setDigitalContractFile(null);
-    setErrors({});
-    setFileErrors({});
-    setCurrentStep(1);
+    if (!rulesAndRegulationFile || !digitalContractFile) return;
+
+    try {
+      setIsSubmitting(true);
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+
+      const response = await FinanceService.createManualStudentEnrollment({
+        token,
+        courseId: formData.course,
+        full_name: formData.studentName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        date_of_birth: formData.dateOfBirth,
+        experience_level: formData.experienceLevel.toUpperCase(),
+        acting_goals: formData.actingGoalsInterests,
+        transaction_id: formData.transactionId,
+        currncy: "usd",
+        amount: formData.paymentAmount,
+        payment_date: formData.paymentDate,
+        rules_signing: rulesAndRegulationFile,
+        contract_signing: digitalContractFile,
+      });
+
+      if (!response?.data?.success) {
+        throw new Error(response?.data?.message || "Failed to enroll student");
+      }
+
+      showSuccessToast(
+        response?.data?.message || "Student enrolled successfully",
+      );
+      setIsSuccessDialogOpen(true);
+      setFormData(initialFormData);
+      setRulesAndRegulationFile(null);
+      setDigitalContractFile(null);
+      setErrors({});
+      setFileErrors({});
+      setCurrentStep(1);
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to enroll student",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileSelect = (field: "rules" | "contract", file: File | null) => {
@@ -209,7 +252,7 @@ export default function StudentEnrollmentForm() {
         </p>
       </div>
       <div className="flex justify-center">
-        <div className="mt-6 w-[696px] rounded-2xl bg-[#0A1726] p-6">
+        <div className="mt-6 w-174 rounded-2xl bg-[#0A1726] p-6">
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-2xl font-semibold text-white">
               Manual Student Enrollment
@@ -217,7 +260,7 @@ export default function StudentEnrollmentForm() {
             {currentStep === 3 && (
               <button
                 type="button"
-                className="rounded-[8px] bg-[#070707] border border-[#3D4566] px-3 py-2 text-base font-medium text-white transition-colors hover:bg-[#101c2d] cursor-pointer"
+                className="rounded-xl bg-[#070707] border border-[#3D4566] px-3 py-2 text-base font-medium text-white transition-colors hover:bg-[#101c2d] cursor-pointer"
               >
                 Preview Document
               </button>

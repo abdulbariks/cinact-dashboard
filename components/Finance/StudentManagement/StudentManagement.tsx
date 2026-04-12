@@ -56,7 +56,7 @@ export default function StudentManagement() {
           studentType,
           paymentStatus,
           paymentType,
-          // paymentPlan: paymentPlan === "all" ? "" : paymentPlan,
+          // paymentType: paymentType === "all" ? "" : paymentType,
           page: currentPage,
           limit: itemsPerPage,
         });
