@@ -52,4 +52,26 @@ export const TutorService = {
     return await Fetch.get(`/dashboard`, withAuthConfig({ token, context }));
   },
 
+    // Get all courses for the tutor
+  getAllCourses: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/courses`, withAuthConfig({ token, context }));
+  },
+
+  // Get single course by id
+  getCourseById: async ({
+    courseId,
+    token = "",
+    context = null,
+  }: {
+    courseId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/${courseId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+  
+
 };

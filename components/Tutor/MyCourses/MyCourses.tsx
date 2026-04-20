@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import RightArrowIcon from "@/components/icons/others/RightArrowIcon";
 import {
   PaymentIcon,
@@ -11,8 +12,41 @@ import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllStatus } from "@/components/reusable/AllStatus";
 import { coursesData } from "@/public/demoData/CoursesData";
 import Link from "next/link";
+import { parseCookies } from "nookies";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { showErrorToast } from "@/lib/hotToast";
+import { TGetCoursesResponse } from "@/types/tutor.mycourse";
 
 export default function MyCourses() {
+  const [allCourses, setAllCourses] = useState<TGetCoursesResponse | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAllCourses = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await TutorService.getAllCourses({
+          token,
+        });
+        setAllCourses(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load dashboard overview",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAllCourses();
+  }, []);
+
+  console.log(allCourses?.data);
   return (
     <div>
       <h2 className=" text-2xl text-[#E6E7E8] font-semibold">My Courses</h2>
@@ -37,13 +71,13 @@ export default function MyCourses() {
           </div>
         </div>
         <div className="flex flex-col gap-6 mt-8">
-          {coursesData.map((course, index) => (
+          {allCourses?.data?.map((course, index) => (
             <div
               key={index}
               className=" bg-[#07121d] p-4 rounded-[12px] border-t-[0.5px] border-b-[0.5px] border-r-[0.5px] border-l-3 border-[#8D9CDC]"
             >
               <h2 className=" text-white text-lg font-medium">
-                {course.course_name}
+                {course.title}
                 <span className=" py-1 px-2.5 rounded-full text-sm text-[#18CC3F] bg-[#2a3d2e]  ml-2">
                   {course.status}
                 </span>
@@ -53,9 +87,12 @@ export default function MyCourses() {
                   <TeacherIcon />
                 </div>
                 <div>
-                  <p className=" text-sm text-[#E6E7E8] ">{course.ins_name}</p>
+                  <p className=" text-sm text-[#E6E7E8] ">
+                    {course?.instructor?.name}
+                  </p>
                   <p className=" text-xs text-[#A5A5AB] ">
-                    {course.ins_specification}
+                    {/* {course.ins_specification} */}
+                    {course?.instructor?.email}
                   </p>
                 </div>
               </div>
@@ -82,10 +119,10 @@ export default function MyCourses() {
                   <div>
                     <div className=" flex items-center gap-1">
                       <UsersIcon />
-                      <p className=" text-xs text-[#B2B5B8] ">Students</p>
+                      <p className="text-xs text-[#B2B5B8]">Students</p>
                     </div>
-                    <p className=" text-sm text-white font-medium mt-1.5">
-                      {course.students}
+                    <p className="text-sm text-white font-medium mt-1.5">
+                      {course.seat_capacity}
                     </p>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ClockIcon from "@/components/icons/course-management/ClockIcon";
 import EnrollmentIcon from "@/components/icons/course-management/EnrollmentIcon";
 import PeriodIcon from "@/components/icons/course-management/PeriodIcon";
@@ -15,9 +15,48 @@ import Link from "next/link";
 import CourseModules from "./CourseModules";
 import CameraIcon from "@/components/icons/others/CameraIcon";
 import Students from "./Students";
+import { useParams } from "next/navigation";
+import { parseCookies } from "nookies";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { showErrorToast } from "@/lib/hotToast";
+import { TGetCourseByIdResponse } from "@/types/tutor.mycourse";
 
 export default function CourseDetails() {
   const [activeTab, setActiveTab] = useState("modules");
+  const params = useParams();
+  const courseId = params?.id;
+  console.log(courseId);
+
+  const [course, setCourse] = useState<TGetCourseByIdResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadCourse = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+
+        const response = await TutorService.getCourseById({
+          courseId: courseId as string,
+          token,
+        });
+
+        setCourse(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load course details",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (courseId) {
+      loadCourse();
+    }
+  }, [courseId]);
 
   const navItems = [
     {
@@ -33,6 +72,7 @@ export default function CourseDetails() {
       activeIcon: <StudentSecondaryIcon />,
     },
   ];
+  console.log("course=====", course?.data);
 
   return (
     <div>
@@ -55,7 +95,8 @@ export default function CourseDetails() {
             {/* item-1 */}
             <div className=" flex items-center justify-between">
               <h3 className=" text-xl text-white font-medium">
-                1 year program ( adult)
+                {/* 1 year program ( adult) */}
+                {course?.data?.title}
               </h3>
 
               <button className="bg-[#E9201D]  text-sm  text-white font-medium  p-3 rounded-[12px] hover:bg-[#E9201D]/80 flex items-center gap-2 cursor-pointer">
@@ -71,7 +112,8 @@ export default function CourseDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Teacher</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  Wade Warren
+                  {/* Wade Warren */}
+                  {course?.data?.instructor?.name}
                 </h3>
               </div>
               <div>
@@ -80,7 +122,8 @@ export default function CourseDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Enrollment</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  45 students
+                  {/* 45 students */}
+                  {course?.data?.total_enrollments} students
                 </h3>
               </div>
               <div>
@@ -89,7 +132,8 @@ export default function CourseDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Duration</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  12 weeks
+                  {/* 12 weeks */}
+                  {course?.data?.duration} weeks
                 </h3>
               </div>
               <div>
@@ -108,8 +152,9 @@ export default function CourseDetails() {
                 Course Overview
               </h3>
               <p className=" mt-2.5 text-sm text-[#D2D2D5]">
-                This course consists of a 2-year period trajectory that runs 1
-                day a week on Sunday takes place.
+                {/* This course consists of a 2-year period trajectory that runs 1
+                day a week on Sunday takes place. */}
+                {course?.data?.course_overview}
               </p>
             </div>
             {/* item-4 */}
