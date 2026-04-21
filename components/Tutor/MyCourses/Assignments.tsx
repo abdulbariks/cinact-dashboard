@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -12,6 +12,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { AddAssignmentModal } from "./modal/AddAssignmentModal";
+import { parseCookies } from "nookies";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { showErrorToast } from "@/lib/hotToast";
+import { TGetAssignmentsResponse } from "@/types/tutor.mycourse";
 
 export const assignments = [
   {
@@ -58,6 +62,40 @@ export default function Assignments() {
   const courseId = params?.id;
   const classId = params?.classId;
 
+  const [assignments, setAssignments] =
+    useState<TGetAssignmentsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAssignments = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+
+        const response = await TutorService.getAllAssignmentsByClass({
+          classId: classId as string,
+          token,
+        });
+
+        setAssignments(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load assignments details",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (classId) {
+      loadAssignments();
+    }
+  }, [classId]);
+
+  console.log("assignments============", assignments);
+
   return (
     <div>
       <h2 className="text-xl font-medium text-white mb-4">All Assignments</h2>
@@ -84,7 +122,7 @@ export default function Assignments() {
 
           <AccordionContent className="px-4 text-[#A5A5AB]">
             <div className=" grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 mt-3">
-              {assignments.map((assignment) => (
+              {assignments?.data?.map((assignment) => (
                 <Link
                   href={
                     courseId && classId
@@ -97,10 +135,22 @@ export default function Assignments() {
                   <div className=" flex items-center justify-between">
                     <div className=" flex items-center gap-2.5">
                       <h3 className=" text-base text-white font-medium">
-                        Assignment {assignment.assignmentNo}
+                        {/* Assignment {assignment.assignmentNo} */}
+                        {assignment?.title}
                       </h3>
                       <p className=" py-1 px-2.5 rounded-full bg-[#f9c80e] text-xs text-[#030C15] font-medium ">
-                        Due {assignment.due}
+                        {/* Due {assignment.due} */}
+                        Due{" "}
+                        {assignment?.due_date
+                          ? new Date(assignment.due_date).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )
+                          : "N/A"}
                       </p>
                     </div>
 
@@ -108,11 +158,11 @@ export default function Assignments() {
                   </div>
 
                   <p className=" text-sm text-[#D2D2D5] mt-1">
-                    {assignment.details}
+                    {assignment?.description}
                   </p>
                   <h4 className=" text-base text-[#18CC3F] mt-2">
-                    Submissions: {assignment.submissionCount} | Graded:{" "}
-                    {assignment.gradedCount}
+                    Submissions: {assignment?.submissions} | Graded:{" "}
+                    {assignment?.grades}
                   </h4>
                 </Link>
               ))}

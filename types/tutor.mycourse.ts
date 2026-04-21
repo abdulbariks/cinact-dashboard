@@ -43,6 +43,7 @@ export type TClass = {
   class_title: string;
   class_name: string;
   class_overview:string;
+  duration:string 
   status:string;
   createdAt: string;
   instructor:TInstructor
@@ -70,4 +71,21 @@ export type TGetClassResponse ={
    message: string;
   success: boolean;
   data:TClass
+}
+
+
+
+export type TAssignment={
+  id:string
+  title:string
+  description:string
+  submissions:string | number
+  grades: string | number
+  due_date: string
+}
+
+export type TGetAssignmentsResponse ={
+  message: string;
+  success: boolean;
+  data: TAssignment[];
 }

@@ -106,6 +106,22 @@ export const TutorService = {
     );
   },
 
+  // Get All Assignments by Class
+  getAllAssignmentsByClass: async ({
+    classId,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/classes/${classId}/assignments`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   
 
 };

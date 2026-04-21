@@ -119,12 +119,13 @@ export default function ClassDetails() {
         </Link>
         <BreadCrumpRightArrow />
         <p className="text-base font-medium text-[#8D9CDC]">
-          class -{classNo} Details{" "}
+          {/* class -{classNo} Details{" "} */}
+          {getClass?.data?.class_title} Details
         </p>
       </div>
       <div className=" flex items-center justify-between mt-8">
         <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
-          Class {classNo} Details
+          {getClass?.data?.class_title} Details
         </h2>
 
         <div className=" flex items-center gap-3">
@@ -142,7 +143,8 @@ export default function ClassDetails() {
 
       <div className=" bg-[#0a1929] p-4 rounded-2xl mt-5">
         <h3 className=" text-xl text-white font-medium mb-4.5">
-          Voice & Breath Control
+          {/* Voice & Breath Control */}
+          {getClass?.data?.class_name}
         </h3>
         <div className=" bg-[#07121d] p-4 rounded-[10px] space-y-4">
           {/* item-1 */}
@@ -155,7 +157,8 @@ export default function ClassDetails() {
                 <p className=" text-xs text-[#A5A5AB] ">Teacher</p>
               </div>
               <h3 className=" text-sm text-white font-medium mt-1.5">
-                Wade Warren
+                {/* Wade Warren */}
+                {getClass?.data?.instructor?.name}
               </h3>
             </div>
             <div>
@@ -164,7 +167,8 @@ export default function ClassDetails() {
                 <p className=" text-xs text-[#A5A5AB] ">Enrollment</p>
               </div>
               <h3 className=" text-sm text-white font-medium mt-1.5">
-                45 students
+                {/* 45 students */}
+                {getClass?.data?.enrollmentCount} students
               </h3>
             </div>
             <div>
@@ -173,7 +177,8 @@ export default function ClassDetails() {
                 <p className=" text-xs text-[#A5A5AB] ">Duration</p>
               </div>
               <h3 className=" text-sm text-white font-medium mt-1.5">
-                12 weeks
+                {/* 12 weeks */}
+                {getClass?.data?.duration} weeks
               </h3>
             </div>
             <div>
@@ -190,8 +195,9 @@ export default function ClassDetails() {
           <div>
             <h3 className=" text-xl text-white font-medium">Class Overview</h3>
             <p className=" mt-2.5 text-sm text-[#D2D2D5]">
-              This course consists of a 2-year period trajectory that runs 1 day
-              a week on Sunday takes place.
+              {/* This course consists of a 2-year period trajectory that runs 1 day
+              a week on Sunday takes place. */}
+              {getClass?.data?.class_overview}
             </p>
           </div>
         </div>
