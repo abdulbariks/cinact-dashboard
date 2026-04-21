@@ -25,7 +25,7 @@ export default function CourseDetails() {
   const [activeTab, setActiveTab] = useState("modules");
   const params = useParams();
   const courseId = params?.id;
-  console.log(courseId);
+  // console.log(courseId);
 
   const [course, setCourse] = useState<TGetCourseByIdResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,7 @@ export default function CourseDetails() {
       activeIcon: <StudentSecondaryIcon />,
     },
   ];
-  console.log("course=====", course?.data);
+  // console.log("course=====", course?.data);
 
   return (
     <div>
@@ -198,7 +198,7 @@ export default function CourseDetails() {
             </div>
 
             <TabsContent value="modules" className="mt-4">
-              <CourseModules />
+              <CourseModules courseId={course?.data?.id} />
             </TabsContent>
             <TabsContent value="students" className="mt-4">
               <Students />

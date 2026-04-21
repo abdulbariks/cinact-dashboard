@@ -1,9 +1,11 @@
+"use client";
 import React, { useState } from "react";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import RightArrowModuleIcon from "@/components/icons/course-management/RightArrowModuleIcon";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AddClassModal from "./modal/AddClassModal";
+import { TModule } from "@/types/tutor.mycourse";
 
 export const classes = [
   {
@@ -92,7 +94,11 @@ export const classes = [
   },
 ];
 
-export default function ModuleDetails() {
+// Define the Props interface
+interface ModuleDetailsProps {
+  module: TModule;
+}
+export default function ModuleDetails({ module }: ModuleDetailsProps) {
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [classData, setClassData] = useState({
     classTitle: "",
@@ -106,13 +112,16 @@ export default function ModuleDetails() {
   const path = usePathname();
   const courseId = path.split("/")[4]; // Extract courseId from the URL
 
+  // console.log("module================", module);
+
   return (
     <div className="mt-3">
       <div className=" px-4 pt-4 pb-8 border  border-[#3D4566] rounded-[12px] bg-[#07121d]">
         <h3 className=" text-base text-white font-medium ">Module Overview</h3>
         <p className=" text-sm text-[#D2D2D5] my-2.5">
-          This module develops the actor’s self-awareness, confidence, and
-          creativity as a foundation for authentic performance.
+          {/* This module develops the actor’s self-awareness, confidence, and
+          creativity as a foundation for authentic performance. */}
+          {module?.module_overview}
         </p>
         <h3 className=" text-sm text-white   mt-4">Key Learning Outcomes</h3>
         <ul className=" mt-2.5">
@@ -137,12 +146,12 @@ export default function ModuleDetails() {
       <div>
         <h3 className=" text-base text-white font-medium my-3">All classes</h3>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {classes.map((cls) => (
+          {module?.classes?.map((cls) => (
             <Link
               href={`/tutor-dashboard/my-courses/my-courses-details/${courseId}/${cls.id}`}
               key={cls.id}
               className={`p-4 border-l-2 rounded-[12px] flex items-center justify-between ${
-                cls.status === "next class"
+                cls.status === "NEXT_CLASS"
                   ? "bg-[#12283d] border-[#F9C80E]"
                   : "bg-[#0a1d2e] border-[#0a1d2e] "
               }`}
@@ -150,12 +159,13 @@ export default function ModuleDetails() {
               <div>
                 <div className=" flex items-center gap-2">
                   <h3 className=" text-sm text-[#8D9CDC] ">
-                    Class-{cls.classNo}
+                    {/* Class-{cls.classNo} */}
+                    {cls.class_title}
                   </h3>
                   {cls.status && (
                     <p
                       className={`text-xs font-medium py-1 px-2 rounded-full inline-block ${
-                        cls.status === "next class"
+                        cls.status === "NEXT_CLASS"
                           ? "text-[#030C15] bg-[#8D9CDC] "
                           : "text-[#18CC3F] bg-[#2a3d2e]"
                       }`}
@@ -165,7 +175,8 @@ export default function ModuleDetails() {
                   )}
                 </div>
                 <h2 className=" text-base text-white font-medium mt-1">
-                  {cls.className}
+                  {/* {cls.className} */}
+                  {cls.class_name}
                 </h2>
               </div>
               <div>

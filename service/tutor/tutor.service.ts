@@ -72,6 +72,40 @@ export const TutorService = {
       withAuthConfig({ token, context }),
     );
   },
+
+    // Get aa course modules
+  getAllCourseModules: async ({
+    courseId,
+    token = "",
+    context = null,
+  }: {
+    courseId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/${courseId}/modules`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+
+    // Get single class by id
+  getClassById: async ({
+    classId,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/classes/${classId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   
 
 };

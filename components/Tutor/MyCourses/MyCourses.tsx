@@ -46,7 +46,7 @@ export default function MyCourses() {
     loadAllCourses();
   }, []);
 
-  console.log(allCourses?.data);
+  // console.log(allCourses?.data);
   return (
     <div>
       <h2 className=" text-2xl text-[#E6E7E8] font-semibold">My Courses</h2>

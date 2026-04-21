@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,6 +21,10 @@ import Attendence from "./Attendence";
 import Assets from "./Assets";
 import CameraIcon from "@/components/icons/others/CameraIcon";
 import Assignments from "./Assignments";
+import { parseCookies } from "nookies";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { showErrorToast } from "@/lib/hotToast";
+import { TGetClassResponse } from "@/types/tutor.mycourse";
 
 export default function ClassDetails() {
   const [activeTab, setActiveTab] = useState("assignments");
@@ -36,9 +40,45 @@ export default function ClassDetails() {
 
   const path = usePathname();
   const courseId = path.split("/")[4];
+  const classId = path.split("/")[5];
   const classNo =
     classes.find((cls) => cls.id === path.split("/")[5])?.classNo ||
     "Class Details";
+
+  console.log("classId=================", classId);
+
+  const [getClass, setGetClass] = useState<TGetClassResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadModules = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+
+        const response = await TutorService.getClassById({
+          classId: classId as string,
+          token,
+        });
+
+        setGetClass(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load Class details",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (courseId) {
+      loadModules();
+    }
+  }, [courseId]);
+
+  console.log("Class===============", getClass);
 
   const navItems = [
     {

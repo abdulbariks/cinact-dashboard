@@ -34,3 +34,40 @@ export type TGetCourseByIdResponse = {
   success: boolean;
   data: TCourse;
 };
+
+
+
+// New Types for Modules 
+export type TClass = {
+  id: string;
+  class_title: string;
+  class_name: string;
+  class_overview:string;
+  status:string;
+  createdAt: string;
+  instructor:TInstructor
+  enrollmentCount: string | number;
+};
+
+export type TModule = {
+  id: string;
+  module_title: string;
+  module_name: string;
+  module_overview: string;
+  courseId: string;
+  createdAt: string;
+  classes: TClass[];
+};
+
+
+export type TGetCourseModulesResponse = {
+  message: string;
+  success: boolean;
+  data: TModule[];
+};
+
+export type TGetClassResponse ={
+   message: string;
+  success: boolean;
+  data:TClass
+}
