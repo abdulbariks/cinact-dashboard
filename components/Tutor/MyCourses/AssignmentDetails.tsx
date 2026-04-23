@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { classes } from "./ModuleDetails";
+// import { classes } from "./ModuleDetails";
 import TeacherIcon from "@/components/icons/course-management/TeacherIcon";
 import SubmissionIcon from "@/components/icons/course-management/SubmissionIcon";
 import StarIcon from "@/components/icons/course-management/StarIcon";
@@ -60,8 +60,8 @@ export default function AssignmentDetails() {
   const classId = params?.classId;
   const assignmentId = params?.assignmentId;
 
-  const classNo =
-    classes.find((cls) => cls.id === classId)?.classNo || "Class Details";
+  // const classNo =
+  //   classes.find((cls) => cls.id === classId)?.classNo || "Class Details";
   // const assignmentNo = assignments.find((assignment) => assignment.id === assignmentId)?.assignmentNo || 'Assignment Details'
 
   return (
@@ -86,7 +86,7 @@ export default function AssignmentDetails() {
           href={`/tutor-dashboard/my-courses/my-courses-details/${courseId}/${classId}`}
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
-          class -{classNo} Details
+          {/* class -{classNo} Details */}
         </Link>
         <BreadCrumpRightArrow />
         <p className="text-base font-medium text-[#8D9CDC]">

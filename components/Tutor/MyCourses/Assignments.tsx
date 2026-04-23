@@ -11,56 +11,73 @@ import WhiteRightArrowIcon from "@/components/icons/course-management/WhiteRight
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
-import { AddAssignmentModal } from "./modal/AddAssignmentModal";
 import { parseCookies } from "nookies";
 import { TutorService } from "@/service/tutor/tutor.service";
-import { showErrorToast } from "@/lib/hotToast";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { TGetAssignmentsResponse } from "@/types/tutor.mycourse";
+import AddAssignmentModal from "./modal/AddAssignmentModal";
+import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 
-export const assignments = [
-  {
-    id: "3300",
-    assignmentNo: "1",
-    due: "2 days",
-    details:
-      "Write a 500-word reflection on your current confidence level and areas for improvement.",
-    submissionCount: 22,
-    gradedCount: 18,
-  },
-  {
-    id: "3301",
-    assignmentNo: "2",
-    due: "4 days",
-    details:
-      "Record and submit a 3-minute monologue focusing on breath support and vocal clarity.",
-    submissionCount: 19,
-    gradedCount: 12,
-  },
-  {
-    id: "3302",
-    assignmentNo: "3",
-    due: "1 week",
-    details:
-      "Perform a partner exercise and submit feedback on listening and response timing.",
-    submissionCount: 17,
-    gradedCount: 10,
-  },
-  {
-    id: "3303",
-    assignmentNo: "4",
-    due: "10 days",
-    details:
-      "Prepare a short scene presentation and attach your rehearsal notes with objectives.",
-    submissionCount: 14,
-    gradedCount: 6,
-  },
-];
+// export const assignments = [
+//   {
+//     id: "3300",
+//     assignmentNo: "1",
+//     due: "2 days",
+//     details:
+//       "Write a 500-word reflection on your current confidence level and areas for improvement.",
+//     submissionCount: 22,
+//     gradedCount: 18,
+//   },
+//   {
+//     id: "3301",
+//     assignmentNo: "2",
+//     due: "4 days",
+//     details:
+//       "Record and submit a 3-minute monologue focusing on breath support and vocal clarity.",
+//     submissionCount: 19,
+//     gradedCount: 12,
+//   },
+//   {
+//     id: "3302",
+//     assignmentNo: "3",
+//     due: "1 week",
+//     details:
+//       "Perform a partner exercise and submit feedback on listening and response timing.",
+//     submissionCount: 17,
+//     gradedCount: 10,
+//   },
+//   {
+//     id: "3303",
+//     assignmentNo: "4",
+//     due: "10 days",
+//     details:
+//       "Prepare a short scene presentation and attach your rehearsal notes with objectives.",
+//     submissionCount: 14,
+//     gradedCount: 6,
+//   },
+// ];
 
-export default function Assignments() {
+interface AssignmentsProps {
+  classTitle: string | undefined;
+  subjectName: string | undefined;
+}
+export default function Assignments({
+  classTitle,
+  subjectName,
+}: AssignmentsProps) {
+  const [isAddAssignmentOpen, setIsAddAssignmentOpen] = useState(false);
+  const [assignmentData, setAssignmentData] = useState({
+    description: "",
+    date: "",
+    totalMarks: "",
+    file: null as File | null,
+  });
   const [openItem, setOpenItem] = useState<string>("class-1");
   const params = useParams<{ id: string; classId: string }>();
   const courseId = params?.id;
   const classId = params?.classId;
+
+  // console.log("classId==========", classId);
 
   const [assignments, setAssignments] =
     useState<TGetAssignmentsResponse | null>(null);
@@ -71,7 +88,6 @@ export default function Assignments() {
       try {
         const cookies = parseCookies();
         const token = cookies.token || cookies.accessToken || "";
-
         const response = await TutorService.getAllAssignmentsByClass({
           classId: classId as string,
           token,
@@ -94,8 +110,38 @@ export default function Assignments() {
     }
   }, [classId]);
 
-  console.log("assignments============", assignments);
+  // console.log("assignments============", assignments);
 
+  const handleAddAssignment = async () => {
+    const formData = new FormData();
+
+    // Append your form fields
+    formData.append("title", subjectName);
+    formData.append("description", assignmentData.description);
+    formData.append("submission_date", assignmentData.date);
+    formData.append("total_marks", assignmentData.totalMarks);
+    // Append the file if it exists
+    if (assignmentData.file) {
+      formData.append("media", assignmentData.file);
+    }
+
+    try {
+      const response = await TutorService.createClassAssignment({
+        classId: classId,
+        payload: formData,
+      });
+      console.log("Assignment created:", response);
+      setIsAddAssignmentOpen(false);
+      showSuccessToast(response?.data?.message || "Class added successfully!");
+    } catch (error) {
+      // console.error("Error creating assignment:", error);
+      showErrorToast(error?.data?.message || "Error creating assignment.");
+    }
+  };
+
+  if (loading) {
+    return <>Loading............</>;
+  }
   return (
     <div>
       <h2 className="text-xl font-medium text-white mb-4">All Assignments</h2>
@@ -113,9 +159,13 @@ export default function Assignments() {
         >
           <AccordionTrigger className="flex cursor-pointer items-center justify-between rounded-t-2xl rounded-b-none px-4 text-left text-white hover:no-underline data-[state=open]:bg-[#262b40]">
             <div className="flex flex-col gap-1">
-              <p className="text-sm text-[#8D9CDC]">Class-1</p>
+              <p className="text-sm text-[#8D9CDC]">
+                {/* Class-1 */}
+                {classTitle}
+              </p>
               <h3 className="text-base font-medium text-white">
-                Voice & Breath Control
+                {/* Voice & Breath Control */}
+                {subjectName}
               </h3>
             </div>
           </AccordionTrigger>
@@ -167,15 +217,25 @@ export default function Assignments() {
                 </Link>
               ))}
               {/* Add Assignment Dotted Button */}
-              {/* <button className="flex items-center justify-center gap-2 border-2 border-dashed border-[#1E2638] cursor-pointer rounded-[12px] p-5 min-h-28 text-[#A1AAB3] hover:text-white hover:border-[#3E4766] transition-all">
-                <Plus className="h-5 w-5" />
-                <span className="font-medium">Add Assignment</span>
-              </button> */}
-              <AddAssignmentModal />
+              <button
+                type="button"
+                onClick={() => setIsAddAssignmentOpen(true)}
+                className="py-6 px-4 border border-dashed border-[#5F6CA0] rounded-[12px] flex items-center justify-center gap-2 text-[#8D9CDC] font-medium hover:text-white hover:border-[#8D9CDC] transition-colors cursor-pointer"
+              >
+                <PlusIcon />
+                Add Assignment
+              </button>
             </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      <AddAssignmentModal
+        open={isAddAssignmentOpen}
+        onOpenChange={setIsAddAssignmentOpen}
+        assignmentData={assignmentData}
+        setAssignmentData={setAssignmentData}
+        onAddAssignment={handleAddAssignment}
+      />
     </div>
   );
 }

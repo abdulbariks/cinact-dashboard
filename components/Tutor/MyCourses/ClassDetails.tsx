@@ -26,6 +26,9 @@ import { TutorService } from "@/service/tutor/tutor.service";
 import { showErrorToast } from "@/lib/hotToast";
 import { TGetClassResponse } from "@/types/tutor.mycourse";
 
+interface ClassDetailsProps {
+  courseId: string | undefined;
+}
 export default function ClassDetails() {
   const [activeTab, setActiveTab] = useState("assignments");
   const [isEditClassOpen, setIsEditClassOpen] = useState(false);
@@ -45,11 +48,10 @@ export default function ClassDetails() {
   //   classes.find((cls) => cls.id === path.split("/")[5])?.classNo ||
   //   "Class Details";
 
-  console.log("classId=================", classId);
+  // console.log("classId=================", classId);
 
   const [getClass, setGetClass] = useState<TGetClassResponse | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const loadModules = async () => {
       try {
@@ -78,7 +80,7 @@ export default function ClassDetails() {
     }
   }, [courseId]);
 
-  console.log("Class===============", getClass);
+  // console.log("Class===============", getClass);
 
   const navItems = [
     {
@@ -225,7 +227,10 @@ export default function ClassDetails() {
           </div>
 
           <TabsContent value="assignments" className="mt-4">
-            <Assignments />
+            <Assignments
+              classTitle={getClass?.data?.class_title}
+              subjectName={getClass?.data?.class_name}
+            />
           </TabsContent>
 
           <TabsContent value="assets" className="mt-4">

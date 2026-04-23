@@ -140,9 +140,7 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
         moduleId: module.id,
         payload: payload,
       });
-
-      console.log("response===============", response);
-
+      // console.log("response===============", response);
       // Close modal and handle success
       setIsAddClassOpen(false);
       // alert("Class added successfully!");

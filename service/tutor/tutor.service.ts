@@ -144,6 +144,26 @@ createTutorClass: async ({
   );
 },
 
+// Create Class Assignment method
+createClassAssignment: async ({
+  classId,
+  payload,
+  token = "",
+  context = null,
+}: {
+  classId: string;
+  payload: FormData; // FormData is required for file attachments
+  token?: string;
+  context?: any;
+}) => {
+  // courses/classes/:classId/assignments
+  return await Fetch.post(
+    `/courses/classes/${classId}/assignments`,
+    payload,
+    withAuthConfig({ token, context }),
+  );
+},
+
 
 
     // Create Class by Tutor
