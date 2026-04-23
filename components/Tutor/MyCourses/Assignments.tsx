@@ -116,7 +116,7 @@ export default function Assignments({
     const formData = new FormData();
 
     // Append your form fields
-    formData.append("title", subjectName);
+    formData.append("title", classTitle);
     formData.append("description", assignmentData.description);
     formData.append("submission_date", assignmentData.date);
     formData.append("total_marks", assignmentData.totalMarks);

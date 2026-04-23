@@ -82,12 +82,22 @@ export type TAssignment={
   submissions:string | number
   grades: string | number
   due_date: string
+  average_score:string | number
+  total_marks: string | number
+  submission_Date: string
+  instructor:TInstructor
 }
 
 export type TGetAssignmentsResponse ={
   message: string;
   success: boolean;
   data: TAssignment[];
+}
+
+export type TGetAssignmentDetailsByIdResponse={
+  message: string;
+  success: boolean;
+  data: TAssignment
 }
 
 

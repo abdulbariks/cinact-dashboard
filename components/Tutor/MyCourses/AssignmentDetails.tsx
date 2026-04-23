@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -13,6 +13,10 @@ import Image from "next/image";
 import { RemarkAssignmentModal } from "./modal/RemarkAssignmentModal";
 import { Download, FileText, Video } from "lucide-react";
 import { UpdateRemarkAssignmentModal } from "./modal/UpdateRemarkAssignmentModal";
+import { parseCookies } from "nookies";
+import { showErrorToast } from "@/lib/hotToast";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { TGetAssignmentDetailsByIdResponse } from "@/types/tutor.mycourse";
 
 const submissions = [
   { id: 1, type: "video", status: "pending" },
@@ -60,6 +64,40 @@ export default function AssignmentDetails() {
   const classId = params?.classId;
   const assignmentId = params?.assignmentId;
 
+  const [assignmentDetails, setAssignmentDetails] =
+    useState<TGetAssignmentDetailsByIdResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAssignmentDetails = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+
+        const response = await TutorService.getAssignmentDetailsById({
+          assignmentId: assignmentId as string,
+          token,
+        });
+
+        setAssignmentDetails(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load assignment details",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (courseId) {
+      loadAssignmentDetails();
+    }
+  }, [courseId]);
+
+  console.log("assignmentDetails==========", assignmentDetails);
+
   // const classNo =
   //   classes.find((cls) => cls.id === classId)?.classNo || "Class Details";
   // const assignmentNo = assignments.find((assignment) => assignment.id === assignmentId)?.assignmentNo || 'Assignment Details'
@@ -76,7 +114,7 @@ export default function AssignmentDetails() {
         </Link>
         <BreadCrumpRightArrow />
         <Link
-          href={`/dashboard/course-management/course-details/${courseId}`}
+          href={`/tutor-dashboard/my-courses/my-courses-details/${courseId}`}
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
           Course Details
@@ -87,6 +125,7 @@ export default function AssignmentDetails() {
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
           {/* class -{classNo} Details */}
+          {assignmentDetails?.data?.title} Details
         </Link>
         <BreadCrumpRightArrow />
         <p className="text-base font-medium text-[#8D9CDC]">
@@ -100,7 +139,8 @@ export default function AssignmentDetails() {
         </h2>
         <div className=" p-4 rounded-2xl bg-[#0A1929] mt-4.5">
           <h3 className=" text-xl text-white font-medium">
-            Introduction to Personal Development
+            {/* Introduction to Personal Development */}
+            {assignmentDetails?.data?.title}
           </h3>
           <div className=" p-4 rounded-[10px] bg-[#07121D] mt-4">
             <div className=" flex items-center justify-between flex-wrap gap-4">
@@ -110,7 +150,8 @@ export default function AssignmentDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Teacher</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  Wade Warren
+                  {/* Wade Warren */}
+                  {assignmentDetails?.data?.instructor?.name}
                 </h3>
               </div>
               <div>
@@ -119,7 +160,8 @@ export default function AssignmentDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Submission</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  22 submitted
+                  {/* 22 submitted */}
+                  {assignmentDetails?.data?.submissions} submitted
                 </h3>
               </div>
               <div>
@@ -128,7 +170,9 @@ export default function AssignmentDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Average Score</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  42.5/50
+                  {/* 42.5/50 */}
+                  {assignmentDetails?.data?.average_score}/
+                  {assignmentDetails?.data?.total_marks}
                 </h3>
               </div>
               <div>
@@ -137,7 +181,8 @@ export default function AssignmentDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Date</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  2024-08-01
+                  {/* 2024-08-01 */}
+                  {assignmentDetails?.data?.submission_Date}
                 </h3>
               </div>
             </div>
@@ -147,10 +192,11 @@ export default function AssignmentDetails() {
                 Assignment Description
               </h3>
               <p className=" mt-2.5 text-sm text-[#D2D2D5]">
-                Write a comprehensive 500-word reflection essay on pur current
+                {/* Write a comprehensive 500-word reflection essay on pur current
                 confidence level, identffying specific areas for 'np«ovement and
                 outlining actionable steps for personal development in your
-                acting Journey.
+                acting Journey. */}
+                {assignmentDetails?.data?.description}
               </p>
             </div>
           </div>

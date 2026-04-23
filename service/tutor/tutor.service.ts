@@ -123,6 +123,22 @@ export const TutorService = {
     );
   },
 
+    // Get Assignment Details By Id
+  getAssignmentDetailsById: async ({
+    assignmentId,
+    token = "",
+    context = null,
+  }: {
+    assignmentId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/assignments/${assignmentId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
 
 
   // Create Tutor Class method
