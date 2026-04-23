@@ -24,6 +24,7 @@ type AddClassModalProps = {
   onOpenChange: (open: boolean) => void;
   classData: AddClassData;
   setClassData: React.Dispatch<React.SetStateAction<AddClassData>>;
+  onAddClass: () => Promise<void>;
 };
 
 export default function AddClassModal({
@@ -31,6 +32,7 @@ export default function AddClassModal({
   onOpenChange,
   classData,
   setClassData,
+  onAddClass,
 }: AddClassModalProps) {
   const inputClassName =
     "w-full rounded-2xl border border-[#3D4566] bg-transparent px-4 py-3 text-white placeholder:text-[#3D4566] outline-none focus:border-[#5F6CA0]";
@@ -172,7 +174,7 @@ export default function AddClassModal({
             </button>
             <button
               type="button"
-              onClick={() => onOpenChange(false)}
+              onClick={onAddClass}
               className="flex cursor-pointer items-center gap-2 rounded-2xl bg-[#E9201D] px-11 py-4 text-base font-medium text-white transition-colors hover:bg-[#ff3b1f]"
             >
               Add Class

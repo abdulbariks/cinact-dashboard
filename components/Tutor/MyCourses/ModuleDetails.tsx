@@ -6,93 +6,95 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AddClassModal from "./modal/AddClassModal";
 import { TModule } from "@/types/tutor.mycourse";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 
-export const classes = [
-  {
-    id: "2200",
-    classNo: "1",
-    className: "Voice & Breath Control",
-    status: "complete",
-  },
-  {
-    id: "2201",
-    classNo: "2",
-    className: "Physical Awareness",
-    status: "complete",
-  },
-  {
-    id: "2202",
-    classNo: "3",
-    className: "Breathing Techniques",
-    status: "complete",
-  },
-  {
-    id: "2203",
-    classNo: "4",
-    className: "Posture and Presence",
-    status: "complete",
-  },
-  {
-    id: "2204",
-    classNo: "5",
-    className: "Vocal Projection",
-    status: "complete",
-  },
-  {
-    id: "2205",
-    classNo: "6",
-    className: "Articulation Practice",
-    status: "complete",
-  },
-  {
-    id: "2206",
-    classNo: "7",
-    className: "Movement Flow",
-    status: "next class",
-  },
-  {
-    id: "2207",
-    classNo: "8",
-    className: "Listening Skills",
-    status: null,
-  },
-  {
-    id: "2208",
-    classNo: "9",
-    className: "Partner Work",
-    status: null,
-  },
-  {
-    id: "2209",
-    classNo: "10",
-    className: "Emotional Recall",
-    status: null,
-  },
-  {
-    id: "2210",
-    classNo: "11",
-    className: "Scene Objectives",
-    status: null,
-  },
-  {
-    id: "2211",
-    classNo: "12",
-    className: "Improvisation Basics",
-    status: null,
-  },
-  {
-    id: "2212",
-    classNo: "13",
-    className: "Character Exploration",
-    status: null,
-  },
-  {
-    id: "2213",
-    classNo: "14",
-    className: "Performance Review",
-    status: null,
-  },
-];
+// export const classes = [
+//   {
+//     id: "2200",
+//     classNo: "1",
+//     className: "Voice & Breath Control",
+//     status: "complete",
+//   },
+//   {
+//     id: "2201",
+//     classNo: "2",
+//     className: "Physical Awareness",
+//     status: "complete",
+//   },
+//   {
+//     id: "2202",
+//     classNo: "3",
+//     className: "Breathing Techniques",
+//     status: "complete",
+//   },
+//   {
+//     id: "2203",
+//     classNo: "4",
+//     className: "Posture and Presence",
+//     status: "complete",
+//   },
+//   {
+//     id: "2204",
+//     classNo: "5",
+//     className: "Vocal Projection",
+//     status: "complete",
+//   },
+//   {
+//     id: "2205",
+//     classNo: "6",
+//     className: "Articulation Practice",
+//     status: "complete",
+//   },
+//   {
+//     id: "2206",
+//     classNo: "7",
+//     className: "Movement Flow",
+//     status: "next class",
+//   },
+//   {
+//     id: "2207",
+//     classNo: "8",
+//     className: "Listening Skills",
+//     status: null,
+//   },
+//   {
+//     id: "2208",
+//     classNo: "9",
+//     className: "Partner Work",
+//     status: null,
+//   },
+//   {
+//     id: "2209",
+//     classNo: "10",
+//     className: "Emotional Recall",
+//     status: null,
+//   },
+//   {
+//     id: "2210",
+//     classNo: "11",
+//     className: "Scene Objectives",
+//     status: null,
+//   },
+//   {
+//     id: "2211",
+//     classNo: "12",
+//     className: "Improvisation Basics",
+//     status: null,
+//   },
+//   {
+//     id: "2212",
+//     classNo: "13",
+//     className: "Character Exploration",
+//     status: null,
+//   },
+//   {
+//     id: "2213",
+//     classNo: "14",
+//     className: "Performance Review",
+//     status: null,
+//   },
+// ];
 
 // Define the Props interface
 interface ModuleDetailsProps {
@@ -112,7 +114,45 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
   const path = usePathname();
   const courseId = path.split("/")[4]; // Extract courseId from the URL
 
-  // console.log("module================", module);
+  // console.log("module================", module?.id);
+
+  // console.log(classData);
+  // Submission handler
+  const handleAddClass = async () => {
+    try {
+      // 1. Format the date into ISO string "YYYY-MM-DDTHH:mm:ss.000Z"
+      const combinedDateTime = new Date(
+        `${classData.date}T${classData.time}:00`,
+      ).toISOString();
+
+      // Prepare payload
+      const payload = {
+        class_title: classData.classTitle,
+        class_name: classData.className,
+        class_overview: classData.classOverview,
+        duration: classData.duration,
+        start_date: combinedDateTime,
+        class_time: classData.time,
+      };
+
+      //  Call API
+      const response = await TutorService.createTutorClass({
+        moduleId: module.id,
+        payload: payload,
+      });
+
+      console.log("response===============", response);
+
+      // Close modal and handle success
+      setIsAddClassOpen(false);
+      // alert("Class added successfully!");
+      showSuccessToast(response?.data?.message || "Class added successfully!");
+    } catch (error) {
+      // console.error("Error creating class:", error);
+      // alert("Failed to create class.");
+      showErrorToast(error?.data?.message || "Failed to create class.");
+    }
+  };
 
   return (
     <div className="mt-3">
@@ -201,6 +241,7 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
         onOpenChange={setIsAddClassOpen}
         classData={classData}
         setClassData={setClassData}
+        onAddClass={handleAddClass}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { classes } from "./ModuleDetails";
+// import { classes } from "./ModuleDetails";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import TeacherIcon from "@/components/icons/course-management/TeacherIcon";
 import EnrollmentIcon from "@/components/icons/course-management/EnrollmentIcon";
@@ -41,9 +41,9 @@ export default function ClassDetails() {
   const path = usePathname();
   const courseId = path.split("/")[4];
   const classId = path.split("/")[5];
-  const classNo =
-    classes.find((cls) => cls.id === path.split("/")[5])?.classNo ||
-    "Class Details";
+  // const classNo =
+  //   classes.find((cls) => cls.id === path.split("/")[5])?.classNo ||
+  //   "Class Details";
 
   console.log("classId=================", classId);
 

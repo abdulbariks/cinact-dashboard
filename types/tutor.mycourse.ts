@@ -89,3 +89,15 @@ export type TGetAssignmentsResponse ={
   success: boolean;
   data: TAssignment[];
 }
+
+
+
+//  Define the interface for the class payload
+export interface CreateTutorClassPayload {
+  class_title: string;
+  class_name: string;
+  class_overview: string;
+  duration: string;
+  start_date: string;
+  class_time: string;
+}
