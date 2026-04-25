@@ -104,7 +104,17 @@ export default function MyCourses() {
                       <p className=" text-xs text-[#B2B5B8] ">Start Date</p>
                     </div>
                     <p className=" text-sm text-white font-medium mt-1.5">
-                      {course.start_date}
+                      {/* {course.start_date} */}
+                      {course.start_date
+                        ? new Date(course.start_date).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )
+                        : "No Date"}
                     </p>
                   </div>
                   <div>

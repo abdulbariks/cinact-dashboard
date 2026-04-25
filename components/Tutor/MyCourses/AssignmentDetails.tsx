@@ -217,7 +217,15 @@ export default function AssignmentDetails() {
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
                   {/* 2024-08-01 */}
-                  {assignmentDetails?.data?.submission_Date}
+                  {assignmentDetails?.data?.submission_Date
+                    ? new Date(
+                        assignmentDetails.data.submission_Date,
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "No Date"}
                 </h3>
               </div>
             </div>

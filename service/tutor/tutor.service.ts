@@ -274,8 +274,30 @@ createClassAssignment: async ({
         withFormDataAuthConfig({ token, context })
       );
     },
-  
-
-  
-
 };
+
+
+export const TutorSystemSettingService = {
+  // Tutor Personal Info
+  getPersonalInfo: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/profile/personal-info`, withAuthConfig({ token, context }));
+  },
+
+  // auth/change-password
+  changePassword: async ({
+  payload,
+  token = "",
+  context = null,
+}: {
+  payload: any;
+  token?: string;
+  context?: any;
+}) => {
+  return await Fetch.post(
+    `/auth/change-password`,
+    payload,
+    withAuthConfig({ token, context }),
+  );
+},
+
+}
