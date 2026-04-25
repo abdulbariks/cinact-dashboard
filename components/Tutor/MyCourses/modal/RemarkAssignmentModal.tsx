@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,10 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { X, ChevronDown } from "lucide-react";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 
 // Form Validation Schema
 const remarkSchema = z.object({
-  remarkNumber: z.string().min(1, "Required"),
+  grade_number: z.string().min(1, "Required"),
   grade: z.string().min(1, "Required"),
   feedback: z.string().min(5, "Feedback must be at least 5 characters"),
 });
@@ -32,6 +34,7 @@ export function RemarkAssignmentModal({
   submissionId,
   studentName,
 }: RemarkAssignmentModalProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -44,10 +47,42 @@ export function RemarkAssignmentModal({
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Remark Data Submitted:", data);
-    // You can add your logic here (API call, state update, etc.)
-    reset(); // Reset form after submission
+  console.log("submissionId=====", submissionId);
+
+  // const onSubmit = (data) => {
+  //   console.log("Remark Data Submitted:", data);
+  //   // You can add your logic here (API call, state update, etc.)
+  //   reset(); // Reset form after submission
+  // };
+  const onSubmit = async (data: any) => {
+    setIsSubmitting(true);
+    try {
+      // Prepare payload with proper types
+      const payload = {
+        grade_number: Number(data.grade_number),
+        grade: data.grade,
+        feedback: data.feedback,
+      };
+
+      // Call the API
+      const response = await TutorService.updateRemarkAssignment({
+        submissionId,
+        payload,
+      });
+
+      // Success handling
+      // console.log("Remark Submitted Successfully");
+      showSuccessToast(
+        response?.data?.message || "Remark Submitted Successfully",
+      );
+      reset();
+      onOpenChange(false); // Close modal
+    } catch (error) {
+      // console.error("Failed to submit remark:", error);
+      showErrorToast(error?.data?.message || "Failed to submit remark.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inputStyles =
@@ -76,7 +111,7 @@ export function RemarkAssignmentModal({
             <label className={labelStyles}>Remark Number</label>
             <div className="relative">
               <input
-                {...register("remarkNumber")}
+                {...register("grade_number")}
                 type="text"
                 placeholder="Enter Number"
                 className={inputStyles}
@@ -85,9 +120,9 @@ export function RemarkAssignmentModal({
                 /50
               </span>
             </div>
-            {errors.remarkNumber && (
+            {errors.grade_number && (
               <p className="text-red-500 text-xs mt-1">
-                {errors.remarkNumber.message}
+                {errors.grade_number.message}
               </p>
             )}
           </div>

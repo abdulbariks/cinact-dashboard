@@ -185,7 +185,7 @@ createClassAssignment: async ({
   context = null,
 }: {
   classId: string;
-  payload: FormData; // FormData is required for file attachments
+  payload: FormData;
   token?: string;
   context?: any;
 }) => {
@@ -197,7 +197,23 @@ createClassAssignment: async ({
   );
 },
 
-
+    updateRemarkAssignment :async({
+      submissionId,
+      payload,
+      token = "",
+      context = null,}:{
+      submissionId: string;
+      payload: any; 
+      token?: string;
+      context?: any;
+    })=>{
+        return await Fetch.patch(
+          // /courses/submissions/:submissionId/grade
+          `/courses/submissions/${submissionId}/grade`,
+          payload,
+          withAuthConfig({ token, context }),
+        );
+    },
 
     // Create Class by Tutor
     createManualEnrollment: async ({

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,10 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { X, ChevronDown } from "lucide-react";
+import { TutorService } from "@/service/tutor/tutor.service";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 
 // Form Validation Schema
 const remarkSchema = z.object({
-  remarkNumber: z.string().min(1, "Required"),
+  grade_number: z.string().min(1, "Required"),
   grade: z.string().min(1, "Required"),
   feedback: z.string().min(5, "Feedback must be at least 5 characters"),
 });
@@ -24,6 +26,9 @@ type UpdateRemarkAssignmentModalProps = {
   onOpenChange: (open: boolean) => void;
   submissionId: string;
   studentName: string;
+  grade_number?: number | string;
+  grade?: string;
+  feedback?: string;
 };
 
 export function UpdateRemarkAssignmentModal({
@@ -31,23 +36,71 @@ export function UpdateRemarkAssignmentModal({
   onOpenChange,
   submissionId,
   studentName,
+  grade_number,
+  grade,
+  feedback,
 }: UpdateRemarkAssignmentModalProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm({
     resolver: zodResolver(remarkSchema),
     defaultValues: {
+      grade_number: "",
       grade: "A Grade",
+      feedback: "",
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Remark Data Submitted:", data);
-    // You can add your logic here (API call, state update, etc.)
-    reset(); // Reset form after submission
+  console.log("gradegrade", grade_number, grade);
+
+  useEffect(() => {
+    reset({
+      grade_number: grade_number ? String(grade_number) : "",
+      grade: grade || "A Grade",
+      feedback: feedback || "",
+    });
+  }, [grade_number, grade, feedback, reset]);
+
+  // const onSubmit = (data) => {
+  //   console.log("Remark Data Submitted:", data);
+  //   // You can add your logic here (API call, state update, etc.)
+  //   reset(); // Reset form after submission
+  // };
+
+  const onSubmit = async (data: any) => {
+    setIsSubmitting(true);
+    try {
+      // Prepare payload with proper types
+      const payload = {
+        grade_number: Number(data.grade_number),
+        grade: data.grade,
+        feedback: data.feedback,
+      };
+
+      // Call the API
+      const response = await TutorService.updateRemarkAssignment({
+        submissionId,
+        payload,
+      });
+
+      // Success handling
+      // console.log("Remark Submitted Successfully");
+      showSuccessToast(
+        response?.data?.message || "Updated Remark Submitted Successfully",
+      );
+      reset();
+      onOpenChange(false); // Close modal
+    } catch (error) {
+      // console.error("Failed to submit remark:", error);
+      showErrorToast(error?.data?.message || "Failed to submit remark.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inputStyles =
@@ -55,7 +108,7 @@ export function UpdateRemarkAssignmentModal({
   const labelStyles = "text-[#A1AAB3] text-sm font-medium";
 
   return (
-    <Dialog onOpenChange={(open) => !open && reset()}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       {/* Trigger: Connect this to your 'Remark Assignment' button */}
       <DialogTrigger asChild>
         <button className="bg-[#414B6F] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#505B86] transition-colors cursor-pointer">
@@ -76,7 +129,7 @@ export function UpdateRemarkAssignmentModal({
             <label className={labelStyles}>Remark Number</label>
             <div className="relative">
               <input
-                {...register("remarkNumber")}
+                {...register("grade_number")}
                 type="text"
                 placeholder="Enter Number"
                 className={inputStyles}
@@ -85,9 +138,9 @@ export function UpdateRemarkAssignmentModal({
                 /50
               </span>
             </div>
-            {errors.remarkNumber && (
+            {errors.grade_number && (
               <p className="text-red-500 text-xs mt-1">
-                {errors.remarkNumber.message}
+                {errors.grade_number.message}
               </p>
             )}
           </div>
@@ -100,6 +153,9 @@ export function UpdateRemarkAssignmentModal({
                 {...register("grade")}
                 className={`${inputStyles} appearance-none cursor-pointer`}
               >
+                <option value="" disabled>
+                  Select a grade
+                </option>
                 <option value="A Grade">A Grade</option>
                 <option value="B Grade">B Grade</option>
                 <option value="C Grade">C Grade</option>
@@ -129,9 +185,11 @@ export function UpdateRemarkAssignmentModal({
           <div className="flex justify-end pt-4">
             <button
               type="submit"
+              disabled={isSubmitting}
               className="px-10 py-3 bg-[#F23030] hover:bg-[#d42a2a] rounded-[15px] font-semibold text-white transition-all cursor-pointer"
             >
-              Submit Remark
+              {/* Submit Remark */}
+              {isSubmitting ? "Submit Remark..." : "Submit Remark"}
             </button>
           </div>
         </form>

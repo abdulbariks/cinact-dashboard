@@ -117,6 +117,7 @@ export type TSubmittedAssignment ={
     grade:string
     score:string | number
     grade_number:string | number
+    feedback:string
   }
 }
 

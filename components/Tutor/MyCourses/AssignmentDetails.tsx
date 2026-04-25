@@ -398,8 +398,11 @@ export default function AssignmentDetails() {
                         <UpdateRemarkAssignmentModal
                           open={isUpdateRemarkAssignmentModalOpen}
                           onOpenChange={setIsUpdateRemarkAssignmentModalOpen}
-                          submissionId={sub.id}
-                          studentName={sub.student?.name}
+                          submissionId={sub?.id}
+                          studentName={sub?.student?.name}
+                          grade_number={sub?.grade?.grade_number}
+                          grade={sub?.grade?.grade}
+                          feedback={sub?.grade?.feedback}
                         />
                       )}
                     </div>
