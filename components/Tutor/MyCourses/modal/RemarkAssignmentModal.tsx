@@ -22,11 +22,15 @@ const remarkSchema = z.object({
 type RemarkAssignmentModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  submissionId: string;
+  studentName: string;
 };
 
 export function RemarkAssignmentModal({
   open,
   onOpenChange,
+  submissionId,
+  studentName,
 }: RemarkAssignmentModalProps) {
   const {
     register,

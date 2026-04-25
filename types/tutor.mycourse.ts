@@ -73,8 +73,6 @@ export type TGetClassResponse ={
   data:TClass
 }
 
-
-
 export type TAssignment={
   id:string
   title:string
@@ -98,6 +96,34 @@ export type TGetAssignmentDetailsByIdResponse={
   message: string;
   success: boolean;
   data: TAssignment
+}
+
+export type TStudent ={
+  id:string
+  name:string
+  avatar:string
+}
+
+export type TSubmittedAssignment ={
+  id:string
+  title:string
+  description:string
+  submitted_at:string
+  file_url:string
+  assignment_id:string
+  student:TStudent
+  grade:{
+    status:string
+    grade:string
+    score:string | number
+    grade_number:string | number
+  }
+}
+
+export type TGetAllSubmittedAssignmentsResponse={
+  message: string;
+  success: boolean;
+  data: TSubmittedAssignment[]
 }
 
 

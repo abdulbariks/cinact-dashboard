@@ -16,37 +16,40 @@ import { UpdateRemarkAssignmentModal } from "./modal/UpdateRemarkAssignmentModal
 import { parseCookies } from "nookies";
 import { showErrorToast } from "@/lib/hotToast";
 import { TutorService } from "@/service/tutor/tutor.service";
-import { TGetAssignmentDetailsByIdResponse } from "@/types/tutor.mycourse";
+import {
+  TGetAllSubmittedAssignmentsResponse,
+  TGetAssignmentDetailsByIdResponse,
+} from "@/types/tutor.mycourse";
 
-const submissions = [
-  { id: 1, type: "video", status: "pending" },
-  { id: 2, type: "pdf", status: "pending" },
-  { id: 3, type: "video", status: "pending" },
-  {
-    id: 4,
-    type: "video",
-    status: "graded",
-    grade: "A Grade",
-    score: "48/50",
-    gradeColor: "#109334",
-  },
-  {
-    id: 5,
-    type: "pdf",
-    status: "graded",
-    grade: "B Grade",
-    score: "38/50",
-    gradeColor: "#007AFF",
-  },
-  {
-    id: 6,
-    type: "pdf",
-    status: "graded",
-    grade: "F Grade",
-    score: "18/50",
-    gradeColor: "#F23030",
-  },
-];
+// const submissions = [
+//   { id: 1, type: "video", status: "pending" },
+//   { id: 2, type: "pdf", status: "pending" },
+//   { id: 3, type: "video", status: "pending" },
+//   {
+//     id: 4,
+//     type: "video",
+//     status: "graded",
+//     grade: "A Grade",
+//     score: "48/50",
+//     gradeColor: "#109334",
+//   },
+//   {
+//     id: 5,
+//     type: "pdf",
+//     status: "graded",
+//     grade: "B Grade",
+//     score: "38/50",
+//     gradeColor: "#007AFF",
+//   },
+//   {
+//     id: 6,
+//     type: "pdf",
+//     status: "graded",
+//     grade: "F Grade",
+//     score: "18/50",
+//     gradeColor: "#F23030",
+//   },
+// ];
 
 export default function AssignmentDetails() {
   const [isRemarkAssignmentModalOpen, setIsRemarkAssignmentModalOpen] =
@@ -66,6 +69,8 @@ export default function AssignmentDetails() {
 
   const [assignmentDetails, setAssignmentDetails] =
     useState<TGetAssignmentDetailsByIdResponse | null>(null);
+  const [allSubmittedAssignment, setAllSubmittedAssignment] =
+    useState<TGetAllSubmittedAssignmentsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -91,12 +96,42 @@ export default function AssignmentDetails() {
       }
     };
 
-    if (courseId) {
+    if (assignmentId) {
       loadAssignmentDetails();
     }
-  }, [courseId]);
+  }, [assignmentId]);
 
-  console.log("assignmentDetails==========", assignmentDetails);
+  // console.log("assignmentDetails==========", assignmentDetails);
+
+  useEffect(() => {
+    const loadAllSubmittedAssignments = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+
+        const response = await TutorService.getAllSubmittedAssignments({
+          assignmentId: assignmentId as string,
+          token,
+        });
+
+        setAllSubmittedAssignment(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load assignment details",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (assignmentId) {
+      loadAllSubmittedAssignments();
+    }
+  }, [assignmentId]);
+
+  console.log("allSubmittedAssignment=========", allSubmittedAssignment?.data);
 
   // const classNo =
   //   classes.find((cls) => cls.id === classId)?.classNo || "Class Details";
@@ -215,16 +250,16 @@ export default function AssignmentDetails() {
         <div className="mt-5 bg-[#0A1929] rounded-2xl p-6 border border-[#0f1f35]">
           <div className="w-full bg-[#040D16] rounded-2xl p-6">
             <h2 className="text-white text-xl font-semibold mb-6">
-              Student Assignment Submissions (22)
+              {/* Student Assignment Submissions (22) */} Student Assignment
+              Submissions ({allSubmittedAssignment?.data?.length || 0})
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {submissions.map((sub) => (
+              {/* {submissions.map((sub) => (
                 <div
                   key={sub.id}
                   className="bg-[#0A1D2E] p-5 rounded-[15px] border border-[#1C2632]"
                 >
-                  {/* Header: Profile & Action Button */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-700">
@@ -244,9 +279,6 @@ export default function AssignmentDetails() {
                     </div>
 
                     {sub.status === "pending" ? (
-                      // <button className="bg-[#F23030] text-white text-xs px-4 py-2 rounded-lg hover:bg-red-700 transition-colors cursor-pointer">
-                      //   Remark Assignment
-                      // </button>
                       <RemarkAssignmentModal
                         open={isRemarkAssignmentModalOpen}
                         onOpenChange={setIsRemarkAssignmentModalOpen}
@@ -258,8 +290,6 @@ export default function AssignmentDetails() {
                       />
                     )}
                   </div>
-
-                  {/* Submission Time & Grade Badges */}
                   <div className="flex justify-between items-center mb-4">
                     <p className="text-[#8D9CDC] font-medium">
                       Submitted:{" "}
@@ -282,8 +312,6 @@ export default function AssignmentDetails() {
                       </div>
                     )}
                   </div>
-
-                  {/* Attachment Box */}
                   <div className="bg-[#0A1D2E] border border-[#1C2632] rounded-lg overflow-hidden mb-4 flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="bg-[#1C2632] p-4 text-[#8D9CDC]">
@@ -304,8 +332,6 @@ export default function AssignmentDetails() {
                       className="mr-4 text-[#F23030] cursor-pointer"
                     />
                   </div>
-
-                  {/* Description Area */}
                   <div className="border border-dashed bg-[#0A1A29] border-[#1C2632] rounded-lg p-3">
                     <h4 className="text-white text-xs font-medium mb-1">
                       Description
@@ -315,7 +341,136 @@ export default function AssignmentDetails() {
                     </p>
                   </div>
                 </div>
-              ))}
+              ))} */}
+
+              {allSubmittedAssignment?.data?.map((sub) => {
+                // Determine if the assignment is graded
+                const isGraded = sub.grade && Object.keys(sub.grade).length > 0;
+
+                // Format the date
+                const dateObj = new Date(sub.submitted_at);
+                const formattedDate = `${dateObj.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" })} | ${dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+
+                // Extract filename
+                const fileName = sub.file_url
+                  ? sub.file_url.split("/").pop()
+                  : "Attachment";
+                const isVideo =
+                  fileName.toLowerCase().endsWith(".mp4") ||
+                  fileName.toLowerCase().endsWith(".mov");
+
+                return (
+                  <div
+                    key={sub?.id}
+                    className="bg-[#0A1D2E] p-5 rounded-[15px] border border-[#1C2632]"
+                  >
+                    {/* Header: Profile & Action Button */}
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-700 bg-gray-800">
+                          <Image
+                            src={sub.student?.avatar || "/profile.png"}
+                            alt="avatar"
+                            width={40}
+                            height={40}
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="text-white font-medium text-sm">
+                            {sub.student?.name || "Unknown Student"}
+                          </h3>
+                          <p className="text-[#8D9CDC] text-xs">
+                            ID-{sub.student?.id?.slice(-6).toUpperCase()}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Modal Logic */}
+                      {!isGraded ? (
+                        <RemarkAssignmentModal
+                          open={isRemarkAssignmentModalOpen}
+                          onOpenChange={setIsRemarkAssignmentModalOpen}
+                          submissionId={sub.id}
+                          studentName={sub.student?.name}
+                        />
+                      ) : (
+                        <UpdateRemarkAssignmentModal
+                          open={isUpdateRemarkAssignmentModalOpen}
+                          onOpenChange={setIsUpdateRemarkAssignmentModalOpen}
+                          submissionId={sub.id}
+                          studentName={sub.student?.name}
+                        />
+                      )}
+                    </div>
+
+                    {/* Submission Time & Grade Badges */}
+                    <div className="flex justify-between items-center mb-4">
+                      <p className="text-[#8D9CDC] font-medium">
+                        Submitted:{" "}
+                        <span className="text-white">{formattedDate}</span>
+                      </p>
+
+                      {isGraded && (
+                        <div className="flex gap-2">
+                          <span
+                            className="text-[10px] px-2 py-1 rounded bg-opacity-10 font-bold"
+                            // style={{
+                            //   color:
+                            //     sub?.grade?.score === "A+" ? "#10B981" : "",
+                            // }}
+                            style={{
+                              color: "#10B981", // You can map colors dynamically based on grade
+                              backgroundColor: "#10B98122",
+                            }}
+                          >
+                            {sub?.grade?.grade}
+                          </span>
+                          <span className="text-[10px] px-2 py-1 rounded bg-[#1C2632] text-[#8D9CDC] font-bold">
+                            {sub.grade.grade_number}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Attachment Box */}
+                    <div className="bg-[#0A1D2E] border border-[#1C2632] rounded-lg overflow-hidden mb-4 flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="bg-[#1C2632] p-4 text-[#8D9CDC]">
+                          {isVideo ? (
+                            <Video size={18} />
+                          ) : (
+                            <FileText size={18} />
+                          )}
+                        </div>
+                        <span className="ml-4 text-[#A1AAB3] text-xs truncate max-w-37.5">
+                          {decodeURIComponent(fileName)}
+                        </span>
+                      </div>
+                      <a
+                        href={sub.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Download
+                          size={16}
+                          className="mr-4 text-[#F23030] cursor-pointer"
+                        />
+                      </a>
+                    </div>
+
+                    {/* Description Area */}
+                    <div className="border border-dashed bg-[#0A1A29] border-[#1C2632] rounded-lg p-3">
+                      <h4 className="text-white text-xs font-medium mb-1">
+                        Description
+                      </h4>
+                      <p className="text-[#A1AAB3] text-xs">
+                        {sub.description || "No description provided."}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

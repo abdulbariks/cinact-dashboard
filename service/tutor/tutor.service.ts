@@ -139,6 +139,23 @@ export const TutorService = {
     );
   },
 
+// get All Submitted Assignments
+  getAllSubmittedAssignments:async({
+    assignmentId,
+    token = "",
+    context = null,
+  }: {
+    assignmentId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      // courses/assignments/:assignmentId/submissions
+      `/courses/assignments/${assignmentId}/submissions`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
 
 
   // Create Tutor Class method
