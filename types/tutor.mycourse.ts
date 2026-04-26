@@ -128,6 +128,26 @@ export type TGetAllSubmittedAssignmentsResponse={
 }
 
 
+export type TVideos={
+  id:string;
+  asset_url:string
+  file_name:string
+}
+export type TFiles={
+  id:string;
+  asset_url:string
+  file_name:string
+}
+
+export type TGetAssetsResponse={
+  message: string;
+  success: boolean;
+  data:{
+   videos:TVideos[]
+   files:TFiles[]
+  }
+}
+
 
 //  Define the interface for the class payload
 export interface CreateTutorClassPayload {

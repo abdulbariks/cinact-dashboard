@@ -234,7 +234,10 @@ export default function ClassDetails() {
           </TabsContent>
 
           <TabsContent value="assets" className="mt-4">
-            <Assets />
+            <Assets
+              classTitle={getClass?.data?.class_title}
+              subjectName={getClass?.data?.class_name}
+            />
           </TabsContent>
 
           <TabsContent value="attendence" className="mt-4">

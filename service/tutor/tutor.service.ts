@@ -122,6 +122,22 @@ export const TutorService = {
       withAuthConfig({ token, context }),
     );
   },
+  // Get All Assets By Class
+  getAllAssetsByClass: async ({
+    classId,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    // /courses/classes/:classId/media
+    return await Fetch.get(
+      `/courses/classes/${classId}/media`,
+      withAuthConfig({ token, context }),
+    );
+  },
 
     // Get Assignment Details By Id
   getAssignmentDetailsById: async ({
@@ -194,6 +210,32 @@ createClassAssignment: async ({
     `/courses/classes/${classId}/assignments`,
     payload,
     withAuthConfig({ token, context }),
+  );
+},
+// Upload Assets in Class
+uploadAssents: async ({
+  classId,
+  payload,
+  token = "",
+  context = null,
+}: {
+  classId: string;
+  payload: FormData;
+  token?: string;
+  context?: any;
+}) => {
+  const config = withAuthConfig({ token, context });
+
+  //Remove the default JSON header
+  if (config.headers && config.headers['Content-Type']) {
+    delete config.headers['Content-Type'];
+  }
+
+  //Perform the request
+  return await Fetch.post(
+    `/courses/classes/${classId}/media`,
+    payload,
+    config
   );
 },
 
