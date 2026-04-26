@@ -14,8 +14,8 @@ type AttendanceStatus = "present" | "absent" | "late";
 
 export interface AttendenceListRow {
   id: number;
-  student_name: string;
-  student_id: string;
+  studentName: string;
+  studentId: string;
   date: string;
   status: AttendanceStatus | string;
   attendence_by: string;
@@ -87,7 +87,7 @@ function ChangeAttendenceSelect({ initialStatus }: { initialStatus: string }) {
 export const MyCourseClassAttendenceColumns: AttendanceColumn[] = [
   {
     label: "Student Name",
-    accessor: "student_name",
+    accessor: "studentName",
     width: "220px",
     formatter: (value: string) => (
       <span className="text-base text-white font-medium">{value}</span>
@@ -95,7 +95,7 @@ export const MyCourseClassAttendenceColumns: AttendanceColumn[] = [
   },
   {
     label: "Student ID",
-    accessor: "student_id",
+    accessor: "studentId",
     width: "130px",
     formatter: (value: string) => (
       <span className="text-sm text-[#D2D2D5]  ">{value}</span>

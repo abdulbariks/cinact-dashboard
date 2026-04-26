@@ -25,79 +25,79 @@ import { TGetAssetsResponse } from "@/types/tutor.mycourse";
 import { TutorService } from "@/service/tutor/tutor.service";
 import AddAssetsModal from "./modal/AddAssetsModal";
 
-export const assets = [
-  {
-    id: "a-1",
-    moduleNo: "1",
-    title: "Personal Development",
-    details:
-      "Build confidence, awareness, and a strong acting foundation for the class.",
-    videos: [
-      "class-1.mp4",
-      "class-2.mp4",
-      "class-3.mp4",
-      "class-4.mp4",
-      "class-5.mp4",
-    ],
-    attachments: [
-      "breath-control.pdf",
-      "vocal-projection.pdf",
-      "articulation-practice.pdf",
-      "movement-flow.pdf",
-      "listening-skills.pdf",
-    ],
-  },
-  {
-    id: "a-2",
-    moduleNo: "2",
-    title: "Script Analysis",
-    details:
-      "Review the script structure, objectives, and character motivations.",
-    videos: [
-      "script-analysis-1.mp4",
-      "script-analysis-2.mp4",
-      "script-analysis-3.mp4",
-    ],
-    attachments: [
-      "scene-breakdown.pdf",
-      "character-notes.pdf",
-      "objective-sheet.pdf",
-    ],
-  },
-  {
-    id: "a-3",
-    moduleNo: "3",
-    title: "Voice Training",
-    details: "Practice projection, articulation, and breath control exercises.",
-    videos: [
-      "voice-training-1.mp4",
-      "voice-training-2.mp4",
-      "voice-training-3.mp4",
-    ],
-    attachments: [
-      "voice-exercises.pdf",
-      "breathing-drills.pdf",
-      "projection-guide.pdf",
-    ],
-  },
-  {
-    id: "a-4",
-    moduleNo: "4",
-    title: "Performance Review",
-    details:
-      "Track rehearsal progress and prepare feedback for final presentation.",
-    videos: [
-      "performance-review-1.mp4",
-      "performance-review-2.mp4",
-      "performance-review-3.mp4",
-    ],
-    attachments: [
-      "review-checklist.pdf",
-      "feedback-form.pdf",
-      "final-notes.pdf",
-    ],
-  },
-];
+// export const assets = [
+//   {
+//     id: "a-1",
+//     moduleNo: "1",
+//     title: "Personal Development",
+//     details:
+//       "Build confidence, awareness, and a strong acting foundation for the class.",
+//     videos: [
+//       "class-1.mp4",
+//       "class-2.mp4",
+//       "class-3.mp4",
+//       "class-4.mp4",
+//       "class-5.mp4",
+//     ],
+//     attachments: [
+//       "breath-control.pdf",
+//       "vocal-projection.pdf",
+//       "articulation-practice.pdf",
+//       "movement-flow.pdf",
+//       "listening-skills.pdf",
+//     ],
+//   },
+//   {
+//     id: "a-2",
+//     moduleNo: "2",
+//     title: "Script Analysis",
+//     details:
+//       "Review the script structure, objectives, and character motivations.",
+//     videos: [
+//       "script-analysis-1.mp4",
+//       "script-analysis-2.mp4",
+//       "script-analysis-3.mp4",
+//     ],
+//     attachments: [
+//       "scene-breakdown.pdf",
+//       "character-notes.pdf",
+//       "objective-sheet.pdf",
+//     ],
+//   },
+//   {
+//     id: "a-3",
+//     moduleNo: "3",
+//     title: "Voice Training",
+//     details: "Practice projection, articulation, and breath control exercises.",
+//     videos: [
+//       "voice-training-1.mp4",
+//       "voice-training-2.mp4",
+//       "voice-training-3.mp4",
+//     ],
+//     attachments: [
+//       "voice-exercises.pdf",
+//       "breathing-drills.pdf",
+//       "projection-guide.pdf",
+//     ],
+//   },
+//   {
+//     id: "a-4",
+//     moduleNo: "4",
+//     title: "Performance Review",
+//     details:
+//       "Track rehearsal progress and prepare feedback for final presentation.",
+//     videos: [
+//       "performance-review-1.mp4",
+//       "performance-review-2.mp4",
+//       "performance-review-3.mp4",
+//     ],
+//     attachments: [
+//       "review-checklist.pdf",
+//       "feedback-form.pdf",
+//       "final-notes.pdf",
+//     ],
+//   },
+// ];
 
 interface AssetsProps {
   classTitle: string | undefined;
@@ -288,7 +288,10 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
                     </div>
                   ))}
                 </div>
-                <button className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-[#1E2638] rounded-lg py-4 mt-5 text-[#A1AAB3] hover:text-white hover:border-[#3E4766] transition-all cursor-pointer">
+                <button
+                  onClick={() => setIsAddAssetsOpen(true)}
+                  className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-[#1E2638] rounded-lg py-4 mt-5 text-[#A1AAB3] hover:text-white hover:border-[#3E4766] transition-all cursor-pointer"
+                >
                   <Plus className="h-5 w-5" />
                   <span className="font-medium">Add Attachment</span>
                 </button>

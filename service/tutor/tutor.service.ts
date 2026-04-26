@@ -319,6 +319,40 @@ uploadAssents: async ({
 };
 
 
+export const TutorAttendanceService = {
+  getAttendance: async ({
+  classId,
+  page = 1,
+  limit = 10,
+  status,
+  search,
+  token = "",
+  context = null,
+}: {
+  classId: string;
+  page?: number;
+  limit?: number;
+  status?: string; 
+  search?: string;
+  token?: string;
+  context?: any;
+}) => {
+  const params = new URLSearchParams({
+    classId,
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+  if (status) params.append("status", status);
+  if (search) params.append("search", search);
+  return await Fetch.get(
+    `/attendance?${params.toString()}`,
+    withAuthConfig({ token, context })
+  );
+},
+}
+
+
+
 export const TutorSystemSettingService = {
   // Tutor Personal Info
   getPersonalInfo: async ({ token = "", context = null } = {}) => {

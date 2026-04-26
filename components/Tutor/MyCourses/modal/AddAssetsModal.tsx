@@ -40,7 +40,7 @@ export default function AddAssetsModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#1C2632] pb-6 mb-6">
           <DialogTitle className="text-2xl font-semibold">
-            Add Assignment
+            Add Assets
           </DialogTitle>
         </div>
 
@@ -84,7 +84,7 @@ export default function AddAssetsModal({
               onClick={onAddAssets}
               className="w-full py-4 bg-[#F23030] hover:bg-[#d42a2a] rounded-[15px] font-semibold text-white transition-all cursor-pointer"
             >
-              Add Assignment
+              Add Assets
             </button>
           </div>
         </div>
