@@ -1,56 +1,63 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllStatus } from "@/components/reusable/AllStatus";
 import DynamicTable from "@/components/reusable/DynamicTable";
-import { attendenceListColumns } from "@/components/columns/AttendenceListColumn";
 import VerticalAttendenceCalendar from "@/components/SuperAdmin/attendence/VerticalAttendenceCalendar";
 import { parseCookies } from "nookies";
 import { TutorAttendanceService } from "@/service/tutor/tutor.service";
 import { showErrorToast } from "@/lib/hotToast";
 import { TAttendanceResponse } from "@/types/tutor.attendece";
 import { useParams } from "next/navigation";
+// 1. Import the factory function instead of the static array
+import { getAttendenceListColumns } from "@/components/columns/getAttendenceListColumns";
 
 export default function Attendence() {
-  const params = useParams<{ classId: string }>(); // Ensure you have access to classId
+  const params = useParams<{ classId: string }>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [search, setSearch] = useState("");
 
   const [allAttendance, setAllAttendance] =
     useState<TAttendanceResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Re-fetch whenever currentPage, itemsPerPage, or search changes
+  //Wrap loadAttendance in useCallback to use it as a stable dependency
+  const loadAttendance = useCallback(async () => {
+    setLoading(true);
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+
+      const response = await TutorAttendanceService.getAttendance({
+        classId: params?.classId || "",
+        page: currentPage,
+        limit: itemsPerPage,
+        status: "",
+        search: search,
+        token: token,
+      });
+
+      setAllAttendance(response?.data || null);
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message || "Failed to load Attendance",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [params?.classId, currentPage, itemsPerPage, search]);
+
+  // Memoize the columns so they are only recreated when loadAttendance or classId changes
+  const columns = useMemo(
+    () => getAttendenceListColumns(loadAttendance, params?.classId || ""),
+    [loadAttendance, params?.classId],
+  );
+
   useEffect(() => {
-    const loadAttendance = async () => {
-      setLoading(true);
-      try {
-        const cookies = parseCookies();
-        const token = cookies.token || cookies.accessToken || "";
-
-        const response = await TutorAttendanceService.getAttendance({
-          classId: params?.classId || "",
-          page: currentPage,
-          limit: itemsPerPage,
-          status: "", // You might want to add a state for this later
-          search: search,
-          token: token,
-        });
-
-        setAllAttendance(response?.data || null);
-      } catch (error: any) {
-        showErrorToast(
-          error?.response?.data?.message || "Failed to load Attendance",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadAttendance();
-  }, [currentPage, itemsPerPage, search, params?.classId]);
+  }, [loadAttendance]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -82,8 +89,8 @@ export default function Attendence() {
 
         <div className="mt-6 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
           <DynamicTable
-            columns={attendenceListColumns}
-            // Use API data instead of demo data
+            //Pass the memoized columns factory result
+            columns={columns}
             data={allAttendance?.data || []}
             currentPage={currentPage}
             itemsPerPage={itemsPerPage}

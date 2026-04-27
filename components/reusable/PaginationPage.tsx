@@ -73,7 +73,7 @@ function PaginationPage({
   const originalArray = [1, 5, 10, 25, 50, 100];
   const uniqueArray = [...new Set(originalArray)];
   return (
-    <div className="  mb-0   ">
+    <div className="mb-0 text-white">
       <div className=" flex justify-end ">
         {/* Pagination */}
         {totalPages > 0 && (
@@ -82,7 +82,7 @@ function PaginationPage({
               <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-2 cursor-pointer py-1.5 flex justify-center  items-center border border-border text-blackColor rounded disabled:opacity-40 disabled:text-borderColor disabled:border-borderColor"
+                className="px-2 cursor-pointer py-1.5 flex justify-center text-white items-center border border-border rounded disabled:opacity-40 disabled:text-borderColor disabled:border-borderColor"
               >
                 <MdArrowBackIosNew size={15} />
               </button>
@@ -91,10 +91,10 @@ function PaginationPage({
                   key={i}
                   onClick={() => typeof page === "number" && onPageChange(page)}
                   disabled={page === "..."}
-                  className={`px-2 py-[3px] rounded cursor-pointer h-full text-sm ${
+                  className={`px-2 py-0.75 rounded cursor-pointer h-full text-sm text-white ${
                     page === currentPage
-                      ? "text-blackColor bg-grayColor1 border border-border h-full  font-medium"
-                      : "text-blackColor "
+                      ? "text-white bg-grayColor1 border border-border h-full  font-medium"
+                      : "text-white"
                   }`}
                 >
                   {page}
@@ -103,27 +103,27 @@ function PaginationPage({
               <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="cursor-pointer px-2 py-1.5 flex justify-center  items-center border border-border text-blackColor rounded disabled:opacity-40 disabled:text-borderColor disabled:border-borderColor"
+                className="cursor-pointer px-2 py-1.5 flex justify-center items-center border border-border text-white rounded disabled:opacity-40 disabled:text-borderColor disabled:border-borderColor"
               >
                 <MdArrowForwardIos size={15} />
               </button>
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="text-sm text-[#4a4c56]">
+              <div className="text-sm text-white">
                 Showing {startIndex} to {endIndex} of {effectiveTotalItems}{" "}
                 entries
               </div>
 
               <div className="flex items-center gap-2">
-                <label className="text-sm text-[#4a4c56]">Show</label>
+                <label className="text-sm text-white">Show</label>
                 <Select
                   value={String(itemsPerPage)}
                   onValueChange={(value) =>
                     handleItemsPerPageChange(Number(value))
                   }
                 >
-                  <SelectTrigger className="w-[62px] px-1.5!">
+                  <SelectTrigger className="w-15.5 px-1.5!">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

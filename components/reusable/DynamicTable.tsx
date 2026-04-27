@@ -58,7 +58,7 @@ export default function DynamicTable({
         <div className={` overflow-auto  `}>
           {/* ${border ? "p-2" : ""} */}
           <table
-            className={`min-w-[1000px] w-full text-left bg-[#07121d] rounded-lg ${border ? "p-2" : ""}`}
+            className={`min-w-250 w-full text-left bg-[#07121d] rounded-lg ${border ? "p-2" : ""}`}
           >
             <thead className=" sticky top-0 text-white rounded-2xl! overflow-hidden  p-2 rounded-tl">
               <tr className="">
