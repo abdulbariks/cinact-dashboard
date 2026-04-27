@@ -19,8 +19,8 @@ import { EditStudentDialog } from "../Finance/StudentManagement/EditStudentDialo
 
 const statusColors: Record<string, string> = {
   ACTIVE: "bg-[#2a3d2e] text-[#18CC3F]",
-  alumni: "bg-[#2b2d40] text-[#6774FF]",
-  restricted: "bg-[#402b2b] text-[#E9201D]",
+  ALUMNI: "bg-[#2b2d40] text-[#6774FF]",
+  RESTRICTED: "bg-[#402b2b] text-[#E9201D]",
   PENDING: "bg-[#443c29] text-[#ECAD11]",
 };
 
@@ -47,6 +47,7 @@ export const getFinanceStudentManagementColumns = (onRefresh: () => void) => [
             width={32}
             height={32}
             className="object-cover w-full h-full"
+            unoptimized
           />
         </div>
         <div>
@@ -80,7 +81,7 @@ export const getFinanceStudentManagementColumns = (onRefresh: () => void) => [
   },
   {
     label: "Join Date",
-    accessor: "join_date",
+    accessor: "joined_at",
     width: "120px",
     formatter: (value: string) => {
       const date = new Date(value);
@@ -139,7 +140,7 @@ export const getFinanceStudentManagementColumns = (onRefresh: () => void) => [
 
         {/* VIEW */}
         <Link
-          href={`/finance-dashboard/student-management/student-details/${row.id}`}
+          href={`/finance-dashboard/student-management/student-details/${row?.user?.id}`}
           className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer"
         >
           <EyeIcon />
@@ -172,7 +173,9 @@ export const getFinanceStudentManagementColumns = (onRefresh: () => void) => [
                 <button
                   onClick={async () => {
                     try {
-                      //   await FinanceService.restrictStudent(row.id);
+                      await FinanceService.restrictStudent({
+                        id: row.id,
+                      });
                       showSuccessToast("User restricted");
                       onRefresh(); // Refresh table
                     } catch (error) {

@@ -56,7 +56,7 @@ export default function StudentManagement() {
     fetchStudentManagement();
   }, [fetchStudentManagement]);
 
-  console.log("allStudentManagementData===", allStudentManagementData);
+  // console.log("allStudentManagementData===", allStudentManagementData);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

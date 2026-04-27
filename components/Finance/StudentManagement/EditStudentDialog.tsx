@@ -16,11 +16,17 @@ export const EditStudentDialog = ({
 
   const handleSave = async () => {
     try {
-      //   await FinanceService.updateStudent(row.id, {
-      //     studentType,
-      //     paymentStatus,
-      //     paymentType,
-      //   });
+      const response = await FinanceService.updateEnrollment({
+        id: row.id,
+        data: {
+          status: studentType,
+          payment_status: paymentStatus,
+          payment_type: paymentType,
+        },
+      });
+
+      //   console.log("response============", response);
+
       showSuccessToast("Student updated successfully");
       onRefresh(); // Trigger table refresh
     } catch (error) {
@@ -42,8 +48,10 @@ export const EditStudentDialog = ({
             onChange={(e) => setStudentType(e.target.value)}
             className="w-full mt-1 bg-[#0A1726] border border-[#2E3A59] rounded-xl px-4 py-3 text-sm focus:outline-none"
           >
-            <option value="FREE">Free</option>
-            <option value="PREMIUM">Premium</option>
+            <option value="ACTIVE">Active</option>
+            <option value="PENDING">Pending</option>
+            <option value="ALUMNI">Alumni</option>
+            <option value="RESTRICTED">Restricted</option>
           </select>
         </div>
 

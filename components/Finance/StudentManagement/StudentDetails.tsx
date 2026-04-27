@@ -1,10 +1,14 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import Link from "next/link";
 import studentProfileImg from "@/public/admin-dashboard/student-profile.png";
 import Image from "next/image";
 import EmailIcon from "@/components/icons/others/EmailIcon";
 import ClockCalender from "@/components/icons/SuperAdmindashboard/ClockCalender";
+import { useParams } from "next/navigation";
+import { FinanceService } from "@/service/finance/finance.service";
+import { showErrorToast } from "@/lib/hotToast";
 
 const paymentHistoryData = [
   {
@@ -53,6 +57,32 @@ const paymentHistoryData = [
 ];
 
 export default function StudentDetails() {
+  const { id } = useParams();
+  const [student, setStudent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // console.log("id===============", id);
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const response = await FinanceService.getStudentDetails({
+          id: id as string,
+        });
+        setStudent(response.data);
+      } catch (error) {
+        showErrorToast("Failed to fetch student details");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) fetchDetails();
+  }, [id]);
+
+  // console.log("student=============", student);
+
+  if (loading) return <div className="p-6 text-white">Loading...</div>;
+  if (!student) return <div className="p-6 text-white">Student not found.</div>;
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -76,16 +106,27 @@ export default function StudentDetails() {
         <div className=" bg-[#07121D] p-4  rounded-[10px] mt-5">
           <div className=" flex flex-col lg:flex-row items-center  justify-between">
             <div className=" flex items-center gap-3">
-              <Image src={studentProfileImg} alt="Student Profile" />
+              <Image
+                src={student?.data?.avatar}
+                alt="Student Profile"
+                height={40}
+                width={40}
+                unoptimized
+                className="rounded-full h-20 w-20"
+              />
               <div>
                 <h3 className=" text-white text-lg font-medium">
-                  Sophie Lambert{" "}
-                  <span className=" text-sm text-[#A5A5AB]">(6y exp)</span>{" "}
+                  {/* Sophie Lambert{" "} */}
+                  {student?.data?.name}
+                  <span className=" text-sm text-[#A5A5AB]">
+                    {/* (6y exp) */}( {student?.data?.experience_level})
+                  </span>{" "}
                 </h3>
                 <div className=" flex items-center gap-1.5 mt-1">
                   <EmailIcon />
                   <p className=" text-sm text-[#A5A5AB] ">
-                    emma.witson@email.cam
+                    {/* emma.witson@email.cam */}
+                    {student?.data?.email}
                   </p>
                 </div>
               </div>
@@ -94,12 +135,25 @@ export default function StudentDetails() {
               <div className="  flex items-center gap-1.5 ">
                 <EmailIcon />
                 <p className=" text-sm text-[#A5A5AB] ">
-                  emma.witson@email.cam
+                  {/* emma.witson@email.cam */}
+                  {student?.data?.email}
                 </p>
               </div>
               <div className="  flex items-center gap-1.5">
                 <ClockCalender />
-                <p className=" text-sm text-[#A5A5AB]">12/ 11 /2000</p>
+                <p className=" text-sm text-[#A5A5AB]">
+                  {/* 12/ 11 /2000 */}
+                  {student?.data?.date_of_birth
+                    ? new Date(student?.data?.date_of_birth).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        },
+                      )
+                    : "No Date"}
+                </p>
               </div>
             </div>
           </div>
@@ -107,9 +161,10 @@ export default function StudentDetails() {
           <div className=" mt-4">
             <p className=" text-xs text-[#8C9196] ">Acting Goals / Interests</p>
             <p className=" text-sm text-[#DFE1E7] mt-1.5">
-              Aspiring actor passionate about stage, screen, and voice
+              {/* Aspiring actor passionate about stage, screen, and voice
               performance.Currently training at CINACT to grow my performance
-              skills and creative confidence.
+              skills and creative confidence. */}
+              {student?.data?.ActingGoals?.acting_goals}
             </p>
           </div>
         </div>
@@ -120,21 +175,30 @@ export default function StudentDetails() {
           <h3 className=" text-xl text-white font-medium">Payment History</h3>
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-          {paymentHistoryData.map((item, index) => (
+          {student?.data?.transactions?.map((item, index) => (
             <div key={index} className=" bg-[#07121D] p-4 rounded-[10px]">
               <div className=" flex items-center gap-2.5">
                 <h3 className=" text-base text-white font-medium">
-                  {item.name}
+                  {item.payment_method}
                 </h3>
                 <p
-                  className={`${item.status === "paid" ? " text-[#18CC3F] bg-[#2a3d2e] " : "text-[#FFC943] bg-[#423c2f]"} py-1 px-2.5 rounded-full text-sm `}
+                  className={`${item.status === "SUCCESS" ? " text-[#18CC3F] bg-[#2a3d2e] " : "text-[#FFC943] bg-[#423c2f]"} py-1 px-2.5 rounded-full text-sm `}
                 >
                   {item.status}
                 </p>
               </div>
 
               <div className=" flex items-center justify-between mt-3">
-                <p className=" text-sm text-[#A5A5AB]">Data: {item.date}</p>
+                <p className=" text-sm text-[#A5A5AB]">
+                  Data:{" "}
+                  {item.payment_date
+                    ? new Date(item.payment_date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "No Date"}
+                </p>
                 <p className=" text-base text-[#18CC3F] font-medium">
                   ${item.amount}
                 </p>

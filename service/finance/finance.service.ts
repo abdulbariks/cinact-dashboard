@@ -90,6 +90,15 @@ export const FinanceService = {
         }
       );
     },
+
+    // Student Details
+  getStudentDetails: async ({ id, token = "", context = null }: { id: string; token?: string; context?: any }) => {
+  return await Fetch.get(
+    // admin/student-management/student/:id
+    `/admin/student-management/student/${id}`,
+     withAuthConfig({ token, context }));
+    },
+
   // student manual enrollment by Finance team
     createManualStudentEnrollment: async ({
         token = "",
@@ -150,6 +159,34 @@ export const FinanceService = {
         );
       },
 
+// update student info
+  updateEnrollment: async ({
+    token = "",
+    context = null,
+    id,
+    data,
+  }: {
+    token?: string;
+    context?: any;
+    id: string;
+    data: any;
+  }) => {
+    return await Fetch.patch(`/admin/student-management/enrollment/${id}`, data, withAuthConfig({ token, context }));
+  },
+
+  // restrict user
+  restrictStudent: async ({
+    token = "",
+    context = null,
+    id,
+  }: {
+    token?: string;
+    context?: any;
+    id: string;
+  }) => {
+    // admin/student-management/enrollment/:enrollId/restrict
+    return await Fetch.patch(`/admin/student-management/enrollment/${id}/restrict`, {}, withAuthConfig({ token, context }));
+  },
 
   // get Finance Payments Stats 
   getFinancePaymentsStats: async ({ token = "", context = null } = {}) => {
@@ -186,46 +223,4 @@ export const FinanceService = {
         }
       );
     },
-
-  // get all instructors
-  getAllInstructors: async ({
-    token = "",
-    context = null,
-    page = 1,
-    limit = 10,
-  }: {
-    token?: string;
-    context?: any;
-    page?: number;
-    limit?: number;
-  } = {}) => {
-    const queryString = buildQueryString({ page, limit });
-
-    return await Fetch.get(`/instructors${queryString}`, withAuthConfig({ token, context }));
-  },
-
-  // get user details
-  getUserDetails: async ({ token = "", context = null }) => {
-    return await Fetch.get(`/user/me`, withAuthConfig({ token, context }));
-  },
-
-  findAll: async (context = null) => {
-    return await Fetch.get(`/user`, withAuthConfig({ context }));
-  },
-
-  findOne: async (id: number, context = null) => {
-    return await Fetch.get(`/user/${id}`, withAuthConfig({ context }));
-  },
-
-  findOneByUsername: async ({
-    username,
-    token = "",
-    context = null,
-  }: {
-    username: string;
-    token?: string;
-    context?: any;
-  }) => {
-    return await Fetch.get(`/user/profile/${username}`, withAuthConfig({ token, context }));
-  },
 };
