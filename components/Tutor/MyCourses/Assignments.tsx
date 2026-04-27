@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -17,45 +17,6 @@ import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { TGetAssignmentsResponse } from "@/types/tutor.mycourse";
 import AddAssignmentModal from "./modal/AddAssignmentModal";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
-
-// export const assignments = [
-//   {
-//     id: "3300",
-//     assignmentNo: "1",
-//     due: "2 days",
-//     details:
-//       "Write a 500-word reflection on your current confidence level and areas for improvement.",
-//     submissionCount: 22,
-//     gradedCount: 18,
-//   },
-//   {
-//     id: "3301",
-//     assignmentNo: "2",
-//     due: "4 days",
-//     details:
-//       "Record and submit a 3-minute monologue focusing on breath support and vocal clarity.",
-//     submissionCount: 19,
-//     gradedCount: 12,
-//   },
-//   {
-//     id: "3302",
-//     assignmentNo: "3",
-//     due: "1 week",
-//     details:
-//       "Perform a partner exercise and submit feedback on listening and response timing.",
-//     submissionCount: 17,
-//     gradedCount: 10,
-//   },
-//   {
-//     id: "3303",
-//     assignmentNo: "4",
-//     due: "10 days",
-//     details:
-//       "Prepare a short scene presentation and attach your rehearsal notes with objectives.",
-//     submissionCount: 14,
-//     gradedCount: 6,
-//   },
-// ];
 
 interface AssignmentsProps {
   classTitle: string | undefined;
@@ -83,32 +44,33 @@ export default function Assignments({
     useState<TGetAssignmentsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadAssignments = async () => {
-      try {
-        const cookies = parseCookies();
-        const token = cookies.token || cookies.accessToken || "";
-        const response = await TutorService.getAllAssignmentsByClass({
-          classId: classId as string,
-          token,
-        });
-
-        setAssignments(response?.data || null);
-      } catch (error: any) {
-        showErrorToast(
-          error?.response?.data?.message ||
-            error?.message ||
-            "Failed to load assignments details",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (classId) {
-      loadAssignments();
+  // Memoized fetch function so it can be reused anywhere
+  const fetchAssignments = useCallback(async () => {
+    if (!classId) return;
+    setLoading(true);
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await TutorService.getAllAssignmentsByClass({
+        classId: classId as string,
+        token,
+      });
+      setAssignments(response?.data || null);
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to load assignments details",
+      );
+    } finally {
+      setLoading(false);
     }
   }, [classId]);
+
+  // Initial load
+  useEffect(() => {
+    fetchAssignments();
+  }, [fetchAssignments]);
 
   // console.log("assignments============", assignments);
 
@@ -130,9 +92,10 @@ export default function Assignments({
         classId: classId,
         payload: formData,
       });
-      console.log("Assignment created:", response);
-      setIsAddAssignmentOpen(false);
+      // console.log("Assignment created:", response);
       showSuccessToast(response?.data?.message || "Class added successfully!");
+      await fetchAssignments();
+      setIsAddAssignmentOpen(false);
     } catch (error) {
       // console.error("Error creating assignment:", error);
       showErrorToast(error?.data?.message || "Error creating assignment.");

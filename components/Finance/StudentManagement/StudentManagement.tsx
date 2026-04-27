@@ -1,27 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllStatus } from "@/components/reusable/AllStatus";
 import DynamicTable from "@/components/reusable/DynamicTable";
 import { PaymentTypeFilter } from "@/components/SuperAdmin/student-management/PaymentTypeFilter";
 import { AllStudentsFilter } from "@/components/SuperAdmin/student-management/StudentsFilter";
-import { studentManagementData } from "@/public/demoData/StudentManagementData";
 import Link from "next/link";
-import { financeStudentManagementColumns } from "@/components/columns/financeStudentManagementColumns";
 import { parseCookies } from "nookies";
 import { FinanceService } from "@/service/finance/finance.service";
 import { showErrorToast } from "@/lib/hotToast";
-
-type AllStudentRow = {
-  userId: string;
-  username: string;
-  transactionId: string;
-  amount: string | number;
-  date: string;
-  paymentType: string;
-  paymentPlan: string;
-};
+import { TStudentManagementResponse } from "@/types/finance.studentmenagement";
+import { getFinanceStudentManagementColumns } from "@/components/columns/getFinanceStudentManagementColumns";
 
 export default function StudentManagement() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,82 +20,48 @@ export default function StudentManagement() {
   const [studentType, setStudentType] = useState("all");
   const [paymentStatus, setPaymentStatus] = useState("all");
   const [paymentType, setPaymentType] = useState("all");
-  const [allStudentManagementData, setAllStudentManagementData] = useState<
-    AllStudentRow[]
-  >([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [allStudentManagementData, setAllStudentManagementData] =
+    useState<TStudentManagementResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
+  // Memoized fetch function so it can be reused anywhere
+  const fetchStudentManagement = useCallback(async () => {
+    setLoading(true);
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await FinanceService.getStudentManagement({
+        token,
+        search,
+        // studentType,
+        // paymentStatus,
+        // paymentType,
+        page: currentPage,
+        limit: itemsPerPage,
+      });
+      setAllStudentManagementData(response?.data || null);
+    } catch (error: any) {
+      showErrorToast(error?.response?.data?.message || "Failed to load Assets");
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, itemsPerPage, search]);
+
+  const columns = useMemo(() => {
+    return getFinanceStudentManagementColumns(fetchStudentManagement);
+  }, [fetchStudentManagement]);
+
+  // Initial load
   useEffect(() => {
-    setCurrentPage(1);
-  }, [itemsPerPage, search, studentType, paymentStatus, paymentType]);
-
-  useEffect(() => {
-    const loadsetAllPaymentsTransactions = async () => {
-      setLoading(true);
-      setError("");
-
-      try {
-        const cookies = parseCookies();
-        const token = cookies.token || cookies.accessToken || "";
-        const response = await FinanceService.getStudentManagement({
-          token,
-          search,
-          studentType,
-          paymentStatus,
-          paymentType,
-          // paymentType: paymentType === "all" ? "" : paymentType,
-          page: currentPage,
-          limit: itemsPerPage,
-        });
-
-        const studentManagementData = response?.data?.data || [];
-        const pagination = response?.data?.pagination || {};
-        setAllStudentManagementData(studentManagementData);
-        // setStudents(studentsData.map(mapStudentRow));
-        setTotalItems(pagination.total ?? studentManagementData.length);
-        setTotalPages(
-          pagination.totalPages ??
-            Math.ceil(
-              (pagination.total ?? studentManagementData.length) / itemsPerPage,
-            ),
-        );
-      } catch (err: any) {
-        const message =
-          err?.response?.data?.message ||
-          err?.message ||
-          "Failed to load students";
-        setAllStudentManagementData([]);
-        setTotalItems(0);
-        setTotalPages(0);
-        setError(message);
-        showErrorToast(message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadsetAllPaymentsTransactions();
-  }, [
-    currentPage,
-    itemsPerPage,
-    search,
-    studentType,
-    paymentStatus,
-    paymentType,
-  ]);
+    fetchStudentManagement();
+  }, [fetchStudentManagement]);
 
   console.log("allStudentManagementData===", allStudentManagementData);
 
-  // Use studentManagementData instead of demoData
-  // const totalItems = studentManagementData.length;
-  // const totalPages = Math.ceil(totalItems / itemsPerPage);
-  // const startIndex = (currentPage - 1) * itemsPerPage;
-  // const endIndex = startIndex + itemsPerPage;
-  // const currentData = studentManagementData.slice(startIndex, endIndex);
-
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
   return (
     <div>
       <div className=" flex items-center justify-between">
@@ -114,7 +70,7 @@ export default function StudentManagement() {
         </h2>
         <Link
           href="/finance-dashboard/student-management/add-student"
-          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer"
+          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
         >
           <PlusIcon />
           Add Student
@@ -129,8 +85,8 @@ export default function StudentManagement() {
               <input
                 type="text"
                 name="search"
-                // value={search}
-                // onChange={handleChange}
+                value={search}
+                onChange={handleSearchChange}
                 className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search User"
               />
@@ -144,16 +100,16 @@ export default function StudentManagement() {
           </div>
         </div>
         <DynamicTable
-          columns={financeStudentManagementColumns}
-          data={allStudentManagementData}
+          columns={columns}
+          data={allStudentManagementData?.data || []}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
-          totalpage={totalPages}
-          totalItems={totalItems}
+          totalpage={allStudentManagementData?.pagination?.totalPages || 1}
+          totalItems={allStudentManagementData?.pagination?.total || 0}
           onPageChange={setCurrentPage}
           setItemsPerPage={setItemsPerPage}
           noDataMessage="No students found"
-          loading={false}
+          loading={loading}
         />
       </div>
     </div>

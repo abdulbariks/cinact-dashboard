@@ -74,10 +74,12 @@ export const financeStudentManagementColumns = [
   },
   {
     label: "Course Name",
-    accessor: "course_name",
+    accessor: "course",
     width: "200px",
-    formatter: (value: string) => (
-      <span className="text-sm text-white font-medium">{value}</span>
+    formatter: (_: any, row: any) => (
+      <span className="text-sm text-white font-medium">
+        {row.course?.title || "N/A"}
+      </span>
     ),
   },
   {
