@@ -1,21 +1,21 @@
-'use client'
-import React, { useState } from 'react'
-import PlusIcon from '@/components/icons/SuperAdmindashboard/PlusIcon'
-import Link from 'next/link'
-import RedUsers from '@/components/icons/SuperAdmindashboard/RedUsers';
-import RedGradHat from '@/components/icons/SuperAdmindashboard/RedGradHat';
-import RedTeacherIcon from '@/components/icons/SuperAdmindashboard/RedTeacherIcon';
-import RedRevenueIcon from '@/components/icons/SuperAdmindashboard/RedRevenueIcon';
-import RedCardIcon from '@/components/icons/SuperAdmindashboard/RedCardIcon';
-import RedUsersIcon from '@/components/icons/SuperAdmindashboard/RedUsersIcon';
-import Image from 'next/image';
-import statBg from '@/public/admin-dashboard/stats-bg.png'
-import { transactionsData } from '@/public/demoData/transactionsData';
-import DynamicTable from '@/components/reusable/DynamicTable';
-import { transactionsColumns } from '@/components/columns/TransactionsColumns';
-import SearchIcon from '@/components/icons/SuperAdmindashboard/SearchIcon';
-import { DatePickerButton } from '@/components/reusable/DatePickerButton';
-import { AllPaymentPlan } from '@/components/reusable/AllPaymentPlan';
+"use client";
+import React, { useState } from "react";
+import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
+import Link from "next/link";
+import RedUsers from "@/components/icons/SuperAdmindashboard/RedUsers";
+import RedGradHat from "@/components/icons/SuperAdmindashboard/RedGradHat";
+import RedTeacherIcon from "@/components/icons/SuperAdmindashboard/RedTeacherIcon";
+import RedRevenueIcon from "@/components/icons/SuperAdmindashboard/RedRevenueIcon";
+import RedCardIcon from "@/components/icons/SuperAdmindashboard/RedCardIcon";
+import RedUsersIcon from "@/components/icons/SuperAdmindashboard/RedUsersIcon";
+import Image from "next/image";
+import statBg from "@/public/admin-dashboard/stats-bg.png";
+import { transactionsData } from "@/public/demoData/transactionsData";
+import DynamicTable from "@/components/reusable/DynamicTable";
+import { transactionsColumns } from "@/components/columns/TransactionsColumns";
+import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
+import { DatePickerButton } from "@/components/reusable/DatePickerButton";
+import { AllPaymentPlan } from "@/components/reusable/AllPaymentPlan";
 
 type StatItem = {
   title: string;
@@ -34,13 +34,13 @@ type StatItem = {
 const statsData: StatItem[] = [
   {
     title: "Total Revenue",
-    value: '$348',
+    value: "$348",
     percentage: "+12.5%",
     icon: RedRevenueIcon,
   },
   {
     title: "Course Revenue",
-    value: '$399',
+    value: "$399",
     percentage: "+5%",
     icon: RedCardIcon,
   },
@@ -59,11 +59,10 @@ const statsData: StatItem[] = [
 ];
 
 export default function FinancePaymentsHome() {
-
-
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const [date, setDate] = useState<Date | null>(null);
+  const [paymentPlan, setPaymentPlan] = useState<string | null>(null);
   // Use studentManagementData instead of demoData
   const totalItems = transactionsData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -73,35 +72,47 @@ export default function FinancePaymentsHome() {
 
   return (
     <div>
-      <div className=' flex items-center justify-between'>
-        <h2 className=' text-2xl text-[#E6E7E8] font-semibold'>Finance & Payments</h2>
+      <div className=" flex items-center justify-between">
+        <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
+          Finance & Payments
+        </h2>
         <Link
           href="/dashboard/finance-payments/add-payment"
-          className=' p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer'>
+          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer"
+        >
           <PlusIcon />
           Add Payment
         </Link>
       </div>
-      <div className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5'>
-        {
-          statsData.map((stat, index) => (
-            <div key={index} className=' p-6 bg-[#0A1A29] rounded-2xl relative overflow-hidden'>
-              <Image src={statBg} alt='Stat Background' className=' absolute top-0 right-0  ' />
-              <div className=' flex items-center justify-between'>
-                <p className=' text-white text-base'>{stat.title}</p>
-                <stat.icon />
-              </div>
-              <div className=' mt-6 '>
-                <h2 className=' text-[32px] text-white font-semibold'>{stat.value}</h2>
-              </div>
-              <div className=' mt-1 flex items-center gap-2'>
-                <p className=' text-xs text-[#E9201D] font-semibold py-1 px-2.5 rounded-full bg-[#1c273b] inline-block'>{stat.percentage}</p>
-
-                <p className=' text-base text-[#8D9CDC]'>vs last month</p>
-              </div>
+      <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
+        {statsData.map((stat, index) => (
+          <div
+            key={index}
+            className=" p-6 bg-[#0A1A29] rounded-2xl relative overflow-hidden"
+          >
+            <Image
+              src={statBg}
+              alt="Stat Background"
+              className=" absolute top-0 right-0  "
+            />
+            <div className=" flex items-center justify-between">
+              <p className=" text-white text-base">{stat.title}</p>
+              <stat.icon />
             </div>
-          ))
-        }
+            <div className=" mt-6 ">
+              <h2 className=" text-[32px] text-white font-semibold">
+                {stat.value}
+              </h2>
+            </div>
+            <div className=" mt-1 flex items-center gap-2">
+              <p className=" text-xs text-[#E9201D] font-semibold py-1 px-2.5 rounded-full bg-[#1c273b] inline-block">
+                {stat.percentage}
+              </p>
+
+              <p className=" text-base text-[#8D9CDC]">vs last month</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
@@ -123,8 +134,11 @@ export default function FinancePaymentsHome() {
                 <SearchIcon />
               </button>
             </div>
-            <DatePickerButton />
-            <AllPaymentPlan />
+            <DatePickerButton date={date} setDate={setDate} />
+            <AllPaymentPlan
+              paymentPlan={paymentPlan}
+              setPaymentPlan={setPaymentPlan}
+            />
           </div>
         </div>
         <DynamicTable
@@ -141,5 +155,5 @@ export default function FinancePaymentsHome() {
         />
       </div>
     </div>
-  )
+  );
 }

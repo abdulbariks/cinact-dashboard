@@ -43,7 +43,7 @@ export const getFinanceStudentManagementColumns = (onRefresh: () => void) => [
         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
           <Image
             src={row.avatar || avatar1}
-            alt={value}
+            alt={value || "name"}
             width={32}
             height={32}
             className="object-cover w-full h-full"
@@ -158,7 +158,7 @@ export const getFinanceStudentManagementColumns = (onRefresh: () => void) => [
           </DialogTrigger>
           <DialogContent className="border-none py-14 px-8 rounded-2xl bg-[#0A1726] text-white [&>button]:hidden">
             <div className="flex items-center justify-center">
-              <Image src={warnigImg} alt="Warning" />
+              {/* <Image src={warnigImg} alt="Warning" /> */}
             </div>
             <h2 className="text-white text-xl font-semibold text-center mt-4">
               Restrict User

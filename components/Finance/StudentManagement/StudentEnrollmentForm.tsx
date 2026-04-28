@@ -157,6 +157,8 @@ export default function StudentEnrollmentForm() {
 
     if (!rulesAndRegulationFile || !digitalContractFile) return;
 
+    console.log("formData===============", formData);
+
     try {
       setIsSubmitting(true);
       const cookies = parseCookies();
