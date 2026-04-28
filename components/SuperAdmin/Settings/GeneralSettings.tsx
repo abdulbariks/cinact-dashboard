@@ -151,8 +151,7 @@ export default function GeneralSettings() {
         if (response?.data) {
           reset(response?.data); // Automatically fills form fields
         }
-
-        console.log("response===========", response);
+        // console.log("response===========", response);
       } catch (error) {
         showErrorToast("Failed to load profile information");
       }

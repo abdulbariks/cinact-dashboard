@@ -11,18 +11,62 @@ import DynamicTable from "@/components/reusable/DynamicTable";
 import { eventMembersColumns as eventsColumn } from "@/components/columns/EventMembersColumn";
 import { eventMembersData as eventsData } from "@/public/demoData/EventMembersData";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { parseCookies } from "nookies";
+import { AdminEventService } from "@/service/user/user.service";
+import { showErrorToast } from "@/lib/hotToast";
 
 export default function EventDetails() {
+  const params = useParams();
+  const id = params.id as string;
+  const [eventData, setEventData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [date, setDate] = useState<Date | null>(null);
-  const totalItems = eventsData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = eventsData.slice(startIndex, endIndex);
+  const [search, setSearch] = useState("");
 
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await AdminEventService.getEventById(id, token);
+        setEventData(response?.data);
+      } catch (error) {
+        showErrorToast("Failed to fetch event details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchEvent();
+  }, [id]);
+
+  // console.log("eventData==============", eventData);
+
+  if (loading) return <div className="text-white p-10">Loading Event...</div>;
+  if (!eventData)
+    return <div className="text-white p-10">Event not found.</div>;
+
+  const members = eventData?.data?.members || [];
+  const totalItems = eventData.registeredMembersCount || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // console.log("members========", members);
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -42,7 +86,7 @@ export default function EventDetails() {
         </h2>
         <Link
           href="/dashboard/events/edit-event"
-          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer"
+          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
         >
           <PlusIcon />
           Edit Event
@@ -53,23 +97,30 @@ export default function EventDetails() {
         <div className=" bg-[#07121d] p-4 rounded-2xl">
           <div>
             <h3 className=" text-white text-base font-semibold">
-              Annual Alumni Meetup
+              {/* Annual Alumni Meetup */}
+              {eventData?.data?.name}
             </h3>
 
             <div className="  space-y-1.5 my-4">
               <div className=" flex items-center gap-1">
                 <RedCalender />
                 <p className=" text-white text-sm ">
-                  12 July, Monday 󠁯•󠁏󠁏 1:30 PM
+                  {/* 12 July, Monday 󠁯•󠁏󠁏 1:30 PM */}
+                  {formatDate(eventData?.data?.date)} at {eventData?.data?.time}
                 </p>
               </div>
               <div className=" flex items-center gap-1">
                 <RedLocation />
-                <p className=" text-white text-sm ">Main Theater</p>
+                <p className=" text-white text-sm ">
+                  {" "}
+                  {eventData?.data?.location}
+                </p>
               </div>
               <div className=" flex items-center gap-1">
                 <RedDoller />
-                <p className=" text-white text-sm ">$246</p>
+                <p className=" text-white text-sm ">
+                  $ {eventData?.data?.amount}
+                </p>
               </div>
             </div>
           </div>
@@ -79,8 +130,9 @@ export default function EventDetails() {
               Event Overview
             </h3>
             <p className=" text-sm text-[#D2D2D5] mt-2.5">
-              This module develops the actor’s self-awareness, confidence, and
-              creativity as a foundation for authentic performance.
+              {/* This module develops the actor’s self-awareness, confidence, and
+              creativity as a foundation for authentic performance. */}
+              {eventData?.data?.overview}
             </p>
           </div>
 
@@ -110,7 +162,8 @@ export default function EventDetails() {
               Ticket Information
             </h3>
             <p className=" text-white text-sm mt-2.5">
-              Limited tickets available — reserve early!
+              {/* Limited tickets available — reserve early! */}
+              {eventData?.data?.description}
             </p>
           </div>
         </div>
@@ -121,15 +174,15 @@ export default function EventDetails() {
       <div className=" bg-[#0a1726] p-6 rounded-2xl mt-5">
         <div className=" flex flex-col lg:flex-row items-center justify-between mb-6">
           <h3 className=" text-white text-xl font-semibold">
-            Event Members({totalItems})
+            Event Members({members.length})
           </h3>
           <div className=" flex flex-col md:flex-row items-center gap-2">
             <div className=" relative w-80">
               <input
                 type="text"
                 name="search"
-                // value={search}
-                // onChange={handleChange}
+                value={search}
+                onChange={handleSearchChange}
                 className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56]"
                 placeholder="Search Transaction ID"
               />
@@ -144,7 +197,7 @@ export default function EventDetails() {
         {/* table here */}
         <DynamicTable
           columns={eventsColumn}
-          data={currentData}
+          data={members}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
           totalpage={totalPages}

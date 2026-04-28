@@ -461,6 +461,28 @@ export const AdminPaymentsTransactionsService ={
       },
 }
 
+export const AdminEventService={
+    getEvent: async({
+      token = "",
+      context = null,
+      search = "",
+    }: {
+      token?: string;
+      context?: any;
+      search?: string;
+    } = {}) =>{
+    return await Fetch.get(`/events`, {
+          ...withAuthConfig({ token, context }), params: {
+            search,
+          },
+        }
+        )
+  },
+  getEventById: async (id: string, token: string) => {
+  return await Fetch.get(`/events/${id}`, withAuthConfig({ token }));
+},
+}
+
 export const AdminSystemSettingService = {
   getPersonalInfo: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/profile/personal-info`, withAuthConfig({ token, context }));
