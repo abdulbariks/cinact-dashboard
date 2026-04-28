@@ -365,6 +365,63 @@ export const UserService = {
 };
 
 
+export const AdminAttendanceService ={
+    getAttendance: async ({
+    classId,
+    page = 1,
+    limit = 10,
+    status,
+    search,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    page?: number;
+    limit?: number;
+    status?: string; 
+    search?: string;
+    token?: string;
+    context?: any;
+  }) => {
+    const params = new URLSearchParams({
+      classId,
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    if (status) params.append("status", status);
+    if (search) params.append("search", search);
+    return await Fetch.get(
+      `/attendance?${params.toString()}`,
+      withAuthConfig({ token, context })
+    );
+  },
+  // Manual Attendance
+  manualAttendance: async ({
+    classId,
+    studentId,
+    status,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    studentId: string;
+    status: "PRESENT" | "ABSENT";
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.post(
+      `/attendance/manual`,
+      {
+        classId,
+        studentId,
+        status,
+        attendedAt: new Date().toISOString(), // Current timestamp
+      },
+      withAuthConfig({ token, context })
+    );
+  },
+
+}
 
 export const AdminSystemSettingService = {
   getPersonalInfo: async ({ token = "", context = null } = {}) => {
@@ -374,7 +431,7 @@ export const AdminSystemSettingService = {
   updatePersonalInfo: async ({ data, token = "", context = null }: { data: any; token?: string; context?: any }) => {
     return await Fetch.put(`/profile/personal-info`, data, withAuthConfig({ token, context }));
   },
-  
+
   changePassword: async ({
     payload,
     token = "",
