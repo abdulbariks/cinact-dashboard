@@ -423,6 +423,44 @@ export const AdminAttendanceService ={
 
 }
 
+export const AdminPaymentsTransactionsService ={
+    // get Finance Payments Stats 
+    getPaymentsStats: async ({ token = "", context = null } = {}) => {
+      return await Fetch.get(`/finance/revenue/stats`, withAuthConfig({ token, context }));
+    }, 
+  
+    // get Finance Payments Transactions
+      getAllPaymentsTransactions: async ({
+        token = "",
+        context = null,
+        search = "",
+        // date = "",
+        paymentPlan = "",
+        page = 1,
+        limit = 10,
+      }: {
+        token?: string;
+        context?: any;
+        search?: string;
+        // date?:string;
+        paymentPlan?: string | boolean;
+        page?: number;
+        limit?: number;
+      } = {}) => {
+        return await Fetch.get(
+          `/finance/transactions`,{
+            ...withAuthConfig({ token, context }), params: {
+              search,
+              // date,
+              paymentPlan,
+              page,
+              limit,
+            },
+          }
+        );
+      },
+}
+
 export const AdminSystemSettingService = {
   getPersonalInfo: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/profile/personal-info`, withAuthConfig({ token, context }));

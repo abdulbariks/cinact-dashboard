@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import Link from "next/link";
 import RedUsers from "@/components/icons/SuperAdmindashboard/RedUsers";
@@ -16,6 +16,10 @@ import { transactionsColumns } from "@/components/columns/TransactionsColumns";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { DatePickerButton } from "@/components/reusable/DatePickerButton";
 import { AllPaymentPlan } from "@/components/reusable/AllPaymentPlan";
+import { showErrorToast } from "@/lib/hotToast";
+import { parseCookies } from "nookies";
+import { AdminPaymentsTransactionsService } from "@/service/user/user.service";
+import StatsCard from "@/components/Finance/FinancePayments/StatsCard";
 
 type StatItem = {
   title: string;
@@ -31,44 +35,158 @@ type StatItem = {
 //   icon: React.ComponentType<{ className?: string }>
 // }
 
-const statsData: StatItem[] = [
-  {
-    title: "Total Revenue",
-    value: "$348",
-    percentage: "+12.5%",
-    icon: RedRevenueIcon,
-  },
-  {
-    title: "Course Revenue",
-    value: "$399",
-    percentage: "+5%",
-    icon: RedCardIcon,
-  },
-  {
-    title: "Events Revenue",
-    value: "$399",
-    percentage: "+18.2%",
-    icon: RedUsersIcon,
-  },
-  {
-    title: "Total Teachers",
-    value: "$127",
-    percentage: "+12.5%",
-    icon: RedRevenueIcon,
-  },
-];
+// const statsData: StatItem[] = [
+//   {
+//     title: "Total Revenue",
+//     value: "$348",
+//     percentage: "+12.5%",
+//     icon: RedRevenueIcon,
+//   },
+//   {
+//     title: "Course Revenue",
+//     value: "$399",
+//     percentage: "+5%",
+//     icon: RedCardIcon,
+//   },
+//   {
+//     title: "Events Revenue",
+//     value: "$399",
+//     percentage: "+18.2%",
+//     icon: RedUsersIcon,
+//   },
+//   {
+//     title: "Total Teachers",
+//     value: "$127",
+//     percentage: "+12.5%",
+//     icon: RedRevenueIcon,
+//   },
+// ];
+
+type StatsCardData = {
+  current: number;
+  previous: number;
+  percentageChange: number;
+};
+
+export type StatsCard = {
+  courseRevenue: StatsCardData;
+  currentMonthRevenue: StatsCardData;
+  eventsRevenue: StatsCardData;
+  totalRevenueThisYear: StatsCardData;
+};
+
+type AllPaymentsTransactionsRow = {
+  userId: string;
+  username: string;
+  transactionId: string;
+  amount: string | number;
+  date: string;
+  paymentType: string;
+  paymentPlan: string;
+};
 
 export default function FinancePaymentsHome() {
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [itemsPerPage, setItemsPerPage] = useState(10);
+  // const [date, setDate] = useState<Date | null>(null);
+  const [paymentPlan, setPaymentPlan] = useState<string | null>(null);
+  // // Use studentManagementData instead of demoData
+  // const totalItems = transactionsData.length;
+  // const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // const startIndex = (currentPage - 1) * itemsPerPage;
+  // const endIndex = startIndex + itemsPerPage;
+  // const currentData = transactionsData.slice(startIndex, endIndex);
+
+  const [statsCardData, setStatsCardData] = useState<StatsCard | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [date, setDate] = useState<Date | null>(null);
-  const [paymentPlan, setPaymentPlan] = useState<string | null>(null);
-  // Use studentManagementData instead of demoData
-  const totalItems = transactionsData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = transactionsData.slice(startIndex, endIndex);
+  const [search, setSearch] = useState("");
+  const [date, setDate] = useState<Date | undefined>();
+  // const [paymentPlan, setPaymentStatus] = useState("all");
+  const [allPaymentsTransactions, setAllPaymentsTransactions] = useState<
+    AllPaymentsTransactionsRow[]
+  >([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadStatsCardData = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response =
+          await AdminPaymentsTransactionsService.getPaymentsStats({
+            token,
+          });
+        setStatsCardData(response?.data || null);
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to load dashboard overview",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStatsCardData();
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage, search, date, paymentPlan]);
+
+  useEffect(() => {
+    const loadsetAllPaymentsTransactions = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response =
+          await AdminPaymentsTransactionsService.getAllPaymentsTransactions({
+            token,
+            search,
+            // date: date === "undefined" ? "" : date,
+            paymentPlan: paymentPlan === "all" ? "" : paymentPlan,
+            page: currentPage,
+            limit: itemsPerPage,
+          });
+
+        const paymentsTransactionsData = response?.data?.data || [];
+        const pagination = response?.data?.pagination || {};
+        setAllPaymentsTransactions(paymentsTransactionsData);
+
+        // setStudents(studentsData.map(mapStudentRow));
+        setTotalItems(pagination.total ?? paymentsTransactionsData.length);
+        setTotalPages(
+          pagination.totalPages ??
+            Math.ceil(
+              (pagination.total ?? paymentsTransactionsData.length) /
+                itemsPerPage,
+            ),
+        );
+      } catch (err: any) {
+        const message =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to load students";
+        setAllPaymentsTransactions([]);
+        setTotalItems(0);
+        setTotalPages(0);
+        setError(message);
+        showErrorToast(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadsetAllPaymentsTransactions();
+  }, [currentPage, itemsPerPage, search, date, paymentPlan]);
 
   return (
     <div>
@@ -78,13 +196,13 @@ export default function FinancePaymentsHome() {
         </h2>
         <Link
           href="/dashboard/finance-payments/add-payment"
-          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-[8px] cursor-pointer"
+          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
         >
           <PlusIcon />
           Add Payment
         </Link>
       </div>
-      <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
+      {/* <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
         {statsData.map((stat, index) => (
           <div
             key={index}
@@ -113,12 +231,16 @@ export default function FinancePaymentsHome() {
             </div>
           </div>
         ))}
+      </div> */}
+      <div className="mt-5">
+        <StatsCard data={statsCardData} loading={loading} />
       </div>
 
       <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
         <div className=" flex flex-col lg:flex-row items-center justify-between mb-6">
           <h3 className=" text-white text-xl font-semibold">
-            Transactions (44)
+            {/* Transactions (44) */}
+            Transactions ({allPaymentsTransactions?.length})
           </h3>
           <div className=" flex flex-col md:flex-row items-center gap-2">
             <div className=" relative w-80">
@@ -143,7 +265,7 @@ export default function FinancePaymentsHome() {
         </div>
         <DynamicTable
           columns={transactionsColumns}
-          data={currentData}
+          data={allPaymentsTransactions}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
           totalpage={totalPages}
