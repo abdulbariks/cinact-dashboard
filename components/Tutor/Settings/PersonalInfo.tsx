@@ -86,7 +86,7 @@ export default function PersonalInfo() {
     loadPersonalInfo();
   }, []);
 
-  console.log("personalInfo=========", personalInfo);
+  // console.log("personalInfo=========", personalInfo);
 
   return (
     <div className="flex flex-col gap-8 px-5 w-full">
@@ -105,6 +105,7 @@ export default function PersonalInfo() {
                 width={56}
                 height={56}
                 className="rounded-full object-cover"
+                unoptimized
               />
 
               {/* Upload Icon */}

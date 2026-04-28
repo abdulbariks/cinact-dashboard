@@ -27,7 +27,7 @@ function getActiveSectionContent(activeSection: string) {
 }
 
 export default function AdminSetting() {
-  const [activeSection, setActiveSection] = useState("personal-info");
+  const [activeSection, setActiveSection] = useState("general-settings");
 
   return (
     <div className="">

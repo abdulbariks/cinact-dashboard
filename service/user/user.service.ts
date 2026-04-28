@@ -363,3 +363,31 @@ export const UserService = {
     return await Fetch.patch(`/user/${id}/password`, data, withAuthConfig({ context }));
   },
 };
+
+
+
+export const AdminSystemSettingService = {
+  getPersonalInfo: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/profile/personal-info`, withAuthConfig({ token, context }));
+  },
+
+  updatePersonalInfo: async ({ data, token = "", context = null }: { data: any; token?: string; context?: any }) => {
+    return await Fetch.put(`/profile/personal-info`, data, withAuthConfig({ token, context }));
+  },
+  
+  changePassword: async ({
+    payload,
+    token = "",
+    context = null,
+  }: {
+    payload: any;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.post(
+      `/auth/change-password`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+};
