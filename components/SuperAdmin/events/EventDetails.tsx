@@ -85,7 +85,7 @@ export default function EventDetails() {
           Event Details
         </h2>
         <Link
-          href="/dashboard/events/edit-event"
+          href={`/dashboard/events/edit-event/${eventData?.data?.id}`}
           className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
         >
           <PlusIcon />

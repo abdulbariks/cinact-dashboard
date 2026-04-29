@@ -481,6 +481,15 @@ export const AdminEventService={
   getEventById: async (id: string, token: string) => {
   return await Fetch.get(`/events/${id}`, withAuthConfig({ token }));
 },
+
+  createEvent: async (data: any, token: string) => {
+      return await Fetch.post(`/events`, data, withAuthConfig({ token }));
+    },
+
+  updateEvent: async (id: string, data: any, token: string) => {
+      //  /events/update/:eventId
+      return await Fetch.patch(`/events/update/${id}`, data, withAuthConfig({ token }));
+  },
 }
 
 export const AdminSystemSettingService = {
