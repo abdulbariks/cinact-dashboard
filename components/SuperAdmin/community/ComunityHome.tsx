@@ -98,7 +98,11 @@ export default function ComunityHome() {
             />
           </TabsContent>
           <TabsContent value="modaration-request" className="mt-4">
-            <ModaretionRequest />
+            <ModaretionRequest
+              search={search}
+              selectedRole={communityRole}
+              selectedStatus={communityStatus}
+            />
           </TabsContent>
         </Tabs>
       </div>

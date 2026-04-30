@@ -40,7 +40,7 @@ const mapApiPost = (post: any): PostCardItem => ({
   user_name: post.author?.name || "Unknown User",
   avatar: post.author?.avatar || "",
   // Extracting role from the role_users array
-  role: post.author?.role_users?.[0]?.role?.name || "User",
+  role: post.author?.role_users?.[0]?.role?.name || "STUDENT",
   status: post.status || "PENDING",
   date: post.createdAt ? moment(post.createdAt).format("DD MMM YYYY") : "-",
   likes: Number(post.likes) || 0,

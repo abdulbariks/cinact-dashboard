@@ -521,6 +521,40 @@ export const AdminCommunityService={
       },
     });
   },
+  getAllRequestedPosts: async ({
+    token = "",
+    context = null,
+    status = "",
+    role = "",
+    page = 1,
+    limit = 10,
+    search = "",
+  }: {
+    token?: string;
+    context?: any;
+    status?: string;
+    role?: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+  } = {}) => {
+    // admin/community-management/requested-posts
+    return await Fetch.get(`/admin/community-management/requested-posts`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        status,
+        role,
+        page,
+        limit,
+        search,
+      },
+    });
+  },
+  getPostDetailsById: async (id: string, token: string = "", context: any = null) => {
+    return await Fetch.get(`/admin/community-management/requested-posts/${id}`, {
+      ...withAuthConfig({ token, context }),
+    });
+  },
 }
 
 export const AdminSystemSettingService = {
