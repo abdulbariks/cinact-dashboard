@@ -3,11 +3,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import EyeIcon from "@/components/icons/SuperAdmindashboard/EyeIcon";
 import Image from "next/image";
+import Link from "next/link";
 import GreenTikIcon from "@/components/icons/Community/GreenTikIcon";
 import RedCross from "@/components/icons/Community/RedCross";
 import { moderationRequestData } from "@/public/demoData/modaretionRequestData";
 import { parseCookies } from "nookies";
-import { showErrorToast } from "@/lib/hotToast";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { AdminCommunityService } from "@/service/user/user.service";
 import moment from "moment";
 import PaginationPage from "@/components/reusable/PaginationPage";
@@ -87,7 +88,7 @@ export default function ModaretionRequest({
     {},
   );
 
-  console.log("requestPosts============", requestPosts);
+  // console.log("requestPosts============", requestPosts);
 
   const fetchPosts = async () => {
     setIsLoading(true);
@@ -108,7 +109,7 @@ export default function ModaretionRequest({
         search: search,
       });
 
-      console.log("response=============", response);
+      // console.log("response=============", response);
 
       if (response?.data?.success) {
         const mappedPosts = response.data.data.map(mapApiPost);
@@ -127,6 +128,25 @@ export default function ModaretionRequest({
   }, [currentPage, itemsPerPage, search, selectedRole, selectedStatus]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  const handleDelete = async (postId: string) => {
+    // Optional: Add a confirmation dialog
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await AdminCommunityService.deletePost(postId, token);
+
+      if (response?.data?.success) {
+        showSuccessToast(response.data.message || "Post deleted successfully");
+        // Refresh the list after deletion
+        fetchPosts();
+      }
+    } catch (error: any) {
+      showErrorToast(error?.data?.message || "Failed to delete post");
+    }
+  };
 
   return (
     <div className=" space-y-3">
@@ -180,13 +200,19 @@ export default function ModaretionRequest({
           </div>
 
           <div className=" flex items-center gap-2">
-            <button className=" cursor-pointer p-1.5 bg-[#0e1825] rounded-lg">
+            <Link
+              href={`/dashboard/community/${post.id}`}
+              className="p-1.5 bg-[#0e1825] rounded-lg"
+            >
               <EyeIcon />
-            </button>
+            </Link>
             <button className=" cursor-pointer p-1.75 bg-[#0e1825] rounded-lg">
               <GreenTikIcon />
             </button>
-            <button className=" cursor-pointer p-3 bg-[#0e1825] rounded-lg">
+            <button
+              onClick={() => handleDelete(post.id)}
+              className=" cursor-pointer p-3 bg-[#0e1825] rounded-lg"
+            >
               <RedCross />
             </button>
           </div>

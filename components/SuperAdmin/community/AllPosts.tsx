@@ -12,7 +12,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 import { parseCookies } from "nookies";
-import { showErrorToast } from "@/lib/hotToast";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import moment from "moment";
 import { AdminCommunityService } from "@/service/user/user.service";
 
@@ -132,6 +132,24 @@ export default function AllPosts({
 
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
+  const handleDelete = async (postId: string) => {
+    // Optional: Add a confirmation dialog
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await AdminCommunityService.deletePost(postId, token);
+
+      if (response?.data?.success) {
+        showSuccessToast(response.data.message || "Post deleted successfully");
+        // Refresh the list after deletion
+        fetchPosts();
+      }
+    } catch (error: any) {
+      showErrorToast(error?.data?.message || "Failed to delete post");
+    }
+  };
   return (
     <div className="space-y-3">
       {isLoading ? (
@@ -210,7 +228,10 @@ export default function AllPosts({
               <button className="p-2.5 bg-[#0e1825] rounded-lg">
                 <FlagIcon />
               </button>
-              <button className="p-1.5 bg-[#0e1825] rounded-lg">
+              <button
+                onClick={() => handleDelete(post.id)}
+                className="p-1.5 bg-[#0e1825] rounded-lg cursor-pointer"
+              >
                 <TrashIconRed />
               </button>
             </div>

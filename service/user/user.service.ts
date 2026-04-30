@@ -555,6 +555,12 @@ export const AdminCommunityService={
       ...withAuthConfig({ token, context }),
     });
   },
+  deletePost: async (id: string, token: string = "") => {
+    // admin/community-management/delete-post/cmm7df5lm0001kg90ajhm9olt
+    return await Fetch.delete(`/admin/community-management/delete-post/${id}`, {
+      ...withAuthConfig({ token }),
+    });
+  },
 }
 
 export const AdminSystemSettingService = {
