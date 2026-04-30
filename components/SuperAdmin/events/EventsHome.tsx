@@ -147,7 +147,7 @@ export default function EventsHome() {
               <p className=" text-xs text-[#D2D2D5] ">{event.description}</p>
 
               <Link
-                href={`/dashboard/events/${event.id}`}
+                href={`/dashboard/events/event-details/${event.id}`}
                 className="w-full flex items-center justify-center text-white border border-[#3D4566] py-4 rounded-[12px] cursor-pointer mt-6"
               >
                 View Details
@@ -204,7 +204,7 @@ export default function EventsHome() {
               <p className=" text-xs text-[#D2D2D5] ">{event.description}</p>
 
               <Link
-                href={`/dashboard/events/${event.id}`}
+                href={`/dashboard/events/event-details/${event.id}`}
                 className="w-full flex items-center justify-center text-white border border-[#3D4566] py-4 rounded-[12px] cursor-pointer mt-6"
               >
                 View Details

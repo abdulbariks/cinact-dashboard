@@ -492,6 +492,37 @@ export const AdminEventService={
   },
 }
 
+export const AdminCommunityService={
+  getAllPosts: async ({
+    token = "",
+    context = null,
+    status = "",
+    role = "",
+    page = 1,
+    limit = 10,
+    search = "",
+  }: {
+    token?: string;
+    context?: any;
+    status?: string;
+    role?: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+  } = {}) => {
+    return await Fetch.get(`/admin/community-management/posts`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        status,
+        role,
+        page,
+        limit,
+        search,
+      },
+    });
+  },
+}
+
 export const AdminSystemSettingService = {
   getPersonalInfo: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/profile/personal-info`, withAuthConfig({ token, context }));

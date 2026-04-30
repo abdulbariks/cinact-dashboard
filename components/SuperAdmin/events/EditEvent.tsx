@@ -93,7 +93,7 @@ export default function EditEvent() {
       showSuccessToast(
         response?.data?.message || "Event updated successfully!",
       );
-      router.push(`/dashboard/events/${id}`);
+      router.push(`/dashboard/events/event-details/${id}`);
     } catch (error) {
       // console.error("Error updating event:", error);
       showErrorToast(error?.data?.message || "Failed to update event");

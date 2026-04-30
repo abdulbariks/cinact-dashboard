@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Select,
@@ -7,15 +7,18 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import DropDownIcon from "../../icons/others/DropDownIcon"
+} from "@/components/ui/select";
+import DropDownIcon from "../../icons/others/DropDownIcon";
 
 type CommunityStatusProps = {
-  value: string
-  onChange: (value: string) => void
-}
+  value: string;
+  onChange: (value: string) => void;
+};
 
-export default function CommunityStatus({ value, onChange }: CommunityStatusProps) {
+export default function CommunityStatus({
+  value,
+  onChange,
+}: CommunityStatusProps) {
   return (
     <Select name="communityStatus" value={value} onValueChange={onChange}>
       <SelectTrigger className="w-48 py-5 cursor-pointer border-none text-white bg-[#505B86] hover:bg-[#5f6a96] data-[state=open]:bg-[#6c78a9] data-[placeholder]:text-white [&>svg]:hidden">
@@ -31,9 +34,9 @@ export default function CommunityStatus({ value, onChange }: CommunityStatusProp
           <SelectItem value="REQUEST">Request</SelectItem>
           <SelectItem value="REJECTED">Rejected</SelectItem>
           <SelectItem value="FLAGGED">Flagged</SelectItem>
-            <SelectItem value="ANNOUNCEMENT">Announcement</SelectItem>
+          <SelectItem value="ANNOUNCEMENT">Announcement</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
+  );
 }
