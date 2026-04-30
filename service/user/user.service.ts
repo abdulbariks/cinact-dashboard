@@ -555,6 +555,12 @@ export const AdminCommunityService={
       ...withAuthConfig({ token, context }),
     });
   },
+  approvePost: async (id: string, token: string) => 
+    await Fetch.patch(`/admin/community-management/approve-post/${id}`, {}, withAuthConfig({ token })),
+  rejectPost: async (id: string, token: string) => 
+    await Fetch.patch(`/admin/community-management/reject-post/${id}`, {}, withAuthConfig({ token })),
+  flagPost: async (id: string, token: string) => 
+    await Fetch.patch(`/admin/community-management/flag-unflag-post/${id}`, {}, withAuthConfig({ token })),
   deletePost: async (id: string, token: string = "") => {
     // admin/community-management/delete-post/cmm7df5lm0001kg90ajhm9olt
     return await Fetch.delete(`/admin/community-management/delete-post/${id}`, {

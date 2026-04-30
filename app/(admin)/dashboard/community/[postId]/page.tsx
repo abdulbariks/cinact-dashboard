@@ -11,12 +11,10 @@ type PageProps = {
 
 export default async function Page({ params }: PageProps) {
   const { postId } = await params;
-  const post =
-    allPostsData.find((item) => item.id === postId) || allPostsData[0];
 
-  if (!post) {
+  if (!postId) {
     notFound();
   }
 
-  return <PostDetails post={post} />;
+  return <PostDetails postId={postId} />;
 }
