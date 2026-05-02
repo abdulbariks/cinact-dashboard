@@ -23,7 +23,7 @@ export default function ChatsLayoutShell({ children }: ChatsLayoutShellProps) {
           <h2 className="text-2xl text-[#E6E7E8] font-semibold ">Inbox</h2>
           <Link
             href={`/dashboard/new-message`}
-            className=" text-sm text-white font-medium flex items-center gap-3 p-3 bg-[#E9201D] rounded-[8px] cursor-pointer"
+            className=" text-sm text-white font-medium flex items-center gap-3 p-3 bg-[#E9201D] rounded-xl cursor-pointer"
           >
             <PlusIcon />
             New Massage

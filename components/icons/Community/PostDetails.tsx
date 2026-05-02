@@ -187,6 +187,7 @@ export default function PostDetails({ postId }: postIdProps) {
               width={40}
               height={40}
               className="rounded-full object-cover size-10"
+              unoptimized
               onError={() => setAvatarError(true)}
             />
           )}
@@ -228,7 +229,22 @@ export default function PostDetails({ postId }: postIdProps) {
                   </button>
                 </div>
               )}
-
+              {post.status == "FLAGGED" && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleAction("flag")}
+                    className="p-1.5 bg-[#0e1825] rounded-lg flex items-center gap-2 text-[#18CC3F]"
+                  >
+                    <FlagIcon /> Unflag
+                  </button>
+                  <button
+                    onClick={() => handleAction("delete")}
+                    className="p-1.5 bg-[#0e1825] rounded-lg cursor-pointer flex items-center gap-2 text-red-600"
+                  >
+                    <TrashIconRed /> Delete
+                  </button>
+                </div>
+              )}
               {post.status == "REQUEST" && (
                 <div className="flex items-center gap-2">
                   <button
