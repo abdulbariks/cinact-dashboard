@@ -51,4 +51,11 @@ export const ChatsService = {
   getAllUsers: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/admin/user`, withAuthConfig({ token, context }));
   },
+  // Get Conversations
+  getConversations: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(
+      `/conversations`, 
+      withAuthConfig({ token, context })
+    );
+  },
 };
