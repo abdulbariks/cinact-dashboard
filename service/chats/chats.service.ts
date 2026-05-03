@@ -65,4 +65,20 @@ export const ChatsService = {
       withAuthConfig({ token, context })
     );
   },
+  //  create DM
+  createDM: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
+    return await Fetch.post(
+      `/conversations/dm`, 
+      data, 
+      withAuthConfig({ token, context })
+    );
+  },
+  // create Group
+  createGroup: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
+    return await Fetch.post(
+      `/conversations/group`, 
+      data,
+      withAuthConfig({ token, context })
+    );
+  },
 };

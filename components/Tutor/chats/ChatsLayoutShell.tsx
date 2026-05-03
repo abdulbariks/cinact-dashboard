@@ -2,10 +2,10 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import ChatSidebar from "@/components/chats/ChatSidebar";
 import { cn } from "@/lib/utils";
-import PlusIcon from "../icons/SuperAdmindashboard/PlusIcon";
 import Link from "next/link";
+import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
+import ChatSidebar from "./ChatSidebar";
 
 type ChatsLayoutShellProps = {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ type ChatsLayoutShellProps = {
 
 export default function ChatsLayoutShell({ children }: ChatsLayoutShellProps) {
   const pathname = usePathname();
-  const isChatRoute = /^\/dashboard\/chats\/\d+$/.test(pathname ?? "");
+  const isChatRoute = /^\/tutor-dashboard\/chats\/\d+$/.test(pathname ?? "");
 
   return (
     <div className="h-[calc(100vh-120px)] overflow-hidden ">
@@ -21,7 +21,7 @@ export default function ChatsLayoutShell({ children }: ChatsLayoutShellProps) {
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-2xl text-[#E6E7E8] font-semibold ">Inbox</h2>
           <Link
-            href={`/dashboard/new-message`}
+            href={`/tutor-dashboard/new-message`}
             className=" text-sm text-white font-medium flex items-center gap-3 p-3 bg-[#E9201D] rounded-xl cursor-pointer"
           >
             <PlusIcon />

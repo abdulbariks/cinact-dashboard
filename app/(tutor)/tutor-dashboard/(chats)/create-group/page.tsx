@@ -1,4 +1,4 @@
-import NewGroup from "@/components/chats/NewGroup";
+import NewGroup from "@/components/Tutor/chats/NewGroup";
 import React from "react";
 
 export default function CreateGroupPage() {

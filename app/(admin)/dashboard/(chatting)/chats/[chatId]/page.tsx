@@ -12,7 +12,7 @@ export default async function page({ params }: ChatPageProps) {
   const { chatId } = await params;
   // const normalizedChatId = chatIdParam?.trim();
 
-  console.log(chatId);
+  // console.log(chatId);
 
   // if (!normalizedChatId || !/^\d+$/.test(normalizedChatId)) {
   //   notFound();

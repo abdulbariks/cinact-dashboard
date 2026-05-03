@@ -1,4 +1,4 @@
-import ChatArea from "@/components/chats/ChatArea";
+import ChatArea from "@/components/Tutor/chats/ChatArea";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -9,18 +9,9 @@ type ChatPageProps = {
 };
 
 export default async function page({ params }: ChatPageProps) {
-  const { chatId: chatIdParam } = await params;
-  const normalizedChatId = chatIdParam?.trim();
+  const { chatId } = await params;
 
-  if (!normalizedChatId || !/^\d+$/.test(normalizedChatId)) {
-    notFound();
-  }
-
-  const chatId = Number(normalizedChatId);
-
-  if (Number.isNaN(chatId) || chatId < 1) {
-    notFound();
-  }
+  // console.log(chatId);
 
   return <ChatArea chatId={chatId} />;
 }

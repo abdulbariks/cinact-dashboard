@@ -8,13 +8,13 @@ import { conversations } from "@/components/chats/chat-data";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import EditIcon from "../icons/chats/EditIcon";
-import SearchIcon from "../icons/SuperAdmindashboard/SearchIcon";
-import FilterIcon2 from "../icons/chats/FilterIcon2";
 import { parseCookies } from "nookies";
 import { ChatsService } from "@/service/chats/chats.service";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
+import EditIcon from "@/components/icons/chats/EditIcon";
+import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
+import FilterIcon2 from "@/components/icons/chats/FilterIcon2";
 
 export default function ChatSidebar() {
   const pathname = usePathname();
@@ -121,7 +121,7 @@ export default function ChatSidebar() {
             return (
               <Link
                 key={item.id}
-                href={`/dashboard/chats/${item.id}`}
+                href={`/tutor-dashboard/chats/${item.id}`}
                 className={cn(
                   "flex w-full items-start gap-2.5 text-left transition-colors pt-4 px-3 rounded-[10px]",
                   pathname?.includes(item.id)

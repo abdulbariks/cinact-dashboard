@@ -41,7 +41,7 @@ export default function NewMessage() {
 
       const response = await ChatsService.getAllUsers({ token });
 
-      console.log("response============", response);
+      // console.log("response============", response);
 
       // Based on your JSON, the users are inside response.data.data
       if (response?.data?.success) {

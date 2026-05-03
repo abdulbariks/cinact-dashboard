@@ -1,6 +1,5 @@
+import ChatsLayoutShell from "@/components/Tutor/chats/ChatsLayoutShell";
 import React from "react";
-
-import ChatsLayoutShell from "@/components/chats/ChatsLayoutShell";
 
 export default function TutorChatsLayout({
   children,
