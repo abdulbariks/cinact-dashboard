@@ -37,12 +37,7 @@ export default function ChatsLayoutShell({ children }: ChatsLayoutShellProps) {
             <ChatSidebar />
           </div>
 
-          <div
-            className={cn(
-              "min-h-0 min-w-0",
-              isChatRoute ? "block" : "hidden lg:block",
-            )}
-          >
+          <div className={cn("min-h-0 min-w-0", isChatRoute ? "block" : "")}>
             {children}
           </div>
         </div>

@@ -58,4 +58,11 @@ export const ChatsService = {
       withAuthConfig({ token, context })
     );
   },
+  // get Conversation By Id
+  getConversationById: async ({ id ="", token = "", context = null } = {}) => {
+    return await Fetch.get(
+      `/conversations/${id}/messages`, 
+      withAuthConfig({ token, context })
+    );
+  },
 };

@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-
-import { ChatMessage, getConversationById, messagesByUserId } from "@/components/chats/chat-data";
 import { cn } from "@/lib/utils";
 import CallIcon from "../icons/chats/CallIcon";
 import VideoIcon from "../icons/chats/VideoIcon";
@@ -12,64 +10,72 @@ import PlusChatIcon from "../icons/chats/PlusChatIcon";
 import ImageIcon from "../icons/chats/ImageIcon";
 import MicIcon from "../icons/chats/MicIcon";
 import EmojiIcon from "../icons/chats/EmojiIcon";
+import { parseCookies } from "nookies";
+import { ChatsService } from "@/service/chats/chats.service";
+import Image from "next/image";
 
 type ChatAreaProps = {
-  chatId: number;
+  chatId: string;
 };
 
 export default function ChatArea({ chatId }: ChatAreaProps) {
   const [draftMessage, setDraftMessage] = useState("");
-  const [chatMessages, setChatMessages] = useState<Record<number, ChatMessage[]>>(() => ({
-    ...messagesByUserId,
-  }));
+  const [messages, setMessages] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Replace this with your actual logged-in admin ID from your auth state/context
+  const MY_ID = "cmm1euh120000kgqgmimhm6gf";
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedUser = getConversationById(chatId);
-  const messages = chatMessages[chatId] ?? [];
+  const fetchMessages = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const res = await ChatsService.getConversationById({ id: chatId, token });
 
-  useEffect(() => {
-    setDraftMessage("");
+      console.log("res==========", res);
+
+      setMessages(res?.data?.items || []);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [chatId]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    fetchMessages();
+    setDraftMessage("");
+  }, [fetchMessages]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  if (!selectedUser) {
-    return (
-      <section className="flex min-h-[70vh] w-full items-center justify-center rounded-xl border bg-card text-card-foreground">
-        <p className="text-sm text-muted-foreground">Conversation not found.</p>
-      </section>
-    );
-  }
-
   const handleSendMessage = () => {
-    const trimmedMessage = draftMessage.trim();
+    if (!draftMessage.trim()) return;
 
-    if (!trimmedMessage) {
-      return;
-    }
+    // Local UI update (Optimistic UI)
+    const newMessage = {
+      id: Date.now().toString(),
+      senderId: MY_ID,
+      content: { text: draftMessage },
+      createdAt: new Date().toISOString(),
+      kind: "TEXT",
+    };
 
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-    setChatMessages((currentChatMessages) => ({
-      ...currentChatMessages,
-      [chatId]: [
-        ...(currentChatMessages[chatId] ?? []),
-        {
-          id: Date.now(),
-          sender: "me",
-          text: trimmedMessage,
-          time: formattedTime,
-        },
-      ],
-    }));
-
+    setMessages((prev) => [...prev, newMessage]);
     setDraftMessage("");
+
+    // API Call would go here:
+    // ChatsService.sendMessage({ conversationId: chatId, text: draftMessage, ... })
   };
 
-  const handleComposerKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleComposerKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSendMessage();
@@ -77,153 +83,140 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
   };
 
   return (
-    <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[16px]      ">
-      <div className=" bg bg-[#0a1929] px-4 py-3 sm:px-5">
-        <div className="mb-3 flex items-center justify-between gap-3">
+    <section className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl">
+      {/* Header */}
+      <div className="bg-[#0a1929] px-4 py-3 sm:px-5">
+        <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
-            <Link
-              href="/dashboard/chats"
-              className="inline-flex size-9 items-center justify-center rounded-md border bg-background text-foreground transition-colors hover:bg-muted lg:hidden"
-              aria-label="Back to conversations"
-            >
-              <span className="text-lg leading-none">←</span>
+            <Link href="/dashboard/chats" className="lg:hidden text-white">
+              ←
             </Link>
-            <div className={`relative flex size-11 shrink-0 items-center justify-center rounded-full   bg-[#1a2336] text-sm font-semibold text-white ${selectedUser.status === "online" ? " border border-[#E9201D]" : "border-0 "}`}>
-              {selectedUser.name
-                .split(" ")
-                .slice(0, 2)
-                .map((word) => word[0])
-                .join("")}
-              {selectedUser.status === "online" ? (
-                <span className="absolute bottom-1 right-1 size-1.5 rounded-full   bg-emerald-500" />
-              ) : (
-                <span className="absolute -bottom-1 -right-1 rounded-full border border-[#505B86]   px-1.5 py-0.5 text-[8px] text-[#00FA26]  leading-none shadow-sm whitespace-nowrap">
-                  {selectedUser.lastActive ?? "Inactive"}
-                </span>
-              )}
+            <div className="size-11 rounded-full bg-[#1a2336] flex items-center justify-center text-white font-bold border border-[#1F283D]">
+              {/* Profile placeholder logic */}
+              {messages[0]?.sender?.name?.slice(0, 2).toUpperCase() || "CH"}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-base text-white font-medium sm:text-base">{selectedUser.name}</p>
-
+              <p className="truncate text-base text-white font-medium">
+                {messages[0]?.sender?.name || "Conversation"}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <button className=" p-3 cursor-pointer hover:bg-[#45537b] rounded-xl">
+            <button className="p-3 hover:bg-[#45537b] rounded-xl transition-colors">
               <CallIcon />
             </button>
-            <button className=" p-3 cursor-pointer hover:bg-[#45537b] rounded-xl">
+            <button className="p-3 hover:bg-[#45537b] rounded-xl transition-colors">
               <VideoIcon />
             </button>
-            <button className=" p-3 cursor-pointer hover:bg-[#45537b] rounded-xl">
+            <button className="p-3 hover:bg-[#45537b] rounded-xl transition-colors">
               <WarningIcon />
             </button>
           </div>
         </div>
-
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5 bg-[#07121d]">
-        <div className="flex min-h-full flex-col justify-end space-y-1">
-          {messages.map((message, index) => {
-            const previousMessage = messages[index - 1];
-            const nextMessage = messages[index + 1];
-            const hasPreviousFromSameSender = previousMessage?.sender === message.sender;
-            const hasNextFromSameSender = nextMessage?.sender === message.sender;
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5 bg-[#07121d] custom-scrollbar">
+        <div className="flex flex-col space-y-2">
+          {isLoading ? (
+            <p className="text-center text-[#5F6CA0] py-10">
+              Loading messages...
+            </p>
+          ) : (
+            messages.map((message, index) => {
+              const isMe = message.senderId === MY_ID;
+              const prevMsg = messages[index - 1];
+              const isSameAsPrev = prevMsg?.senderId === message.senderId;
 
-            return (
-              <div
-                key={message.id}
-                className={cn("flex", message.sender === "me" ? "justify-end" : "justify-start")}
-              >
-                <div>
-                  {!hasPreviousFromSameSender ? (
-                    <p
-                      className={cn(
-                        "mb-1 text-[11px]",
-                        message.sender === "me"
-                          ? "text-right text-xs text-[#8C9196]"
-                          : "text-left text-xs text-[#8C9196]"
-                      )}
-                    >
-                      {message.time}
-                    </p>
-                  ) : null}
+              return (
+                <div
+                  key={message.id}
+                  className={cn(
+                    "flex flex-col",
+                    isMe ? "items-end" : "items-start",
+                  )}
+                >
+                  {!isSameAsPrev && (
+                    <span className="text-[10px] text-[#5F6CA0] mb-1 px-1">
+                      {new Date(message.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  )}
+
                   <div
                     className={cn(
-                      "w-fit max-w-[85%] rounded-2xl px-3 py-2 text-sm sm:max-w-105",
-                      message.sender === "me"
-                        ? "bg-[#5f6ca0] text-base text-white"
-                        : "bg-[#17212c] text-base text-[#B2B5B8]",
-                      !hasPreviousFromSameSender && !hasNextFromSameSender
-                        ? message.sender === "me"
-                          ? "rounded-br-none"
-                          : "rounded-bl-none"
-                        : "",
-                      message.sender === "me"
-                        ? hasPreviousFromSameSender
-                          ? "rounded-tr-none"
-                          : ""
-                        : hasPreviousFromSameSender
-                          ? "rounded-tl-none"
-                          : "",
-                      message.sender === "me"
-                        ? hasNextFromSameSender
-                          ? "rounded-br-none"
-                          : ""
-                        : hasNextFromSameSender
-                          ? "rounded-bl-none"
-                          : ""
+                      "w-fit max-w-[85%] px-4 py-2 text-sm rounded-2xl",
+                      isMe
+                        ? "bg-[#5f6ca0] text-white rounded-tr-none"
+                        : "bg-[#17212c] text-[#B2B5B8] rounded-tl-none",
+                      isSameAsPrev &&
+                        (isMe ? "rounded-tr-2xl" : "rounded-tl-2xl"),
                     )}
                   >
-                    <p className="whitespace-pre-wrap wrap-anywhere">{message.text}</p>
-
+                    {message.kind === "TEXT" ? (
+                      <p className="whitespace-pre-wrap wrap-break-word">
+                        {message.content?.text}
+                      </p>
+                    ) : message.kind === "IMAGE" ? (
+                      <div className="relative size-60 rounded-lg overflow-hidden">
+                        <Image
+                          src={message.media_Url}
+                          alt="chat-img"
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
           <div ref={messagesEndRef} />
         </div>
       </div>
 
-      <div className="  p-4 sm:p-5 bg-[#07121d]">
-
-
-        <div className=" flex items-center gap-3">
-
-          <button>
+      {/* Input Area */}
+      <div className="p-4 sm:p-5 bg-[#07121d]">
+        <div className="flex items-center gap-3">
+          <button className="hover:opacity-80 transition-opacity">
             <PlusChatIcon />
           </button>
-          <button>
+          <button className="hover:opacity-80 transition-opacity">
             <ImageIcon />
           </button>
 
-          <div className=" flex-1 relative ">
-            <button className=" absolute  right-4 top-1/2 -translate-y-1/2">
-
+          <div className="flex-1 relative">
+            <button className="absolute right-4 top-1/2 -translate-y-1/2">
               <EmojiIcon />
             </button>
             <input
               type="text"
-              name=""
-              id=""
               value={draftMessage}
-              onChange={(event) => setDraftMessage(event.target.value)}
+              onChange={(e) => setDraftMessage(e.target.value)}
               onKeyDown={handleComposerKeyDown}
-              className=" w-full p-4  bg-[#0a1929] rounded-full placeholder:text-sm placeholder:text-[#8C9196] text-white"
+              className="w-full p-4 bg-[#0a1929] rounded-full placeholder:text-[#8C9196] text-white outline-none focus:ring-1 ring-[#5f6ca0]"
               placeholder="Type message..."
             />
           </div>
 
-          <button onClick={handleSendMessage}>
-            <MicIcon />
+          <button
+            onClick={handleSendMessage}
+            className="hover:scale-110 transition-transform"
+          >
+            {draftMessage.trim() ? (
+              <div className="bg-[#E9201D] p-2 rounded-full">
+                <PlusChatIcon className="rotate-45" />
+              </div>
+            ) : (
+              <MicIcon />
+            )}
           </button>
-
-
         </div>
       </div>
-
-
     </section>
   );
 }
