@@ -63,6 +63,8 @@ export default function PersonalInfo() {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // console.log("personalInfo========", personalInfo);
+
   useEffect(() => {
     const loadPersonalInfo = async () => {
       try {

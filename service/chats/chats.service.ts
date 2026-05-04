@@ -18,11 +18,17 @@ const withAuthConfig = ({ token = "", context = null }: { token?: string; contex
   },
 });
 
-const withMultipartAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+// const withMultipartAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+//   headers: {
+//     "Content-Type": "application/json",
+//     Authorization: "Bearer " + resolveToken({ token, context }),
+//     "content-type": "multipart/form-data",
+//   },
+// });
+
+const withMultipartAuthConfig = ({ token = "", context = null } = {}) => ({
   headers: {
-    "Content-Type": "application/json",
     Authorization: "Bearer " + resolveToken({ token, context }),
-    "content-type": "multipart/form-data",
   },
 });
 
@@ -47,6 +53,11 @@ const buildQueryString = (params: Record<string, string | number | undefined>) =
 };
 
 export const ChatsService = {
+   
+  // All Users
+  getMe: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/auth/me`, withAuthConfig({ token, context }));
+  },
   // All Users
   getAllUsers: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/admin/user`, withAuthConfig({ token, context }));
@@ -81,4 +92,20 @@ export const ChatsService = {
       withAuthConfig({ token, context })
     );
   },
+  // send Message
+sendMessage: async ({ conversationId, data, token = "" }) => {
+  return await Fetch.post(
+    `/conversations/${conversationId}/messages`,
+    data,
+    withAuthConfig({ token })
+  );
+},
+// upload Message
+uploadMessage: async ({ conversationId, formData, token = "" }) => {
+  return await Fetch.post(
+    `/conversations/${conversationId}/messages/upload`,
+    formData,
+    withMultipartAuthConfig({ token })
+  );
+},
 };
