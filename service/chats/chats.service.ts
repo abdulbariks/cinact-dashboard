@@ -70,9 +70,30 @@ export const ChatsService = {
     );
   },
   // get Conversation By Id
-  getConversationById: async ({ id ="", token = "", context = null } = {}) => {
+  // getConversationById: async ({ id ="", token = "", context = null } = {}) => {
+  //   return await Fetch.get(
+  //     `/conversations/${id}/messages`, 
+  //     withAuthConfig({ token, context })
+  //   );
+  // },
+  // get Conversation By Id with Cursor Pagination
+  getConversationById: async ({ 
+    id = "", 
+    token = "", 
+    cursor = null, 
+    take = 20, 
+    context = null 
+  } = {}) => {
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (cursor) params.append("cursor", cursor);
+    if (take) params.append("limit", take.toString());
+
+    const queryString = params.toString();
+    const url = `/conversations/${id}/messages${queryString ? `?${queryString}` : ""}`;
+
     return await Fetch.get(
-      `/conversations/${id}/messages`, 
+      url, 
       withAuthConfig({ token, context })
     );
   },
