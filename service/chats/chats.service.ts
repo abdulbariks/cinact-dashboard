@@ -81,7 +81,7 @@ export const ChatsService = {
     id = "", 
     token = "", 
     cursor = null, 
-    take = 20, 
+    take = 500, 
     context = null 
   } = {}) => {
     // Build query parameters
