@@ -8,9 +8,14 @@ import {
 } from "@/components/ui/select";
 import DropDownIcon from "../icons/others/DropDownIcon";
 
-export function AllStatus() {
+type AllStatusProps = {
+  value?: string;
+  onValueChange?: (value: string) => void;
+};
+
+export function AllStatus({ value, onValueChange }: AllStatusProps) {
   return (
-    <Select name="status">
+    <Select name="status" value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-48 py-5 cursor-pointer border-none text-white bg-[#505B86] hover:bg-[#5f6a96] data-[state=open]:bg-[#6c78a9] data-[placeholder]:text-white [&>svg]:hidden">
         <div className="flex items-center justify-between w-full">
           <SelectValue placeholder="Select Status" />
@@ -19,8 +24,9 @@ export function AllStatus() {
       </SelectTrigger>
       <SelectContent className="border-none bg-[#0a1929] text-[#777980] [&_[data-slot=select-item]]:text-[#777980] [&_[data-slot=select-item][data-highlighted]]:bg-[#5f6ca0] [&_[data-slot=select-item][data-highlighted]]:text-white [&_[data-slot=select-item][data-state=checked]]:text-white">
         <SelectGroup>
-          <SelectItem value="all-students">All Status</SelectItem>
+          <SelectItem value="all">All Status</SelectItem>
           <SelectItem value="active">Active</SelectItem>
+          <SelectItem value="inactive">Inactive</SelectItem>
           <SelectItem value="alumni">Alumni</SelectItem>
           <SelectItem value="pending">Pending</SelectItem>
         </SelectGroup>

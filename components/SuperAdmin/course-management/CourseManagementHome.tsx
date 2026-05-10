@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RightArrowIcon from "@/components/icons/others/RightArrowIcon";
 import {
   PaymentIcon,
@@ -10,20 +10,108 @@ import CalenderIcon from "@/components/icons/SuperAdmindashboard/CalenderIcon";
 import ClockIcon from "@/components/icons/SuperAdmindashboard/ClockIcon";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllStatus } from "@/components/reusable/AllStatus";
-import { coursesData } from "@/public/demoData/CoursesData";
 import Link from "next/link";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { AddCourseModal } from "./AddCourseModal";
+import { parseCookies } from "nookies";
+import { AdminCourseManagementService } from "@/service/user/user.service";
+import { showErrorToast } from "@/lib/hotToast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TCourse } from "@/types/tutor.mycourse";
+
+const formatDate = (value?: string) => {
+  if (!value) return "No Date";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+const getInstructorName = (course: TCourse | any) =>
+  course?.instructor?.name ||
+  course?.instructor_name ||
+  course?.ins_name ||
+  "-";
+
+const getInstructorMeta = (course: TCourse | any) =>
+  course?.instructor?.email ||
+  course?.instructor?.specialization ||
+  course?.ins_specification ||
+  "Instructor";
+
+const getCourseFee = (course: TCourse | any) =>
+  course?.fee || course?.course_fee || "0";
+
+const CourseManagementSkeleton = () => (
+  <div>
+    <Skeleton className="h-8 w-60 bg-[#1d2a3e]" />
+    <div className="mt-5 rounded-2xl bg-[#0a1726] p-6">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-7 w-36 bg-[#1d2a3e]" />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-10 w-80 rounded-xl bg-[#1d2a3e]" />
+          <Skeleton className="h-10 w-48 rounded-xl bg-[#1d2a3e]" />
+        </div>
+      </div>
+      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Skeleton key={index} className="h-70 rounded-xl bg-[#1d2a3e]" />
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export default function CourseManagementHome() {
   const [isAddCourseModalOpen, setIsAddCourseModalOpen] = useState(false);
+  const [courses, setCourses] = useState<TCourse[]>([]);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const loadCourses = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await AdminCourseManagementService.getAllCourses({
+        token,
+        search,
+        status: status === "all" ? "" : status,
+      });
+
+      const responseData = response?.data?.data;
+      setCourses(Array.isArray(responseData) ? responseData : []);
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load courses";
+      setCourses([]);
+      setError(message);
+      showErrorToast(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCourses();
+  }, [search, status]);
+
+  if (loading) {
+    return <CourseManagementSkeleton />;
+  }
+
+  // console.log("courses=========", courses);
+
   return (
     <div>
       <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
@@ -37,30 +125,42 @@ export default function CourseManagementHome() {
               <input
                 type="text"
                 name="search"
-                // value={search}
-                // onChange={handleChange}
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
                 className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
-                placeholder="Search Course`"
+                placeholder="Search Course"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
                 <SearchIcon />
               </button>
             </div>
 
-            <AllStatus />
+            <AllStatus value={status} onValueChange={setStatus} />
           </div>
         </div>
 
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {coursesData.map((course, index) => (
+          {error && (
+            <div className="col-span-full rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-center text-red-400">
+              {error}
+            </div>
+          )}
+
+          {!error && courses.length === 0 && (
+            <div className="col-span-full rounded-xl border border-[#3D4566] bg-[#07121d] p-8 text-center text-[#A5A5AB]">
+              No courses found
+            </div>
+          )}
+
+          {courses.map((course, index) => (
             <div
-              key={index}
+              key={course.id || index}
               className=" bg-[#07121d] p-4 rounded-[12px] border-t-[0.5px] border-b-[0.5px] border-r-[0.5px] border-l-3 border-[#8D9CDC]"
             >
               <h2 className=" text-white text-lg font-medium">
-                {course.course_name}
+                {course.title || (course as any).course_name}
                 <span className=" py-1 px-2.5 rounded-full text-sm text-[#18CC3F] bg-[#2a3d2e]  ml-2">
-                  {course.status}
+                  {course.status?.toLowerCase()}
                 </span>
               </h2>
               <div className=" mt-3 flex items-center gap-3">
@@ -68,9 +168,13 @@ export default function CourseManagementHome() {
                   <TeacherIcon />
                 </div>
                 <div>
-                  <p className=" text-sm text-[#E6E7E8] ">{course.ins_name}</p>
+                  <p className=" text-sm text-[#E6E7E8] ">
+                    {/* {getInstructorName(course)} */}{" "}
+                    {course?.instructor?.name || ""}
+                  </p>
                   <p className=" text-xs text-[#A5A5AB] ">
-                    {course.ins_specification}
+                    {/* {getInstructorMeta(course)} */}
+                    {course?.instructor?.email || ""}
                   </p>
                 </div>
               </div>
@@ -82,7 +186,7 @@ export default function CourseManagementHome() {
                     <p className=" text-xs text-[#B2B5B8] ">Start Date</p>
                   </div>
                   <p className=" text-sm text-white font-medium mt-1.5">
-                    {course.start_date}
+                    {formatDate(course.start_date)}
                   </p>
                 </div>
                 <div>
@@ -91,7 +195,7 @@ export default function CourseManagementHome() {
                     <p className=" text-xs text-[#B2B5B8] ">Duration</p>
                   </div>
                   <p className=" text-sm text-white font-medium mt-1.5">
-                    {course.duration}
+                    {course.duration || "-"}
                   </p>
                 </div>
                 <div>
@@ -100,7 +204,8 @@ export default function CourseManagementHome() {
                     <p className=" text-xs text-[#B2B5B8] ">Students</p>
                   </div>
                   <p className=" text-sm text-white font-medium mt-1.5">
-                    {course.students}
+                    {course.total_enrollments ?? 0}/
+                    {course.seat_capacity ?? "-"}
                   </p>
                 </div>
               </div>
@@ -112,9 +217,11 @@ export default function CourseManagementHome() {
                     <p className=" text-xs text-[#B2B5B8] ">Course Fee</p>
                   </div>
                   <p className=" text-sm text-white font-medium mt-1.5">
-                    ${course.course_fee}{" "}
+                    ${getCourseFee(course)}{" "}
                     <span className=" text-sm text-[#d1d1d1] ">
-                      ( ${course.per_month_fee}/month )
+                      {(course as any).per_month_fee
+                        ? `( $${(course as any).per_month_fee}/month )`
+                        : ""}
                     </span>{" "}
                   </p>
                 </div>
@@ -139,6 +246,7 @@ export default function CourseManagementHome() {
           <AddCourseModal
             open={isAddCourseModalOpen}
             onOpenChange={setIsAddCourseModalOpen}
+            onCourseCreated={loadCourses}
           />
         </div>
       </div>

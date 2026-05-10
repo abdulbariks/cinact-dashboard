@@ -14,6 +14,7 @@ type AddModuleModalProps = {
   onOpenChange: (open: boolean) => void
   moduleData: AddModuleData
   setModuleData: React.Dispatch<React.SetStateAction<AddModuleData>>
+  onAddModule?: () => void
 }
 
 export default function AddModuleModal({
@@ -21,6 +22,7 @@ export default function AddModuleModal({
   onOpenChange,
   moduleData,
   setModuleData,
+  onAddModule,
 }: AddModuleModalProps) {
   const inputClassName =
     "w-full rounded-2xl border border-[#3D4566] bg-transparent px-4 py-3 text-white placeholder:text-[#3D4566] outline-none focus:border-[#5F6CA0]"
@@ -84,7 +86,7 @@ export default function AddModuleModal({
             </button>
             <button
               type="button"
-              onClick={() => onOpenChange(false)}
+              onClick={onAddModule || (() => onOpenChange(false))}
               className="flex cursor-pointer items-center gap-2 rounded-2xl bg-[#E9201D] px-11 py-4 text-base font-medium text-white transition-colors hover:bg-[#ff3b1f]"
             >
               Add Module

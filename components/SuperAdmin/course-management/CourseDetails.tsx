@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClockIcon from "@/components/icons/course-management/ClockIcon";
 import EnrollmentIcon from "@/components/icons/course-management/EnrollmentIcon";
 import PeriodIcon from "@/components/icons/course-management/PeriodIcon";
@@ -18,9 +18,28 @@ import AddModuleModal from "./AddModuleModal";
 import Modules from "./Modules";
 import Students from "./Students";
 import EditCourseModal from "./EditCourseModal";
+import { useParams } from "next/navigation";
+import { parseCookies } from "nookies";
+import { AdminCourseManagementService } from "@/service/user/user.service";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
+import { TGetCourseByIdResponse } from "@/types/tutor.mycourse";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const formatDate = (value?: string) => {
+  if (!value) return "No Date";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
 export default function CourseDetails() {
   const [activeTab, setActiveTab] = useState("modules");
+  const params = useParams<{ courseId: string }>();
+  const courseId = params?.courseId;
   const [isEditCourseOpen, setIsEditCourseOpen] = useState(false);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [isAddModuleOpen, setIsAddModuleOpen] = useState(false);
@@ -45,6 +64,8 @@ export default function CourseDetails() {
     moduleName: "",
     moduleOverview: "",
   });
+  const [course, setCourse] = useState<TGetCourseByIdResponse | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const instructorOptions = [
     "Wade Warren",
@@ -53,9 +74,57 @@ export default function CourseDetails() {
     "Bessie Cooper",
   ];
 
-  const inputClassName =
-    "w-full rounded-2xl border border-[#3D4566] bg-transparent px-4 py-3 text-white placeholder:text-[#3D4566] outline-none focus:border-[#5F6CA0]";
-  const labelClassName = "mb-2 block text-sm text-[#B2B5B8]";
+  const loadCourse = useCallback(async () => {
+    if (!courseId) return;
+
+    setLoading(true);
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await AdminCourseManagementService.getCourseById({
+        courseId,
+        token,
+      });
+
+      setCourse(response?.data || null);
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to load course details",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [courseId]);
+
+  useEffect(() => {
+    loadCourse();
+  }, [loadCourse]);
+
+  const handleAddModule = async () => {
+    if (!courseId) return;
+
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await AdminCourseManagementService.createCourseModule({
+        courseId,
+        token,
+        payload: {
+          module_title: moduleData.moduleTitle,
+          module_name: moduleData.moduleName,
+          module_overview: moduleData.moduleOverview,
+        },
+      });
+
+      showSuccessToast(response?.data?.message || "Module added successfully");
+      setModuleData({ moduleTitle: "", moduleName: "", moduleOverview: "" });
+      setIsAddModuleOpen(false);
+    } catch (error: any) {
+      showErrorToast(error?.response?.data?.message || "Failed to add module");
+    }
+  };
 
   const navItems = [
     {
@@ -71,6 +140,17 @@ export default function CourseDetails() {
       activeIcon: <StudentSecondaryIcon />,
     },
   ];
+
+  if (loading) {
+    return (
+      <div>
+        <Skeleton className="h-6 w-72 bg-[#1d2a3e]" />
+        <Skeleton className="mt-8 h-8 w-52 bg-[#1d2a3e]" />
+        <Skeleton className="mt-5 h-64 rounded-2xl bg-[#1d2a3e]" />
+        <Skeleton className="mt-6 h-96 rounded-2xl bg-[#1d2a3e]" />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -93,7 +173,7 @@ export default function CourseDetails() {
             {/* item-1 */}
             <div className=" flex items-center justify-between">
               <h3 className=" text-xl text-white font-medium">
-                1 year program ( adult)
+                {course?.data?.title || "Course"}
               </h3>
 
               <button
@@ -112,7 +192,7 @@ export default function CourseDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Teacher</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  Wade Warren
+                  {course?.data?.instructor?.name || "-"}
                 </h3>
               </div>
               <div>
@@ -121,7 +201,7 @@ export default function CourseDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Enrollment</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  45 students
+                  {course?.data?.total_enrollments || 0} students
                 </h3>
               </div>
               <div>
@@ -130,7 +210,7 @@ export default function CourseDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Duration</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  12 weeks
+                  {course?.data?.duration || "-"}
                 </h3>
               </div>
               <div>
@@ -139,7 +219,7 @@ export default function CourseDetails() {
                   <p className=" text-xs text-[#A5A5AB] ">Period</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  2024-08-01 - 2024-10-24
+                  {formatDate(course?.data?.start_date)}
                 </h3>
               </div>
             </div>
@@ -149,8 +229,7 @@ export default function CourseDetails() {
                 Course Overview
               </h3>
               <p className=" mt-2.5 text-sm text-[#D2D2D5]">
-                This course consists of a 2-year period trajectory that runs 1
-                day a week on Sunday takes place.
+                {course?.data?.course_overview || "No overview available."}
               </p>
             </div>
             {/* item-4 */}
@@ -210,7 +289,7 @@ export default function CourseDetails() {
             </div>
 
             <TabsContent value="modules" className="mt-4">
-              <Modules />
+              <Modules courseId={courseId} />
             </TabsContent>
 
             <TabsContent value="students" className="mt-4">
@@ -240,6 +319,7 @@ export default function CourseDetails() {
         onOpenChange={setIsAddModuleOpen}
         moduleData={moduleData}
         setModuleData={setModuleData}
+        onAddModule={handleAddModule}
       />
     </div>
   );

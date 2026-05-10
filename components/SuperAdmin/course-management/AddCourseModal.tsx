@@ -6,20 +6,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import dynamic from "next/dynamic";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ChevronDown } from "lucide-react";
+import { AdminCourseManagementService } from "@/service/user/user.service";
+import { parseCookies } from "nookies";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 
 // Dynamically import Jodit for Next.js
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const courseSchema = z.object({
-  courseTitle: z.string().min(1, "Title is required"),
-  courseOverview: z.string().min(1, "Overview is required"),
-  moduleDetails: z.string().min(1, "Module details are required"),
-  startDate: z.string().min(1, "Date is required"),
-  classTime: z.string().min(1, "Time is required"),
-  instructor: z.string().min(1, "Instructor is required"),
-  courseFee: z.string().min(1, "Fee is required"),
-  installmentProcess: z.string().min(1, "Installment details are required"),
+  title: z.string().min(1, "Title is required"),
+  course_overview: z.string().min(1, "Overview is required"),
+  course_module_details: z.string().min(1, "Module details are required"),
+  duration: z.string().min(1, "Duration is required"),
+  start_date: z.string().min(1, "Date is required"),
+  class_time: z.string().min(1, "Time is required"),
+  fee: z.string().min(1, "Fee is required"),
+  seat_capacity: z.string().min(1, "Seat capacity is required"),
+  installment_process: z.string().min(1, "Installment details are required"),
 });
 
 type CourseFormValues = z.infer<typeof courseSchema>;
@@ -27,9 +30,11 @@ type CourseFormValues = z.infer<typeof courseSchema>;
 export function AddCourseModal({
   open,
   onOpenChange,
+  onCourseCreated,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
+  onCourseCreated?: () => void;
 }) {
   const {
     control,
@@ -39,6 +44,17 @@ export function AddCourseModal({
     reset,
   } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
+    defaultValues: {
+      title: "",
+      course_overview: "",
+      course_module_details: "",
+      duration: "",
+      start_date: "",
+      class_time: "",
+      fee: "",
+      seat_capacity: "",
+      installment_process: "",
+    },
   });
 
   const config = useMemo(
@@ -57,10 +73,40 @@ export function AddCourseModal({
     [],
   );
 
-  const onSubmit = (data: CourseFormValues) => {
-    console.log("Form Submitted:", data);
-    reset();
-    onOpenChange(false);
+  const onSubmit = async (data: CourseFormValues) => {
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const startDate = new Date(
+        `${data.start_date}T00:00:00.000Z`,
+      ).toISOString();
+
+      const response = await AdminCourseManagementService.createCourse({
+        token,
+        payload: {
+          title: data.title,
+          course_overview: data.course_overview,
+          course_module_details: data.course_module_details,
+          duration: data.duration,
+          start_date: startDate,
+          class_time: data.class_time,
+          fee: Number(data.fee),
+          installment_process: data.installment_process,
+          seat_capacity: data.seat_capacity,
+        },
+      });
+
+      showSuccessToast(
+        response?.data?.message || "Course created successfully",
+      );
+      reset();
+      onOpenChange(false);
+      onCourseCreated?.();
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message || "Failed to create course",
+      );
+    }
   };
 
   const inputStyles =
@@ -70,7 +116,7 @@ export function AddCourseModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-[#0A1726] border-none text-white p-8 rounded-[20px] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
+      <DialogContent className="sm:max-w-150 bg-[#0A1726] border-none text-white p-8 rounded-[20px] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
         <div className="flex items-center justify-between border-b border-[#1C2632] pb-6 mb-6">
           <DialogTitle className="text-2xl font-semibold">
             Add New Course
@@ -82,12 +128,12 @@ export function AddCourseModal({
           <div>
             <label className={labelStyles}>Course Title</label>
             <input
-              {...register("courseTitle")}
+              {...register("title")}
               placeholder="Enter Course name"
               className={inputStyles}
             />
-            {errors.courseTitle && (
-              <p className={errorStyles}>{errors.courseTitle.message}</p>
+            {errors.title && (
+              <p className={errorStyles}>{errors.title.message}</p>
             )}
           </div>
 
@@ -96,7 +142,7 @@ export function AddCourseModal({
             <label className={labelStyles}>Course Overview</label>
             <div className="mt-2 border border-[#242D3D] rounded-[12px] overflow-hidden">
               <Controller
-                name="courseOverview"
+                name="course_overview"
                 control={control}
                 render={({ field }) => (
                   <JoditEditor
@@ -108,8 +154,8 @@ export function AddCourseModal({
                 )}
               />
             </div>
-            {errors.courseOverview && (
-              <p className={errorStyles}>{errors.courseOverview.message}</p>
+            {errors.course_overview && (
+              <p className={errorStyles}>{errors.course_overview.message}</p>
             )}
           </div>
 
@@ -118,7 +164,7 @@ export function AddCourseModal({
             <label className={labelStyles}>Course Module Details</label>
             <div className="mt-2 border border-[#242D3D] rounded-[12px] overflow-hidden">
               <Controller
-                name="moduleDetails"
+                name="course_module_details"
                 control={control}
                 render={({ field }) => (
                   <JoditEditor
@@ -130,22 +176,40 @@ export function AddCourseModal({
                 )}
               />
             </div>
-            {errors.moduleDetails && (
-              <p className={errorStyles}>{errors.moduleDetails.message}</p>
+            {errors.course_module_details && (
+              <p className={errorStyles}>
+                {errors.course_module_details.message}
+              </p>
             )}
           </div>
 
-          {/* 4 & 5. Date and Time */}
+          {/* 4. Duration */}
+          <div>
+            <label className={labelStyles}>Duration</label>
+            <input
+              {...register("duration")}
+              placeholder="6 weeks"
+              className={inputStyles}
+            />
+            {errors.duration && (
+              <p className={errorStyles}>{errors.duration.message}</p>
+            )}
+          </div>
+
+          {/* 5 & 6. Date and Time */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelStyles}>Start Date</label>
               <div className="relative mt-2">
                 <input
                   type="date"
-                  {...register("startDate")}
+                  {...register("start_date")}
                   className={`${inputStyles} mt-0`}
                   style={{ colorScheme: "dark" }}
                 />
+                {errors.start_date && (
+                  <p className={errorStyles}>{errors.start_date.message}</p>
+                )}
               </div>
             </div>
             <div>
@@ -153,30 +217,14 @@ export function AddCourseModal({
               <div className="relative mt-2">
                 <input
                   type="time"
-                  {...register("classTime")}
+                  {...register("class_time")}
                   className={`${inputStyles} mt-0`}
                   style={{ colorScheme: "dark" }}
                 />
+                {errors.class_time && (
+                  <p className={errorStyles}>{errors.class_time.message}</p>
+                )}
               </div>
-            </div>
-          </div>
-
-          {/* 6. Assign Instructor */}
-          <div>
-            <label className={labelStyles}>Assign Instructor</label>
-            <div className="relative">
-              <select
-                {...register("instructor")}
-                className={`${inputStyles} appearance-none cursor-pointer`}
-              >
-                <option value="" className="bg-[#0A1726]">
-                  Select teacher
-                </option>
-                <option value="instructor1" className="bg-[#0A1726]">
-                  Instructor Name 1
-                </option>
-              </select>
-              <ChevronDown className="absolute right-4 top-6 h-5 w-5 text-[#505B86] pointer-events-none" />
             </div>
           </div>
 
@@ -184,18 +232,32 @@ export function AddCourseModal({
           <div>
             <label className={labelStyles}>Course Fee</label>
             <input
-              {...register("courseFee")}
+              {...register("fee")}
               placeholder="Course price"
               className={inputStyles}
             />
+            {errors.fee && <p className={errorStyles}>{errors.fee.message}</p>}
           </div>
 
-          {/* 8. Installment Process */}
+          {/* 8. Seat Capacity */}
+          <div>
+            <label className={labelStyles}>Seat Capacity</label>
+            <input
+              {...register("seat_capacity")}
+              placeholder="100"
+              className={inputStyles}
+            />
+            {errors.seat_capacity && (
+              <p className={errorStyles}>{errors.seat_capacity.message}</p>
+            )}
+          </div>
+
+          {/* 9. Installment Process */}
           <div>
             <label className={labelStyles}>Installment Process</label>
             <div className="mt-2 border border-[#242D3D] rounded-[12px] overflow-hidden">
               <Controller
-                name="installmentProcess"
+                name="installment_process"
                 control={control}
                 render={({ field }) => (
                   <JoditEditor
@@ -207,8 +269,10 @@ export function AddCourseModal({
                 )}
               />
             </div>
-            {errors.installmentProcess && (
-              <p className={errorStyles}>{errors.installmentProcess.message}</p>
+            {errors.installment_process && (
+              <p className={errorStyles}>
+                {errors.installment_process.message}
+              </p>
             )}
           </div>
 

@@ -1,5 +1,6 @@
 import { CookieHelper } from "../../helper/cookie.helper";
 import { Fetch } from "../../lib/Fetch";
+import { CreateTutorClassPayload } from "@/types/tutor.mycourse";
 
 const jsonConfig = {
   headers: {
@@ -7,18 +8,27 @@ const jsonConfig = {
   },
 };
 
-const resolveToken = ({ token = "", context = null }: { token?: string; context?: any } = {}) => {
+const resolveToken = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => {
   return token || CookieHelper.get({ key: "token", context }) || "";
 };
 
-const withAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     "Content-Type": "application/json",
     Authorization: "Bearer " + resolveToken({ token, context }),
   },
 });
 
-const withMultipartAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withMultipartAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     "Content-Type": "application/json",
     Authorization: "Bearer " + resolveToken({ token, context }),
@@ -26,13 +36,18 @@ const withMultipartAuthConfig = ({ token = "", context = null }: { token?: strin
   },
 });
 
-const withFormDataAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withFormDataAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     Authorization: "Bearer " + resolveToken({ token, context }),
   },
 });
 
-const buildQueryString = (params: Record<string, string | number | undefined>) => {
+const buildQueryString = (
+  params: Record<string, string | number | undefined>,
+) => {
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {
@@ -47,7 +62,7 @@ const buildQueryString = (params: Record<string, string | number | undefined>) =
 };
 
 export const UserService = {
-  // login 
+  // login
   login: async ({ email, password }: { email: string; password: string }) => {
     const data = {
       email: email,
@@ -65,7 +80,6 @@ export const UserService = {
   getAllCourses: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/course/all`, withAuthConfig({ token, context }));
   },
-
 
   // get all students
 
@@ -86,17 +100,16 @@ export const UserService = {
     page?: number;
     limit?: number;
   } = {}) => {
-    return await Fetch.get(
-      `/admin/student-management`,{
-        ...withAuthConfig({ token, context }), params: {
-          search,
-          status,
-          paymentStatus,
-          page,
-          limit,
-        },
-      }
-    );
+    return await Fetch.get(`/admin/student-management`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        search,
+        status,
+        paymentStatus,
+        page,
+        limit,
+      },
+    });
   },
 
   // get all instructors
@@ -117,7 +130,10 @@ export const UserService = {
   } = {}) => {
     const queryString = buildQueryString({ status, search, page, limit });
 
-    return await Fetch.get(`/instructors${queryString}`, withAuthConfig({ token, context }));
+    return await Fetch.get(
+      `/instructors${queryString}`,
+      withAuthConfig({ token, context }),
+    );
   },
 
   // student manual enrollment by super admin
@@ -176,7 +192,7 @@ export const UserService = {
     return await Fetch.post(
       "/admin/student-management/manual-enrollment",
       formData,
-      withFormDataAuthConfig({ token, context })
+      withFormDataAuthConfig({ token, context }),
     );
   },
 
@@ -200,16 +216,13 @@ export const UserService = {
   } = {}) => {
     const authConfig = withAuthConfig({ token, context });
 
-    return await Fetch.get(
-      `/admin/community-management/posts`,
-      {
-        ...authConfig,
-        params: { search, status, role, page, limit },
-      }
-    );
+    return await Fetch.get(`/admin/community-management/posts`, {
+      ...authConfig,
+      params: { search, status, role, page, limit },
+    });
   },
-  
-//  another get all posts for super admin home page ===================================
+
+  //  another get all posts for super admin home page ===================================
 
   register: async ({
     username,
@@ -257,7 +270,10 @@ export const UserService = {
     token?: string;
     context?: any;
   }) => {
-    return await Fetch.get(`/user/profile/${username}`, withAuthConfig({ token, context }));
+    return await Fetch.get(
+      `/user/profile/${username}`,
+      withAuthConfig({ token, context }),
+    );
   },
 
   update: async (
@@ -290,7 +306,7 @@ export const UserService = {
       recipient_address: string;
       recipient_phone_number: string;
     },
-    context = null
+    context = null,
   ) => {
     const data = {
       fname: fname,
@@ -312,7 +328,11 @@ export const UserService = {
   },
 
   updateAvatar: async (data: any, context = null) => {
-    return await Fetch.patch(`/user/avatar`, data, withMultipartAuthConfig({ context }));
+    return await Fetch.patch(
+      `/user/avatar`,
+      data,
+      withMultipartAuthConfig({ context }),
+    );
   },
 
   //
@@ -330,7 +350,7 @@ export const UserService = {
       email: string;
       role_id: number;
     },
-    context: any = null
+    context: any = null,
   ) => {
     const data = {
       fname: fname,
@@ -351,7 +371,7 @@ export const UserService = {
       email,
       password,
     }: { id: number; token: string; email: string; password: string },
-    context: any = null
+    context: any = null,
   ) => {
     const data = {
       id: id,
@@ -360,13 +380,16 @@ export const UserService = {
       password: password,
     };
 
-    return await Fetch.patch(`/user/${id}/password`, data, withAuthConfig({ context }));
+    return await Fetch.patch(
+      `/user/${id}/password`,
+      data,
+      withAuthConfig({ context }),
+    );
   },
 };
 
-
-export const AdminAttendanceService ={
-    getAttendance: async ({
+export const AdminAttendanceService = {
+  getAttendance: async ({
     classId,
     page = 1,
     limit = 10,
@@ -378,7 +401,7 @@ export const AdminAttendanceService ={
     classId: string;
     page?: number;
     limit?: number;
-    status?: string; 
+    status?: string;
     search?: string;
     token?: string;
     context?: any;
@@ -392,7 +415,7 @@ export const AdminAttendanceService ={
     if (search) params.append("search", search);
     return await Fetch.get(
       `/attendance?${params.toString()}`,
-      withAuthConfig({ token, context })
+      withAuthConfig({ token, context }),
     );
   },
   // Manual Attendance
@@ -417,82 +440,350 @@ export const AdminAttendanceService ={
         status,
         attendedAt: new Date().toISOString(), // Current timestamp
       },
-      withAuthConfig({ token, context })
+      withAuthConfig({ token, context }),
+    );
+  },
+};
+
+export const AdminCourseManagementService = {
+  getAllCourses: async ({
+    token = "",
+    context = null,
+    search = "",
+    status = "",
+    page,
+    limit,
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    return await Fetch.get(`/courses`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        search,
+        status,
+        page,
+        limit,
+      },
+    });
+  },
+
+  createCourse: async ({
+    payload,
+    token = "",
+    context = null,
+  }: {
+    payload: any;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.post(
+      `/courses`,
+      payload,
+      withAuthConfig({ token, context }),
     );
   },
 
-}
+  getCourseById: async ({
+    courseId,
+    token = "",
+    context = null,
+  }: {
+    courseId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/${courseId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
 
-export const AdminPaymentsTransactionsService ={
-    // get Finance Payments Stats 
-    getPaymentsStats: async ({ token = "", context = null } = {}) => {
-      return await Fetch.get(`/finance/revenue/stats`, withAuthConfig({ token, context }));
-    }, 
-  
-    // get Finance Payments Transactions
-      getAllPaymentsTransactions: async ({
-        token = "",
-        context = null,
-        search = "",
-        // date = "",
-        paymentPlan = "",
-        page = 1,
-        limit = 10,
-      }: {
-        token?: string;
-        context?: any;
-        search?: string;
-        // date?:string;
-        paymentPlan?: string | boolean;
-        page?: number;
-        limit?: number;
-      } = {}) => {
-        return await Fetch.get(
-          `/finance/transactions`,{
-            ...withAuthConfig({ token, context }), params: {
-              search,
-              // date,
-              paymentPlan,
-              page,
-              limit,
-            },
-          }
-        );
+  updateCourse: async ({
+    courseId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    courseId: string;
+    payload: any;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.patch(
+      `/courses/${courseId}`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  getAllCourseModules: async ({
+    courseId,
+    token = "",
+    context = null,
+  }: {
+    courseId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/${courseId}/modules`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  createCourseModule: async ({
+    courseId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    courseId: string;
+    payload: any;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.post(
+      `/courses/${courseId}/modules`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  getClassById: async ({
+    classId,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/classes/${classId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  createClass: async ({
+    moduleId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    moduleId: string;
+    payload: CreateTutorClassPayload;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.post(
+      `/courses/modules/${moduleId}/classes`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  updateClass: async ({
+    classId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    payload: any;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.patch(
+      `/courses/classes/${classId}`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  getAllAssignmentsByClass: async ({
+    classId,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/classes/${classId}/assignments`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  createClassAssignment: async ({
+    classId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    payload: FormData;
+    token?: string;
+    context?: any;
+  }) => {
+    const config = withAuthConfig({ token, context });
+    delete config.headers["Content-Type"];
+
+    return await Fetch.post(
+      `/courses/classes/${classId}/assignments`,
+      payload,
+      config,
+    );
+  },
+
+  getAssignmentDetailsById: async ({
+    assignmentId,
+    token = "",
+    context = null,
+  }: {
+    assignmentId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/assignments/${assignmentId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  getAllSubmittedAssignments: async ({
+    assignmentId,
+    token = "",
+    context = null,
+  }: {
+    assignmentId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/assignments/${assignmentId}/submissions`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  getAllAssetsByClass: async ({
+    classId,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/courses/classes/${classId}/media`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  uploadAssets: async ({
+    classId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    payload: FormData;
+    token?: string;
+    context?: any;
+  }) => {
+    const config = withAuthConfig({ token, context });
+    delete config.headers["Content-Type"];
+
+    return await Fetch.post(
+      `/courses/classes/${classId}/media`,
+      payload,
+      config,
+    );
+  },
+};
+
+export const AdminPaymentsTransactionsService = {
+  // get Finance Payments Stats
+  getPaymentsStats: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(
+      `/finance/revenue/stats`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  // get Finance Payments Transactions
+  getAllPaymentsTransactions: async ({
+    token = "",
+    context = null,
+    search = "",
+    // date = "",
+    paymentPlan = "",
+    page = 1,
+    limit = 10,
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    // date?:string;
+    paymentPlan?: string | boolean;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    return await Fetch.get(`/finance/transactions`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        search,
+        // date,
+        paymentPlan,
+        page,
+        limit,
       },
-}
+    });
+  },
+};
 
-export const AdminEventService={
-    getEvent: async({
-      token = "",
-      context = null,
-      search = "",
-    }: {
-      token?: string;
-      context?: any;
-      search?: string;
-    } = {}) =>{
+export const AdminEventService = {
+  getEvent: async ({
+    token = "",
+    context = null,
+    search = "",
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+  } = {}) => {
     return await Fetch.get(`/events`, {
-          ...withAuthConfig({ token, context }), params: {
-            search,
-          },
-        }
-        )
+      ...withAuthConfig({ token, context }),
+      params: {
+        search,
+      },
+    });
   },
   getEventById: async (id: string, token: string) => {
-  return await Fetch.get(`/events/${id}`, withAuthConfig({ token }));
-},
+    return await Fetch.get(`/events/${id}`, withAuthConfig({ token }));
+  },
 
   createEvent: async (data: any, token: string) => {
-      return await Fetch.post(`/events`, data, withAuthConfig({ token }));
-    },
+    return await Fetch.post(`/events`, data, withAuthConfig({ token }));
+  },
 
   updateEvent: async (id: string, data: any, token: string) => {
-      //  /events/update/:eventId
-      return await Fetch.patch(`/events/update/${id}`, data, withAuthConfig({ token }));
+    //  /events/update/:eventId
+    return await Fetch.patch(
+      `/events/update/${id}`,
+      data,
+      withAuthConfig({ token }),
+    );
   },
-}
+};
 
-export const AdminCommunityService={
+export const AdminCommunityService = {
   getAllPosts: async ({
     token = "",
     context = null,
@@ -550,32 +841,66 @@ export const AdminCommunityService={
       },
     });
   },
-  getPostDetailsById: async (id: string, token: string = "", context: any = null) => {
-    return await Fetch.get(`/admin/community-management/requested-posts/${id}`, {
-      ...withAuthConfig({ token, context }),
-    });
+  getPostDetailsById: async (
+    id: string,
+    token: string = "",
+    context: any = null,
+  ) => {
+    return await Fetch.get(
+      `/admin/community-management/requested-posts/${id}`,
+      {
+        ...withAuthConfig({ token, context }),
+      },
+    );
   },
-  approvePost: async (id: string, token: string) => 
-    await Fetch.patch(`/admin/community-management/approve-post/${id}`, {}, withAuthConfig({ token })),
-  rejectPost: async (id: string, token: string) => 
-    await Fetch.patch(`/admin/community-management/reject-post/${id}`, {}, withAuthConfig({ token })),
-  flagPost: async (id: string, token: string) => 
-    await Fetch.patch(`/admin/community-management/flag-unflag-post/${id}`, {}, withAuthConfig({ token })),
+  approvePost: async (id: string, token: string) =>
+    await Fetch.patch(
+      `/admin/community-management/approve-post/${id}`,
+      {},
+      withAuthConfig({ token }),
+    ),
+  rejectPost: async (id: string, token: string) =>
+    await Fetch.patch(
+      `/admin/community-management/reject-post/${id}`,
+      {},
+      withAuthConfig({ token }),
+    ),
+  flagPost: async (id: string, token: string) =>
+    await Fetch.patch(
+      `/admin/community-management/flag-unflag-post/${id}`,
+      {},
+      withAuthConfig({ token }),
+    ),
   deletePost: async (id: string, token: string = "") => {
     // admin/community-management/delete-post/cmm7df5lm0001kg90ajhm9olt
     return await Fetch.delete(`/admin/community-management/delete-post/${id}`, {
       ...withAuthConfig({ token }),
     });
   },
-}
+};
 
 export const AdminSystemSettingService = {
   getPersonalInfo: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/profile/personal-info`, withAuthConfig({ token, context }));
+    return await Fetch.get(
+      `/profile/personal-info`,
+      withAuthConfig({ token, context }),
+    );
   },
 
-  updatePersonalInfo: async ({ data, token = "", context = null }: { data: any; token?: string; context?: any }) => {
-    return await Fetch.put(`/profile/personal-info`, data, withAuthConfig({ token, context }));
+  updatePersonalInfo: async ({
+    data,
+    token = "",
+    context = null,
+  }: {
+    data: any;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.put(
+      `/profile/personal-info`,
+      data,
+      withAuthConfig({ token, context }),
+    );
   },
 
   changePassword: async ({
