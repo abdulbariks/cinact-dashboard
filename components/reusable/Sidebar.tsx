@@ -84,7 +84,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
       try {
         const userData = JSON.parse(userCookie);
         const normalizedUserRole = normalizeRole(
-          userData?.role || userData?.apiRole || userData?.type
+          userData?.role || userData?.apiRole || userData?.type,
         );
         if (isValidRole(normalizedUserRole)) {
           role = normalizedUserRole;
@@ -120,7 +120,12 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
   };
 
   const isActive = (href: string): boolean => {
-    if (href === "/" || href === "/dashboard") {
+    if (
+      href === "/" ||
+      href === "/dashboard" ||
+      href === "/tutor-dashboard" ||
+      href === "/finance-dashboard"
+    ) {
       return pathname === href;
     }
 
@@ -146,8 +151,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
     CookieHelper.destroy({ key: "refreshToken" });
     CookieHelper.destroy({ key: "user" });
     CookieHelper.destroy({ key: "userRole" });
-    document.cookie =
-      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     document.cookie =
       "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     document.cookie =
@@ -249,27 +253,33 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
             </div>
           )}
 
-          {!isLoading && Object.entries(groupedMenuItems).map(([category, items]) => (
-            <div key={category} className="mb-6">
-              {/* Category Title - Hidden when collapsed on desktop */}
-              {!effectiveCollapsed && (
-                <h3 className="text-sm uppercase tracking-wider text-[#8C9196]   mb-3 px-3">
-                  {category}
-                </h3>
-              )}
+          {!isLoading &&
+            Object.entries(groupedMenuItems).map(([category, items]) => (
+              <div key={category} className="mb-6">
+                {/* Category Title - Hidden when collapsed on desktop */}
+                {!effectiveCollapsed && (
+                  <h3 className="text-sm uppercase tracking-wider text-[#8C9196]   mb-3 px-3">
+                    {category}
+                  </h3>
+                )}
 
-              {/* Category Items */}
-              <div className="space-y-1">
-                {items.map((item) => {
-                  const active = isActive(item.href);
-                  const Icon = item.icon;
+                {/* Category Items */}
+                <div className="space-y-1">
+                  {items.map((item) => {
+                    const active = isActive(item.href);
+                    const Icon = item.icon;
+                    const iconClassName = `w-5 h-5 transition-all duration-200 ${
+                      active
+                        ? "text-blackColor"
+                        : "text-gray-500 group-hover:text-gray-700"
+                    }`;
 
-                  return (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      onClick={onClose}
-                      className={`
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        onClick={onClose}
+                        className={`
                         flex items-center group gap-3 px-3 py-2.5 lg:py-3 rounded-lg 
                         transition-all duration-200 relative 
                         ${
@@ -279,35 +289,35 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                         }
                         ${effectiveCollapsed ? "justify-center" : ""}
                       `}
-                      title={effectiveCollapsed ? item.name : ""}
-                    >
-                      <div
-                        className={`flex ${effectiveCollapsed ? "" : "gap-3"} items-center`}
+                        title={effectiveCollapsed ? item.name : ""}
                       >
-                        <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
-                          <Icon
-                            className={`w-5 h-5 transition-all duration-200 ${
-                              active
-                                ? "text-blackColor"
-                                : "text-gray-500 group-hover:text-gray-700"
-                            }`}
-                            isActive={active}
-                          />
-                        </div>
+                        <div
+                          className={`flex ${effectiveCollapsed ? "" : "gap-3"} items-center`}
+                        >
+                          <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
+                            {item.supportsActiveState ? (
+                              <Icon
+                                className={iconClassName}
+                                isActive={active}
+                              />
+                            ) : (
+                              <Icon className={iconClassName} />
+                            )}
+                          </div>
 
-                        {/* Show text on mobile always, on desktop only when not collapsed */}
-                        {(isMobile || !effectiveCollapsed) && (
-                          <span className="text-base font-medium whitespace-nowrap">
-                            {item.name}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  );
-                })}
+                          {/* Show text on mobile always, on desktop only when not collapsed */}
+                          {(isMobile || !effectiveCollapsed) && (
+                            <span className="text-base font-medium whitespace-nowrap">
+                              {item.name}
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
 
         {/* Log out section */}
@@ -326,9 +336,9 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
           )}
 
           {!isLoading && (
-          <button
-            onClick={handleLogout}
-            className={`
+            <button
+              onClick={handleLogout}
+              className={`
               flex items-center gap-3 px-3 py-3 
               w-full rounded-lg 
               transition-all duration-200
@@ -336,19 +346,19 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
               text-gray-700 hover:bg-red-50 hover:text-red-600
               group
             `}
-            title={effectiveCollapsed ? "Log Out Account" : ""}
-            type="button"
-          >
-            <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
-              <LogOutIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-            </div>
+              title={effectiveCollapsed ? "Log Out Account" : ""}
+              type="button"
+            >
+              <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
+                <LogOutIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              </div>
 
-            {(isMobile || !effectiveCollapsed) && (
-              <span className="text-sm font-medium whitespace-nowrap">
-                Log Out Account
-              </span>
-            )}
-          </button>
+              {(isMobile || !effectiveCollapsed) && (
+                <span className="text-sm font-medium whitespace-nowrap">
+                  Log Out Account
+                </span>
+              )}
+            </button>
           )}
         </div>
       </div>

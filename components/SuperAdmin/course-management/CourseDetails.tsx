@@ -67,13 +67,6 @@ export default function CourseDetails() {
   const [course, setCourse] = useState<TGetCourseByIdResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const instructorOptions = [
-    "Wade Warren",
-    "Jane Cooper",
-    "Devon Lane",
-    "Bessie Cooper",
-  ];
-
   const loadCourse = useCallback(async () => {
     if (!courseId) return;
 
@@ -228,9 +221,18 @@ export default function CourseDetails() {
               <h3 className=" text-xl text-white font-medium">
                 Course Overview
               </h3>
-              <p className=" mt-2.5 text-sm text-[#D2D2D5]">
-                {course?.data?.course_overview || "No overview available."}
-              </p>
+              {course?.data?.course_overview ? (
+                <div
+                  className="mt-2.5 text-sm text-[#D2D2D5]"
+                  dangerouslySetInnerHTML={{
+                    __html: course.data.course_overview,
+                  }}
+                />
+              ) : (
+                <p className="mt-2.5 text-sm text-[#D2D2D5]">
+                  No overview available.
+                </p>
+              )}
             </div>
             {/* item-4 */}
             <div>
@@ -304,7 +306,8 @@ export default function CourseDetails() {
         onOpenChange={setIsEditCourseOpen}
         editCourseData={editCourseData}
         setEditCourseData={setEditCourseData}
-        instructorOptions={instructorOptions}
+        course={course?.data}
+        onCourseUpdated={loadCourse}
       />
 
       <AddClassModal

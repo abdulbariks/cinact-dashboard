@@ -136,6 +136,72 @@ export const UserService = {
     );
   },
 
+  getInstructorDetailsById: async ({
+    instructorId,
+    token = "",
+    context = null,
+  }: {
+    instructorId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/instructors/details/${instructorId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  createInstructor: async ({
+    payload,
+    token = "",
+    context = null,
+  }: {
+    payload: {
+      name: string;
+      email: string;
+      phone_number: string;
+      teacherType: string;
+      teacherStatus: string;
+      password: string;
+      experienceLevel: string;
+      joinDate: string;
+    };
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.post(
+      `/instructors`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  updateInstructor: async ({
+    instructorId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    instructorId: string;
+    payload: {
+      name: string;
+      // email: string;
+      // phone_number: string;
+      // teacherType: string;
+      // teacherStatus: string;
+      // experienceLevel: string;
+      // joinDate: string;
+    };
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.patch(
+      `/instructors/update/${instructorId}`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   // student manual enrollment by super admin
   createManualEnrollment: async ({
     token = "",
