@@ -1,7 +1,7 @@
 import Image from "next/image";
-import avatar1 from '@/public/admin-dashboard/avatar-1.png'
-import avatar2 from '@/public/admin-dashboard/avatar-2.png'
-import avatar3 from '@/public/admin-dashboard/avatar-3.png'
+import avatar1 from "@/public/admin-dashboard/avatar-1.png";
+import avatar2 from "@/public/admin-dashboard/avatar-2.png";
+import avatar3 from "@/public/admin-dashboard/avatar-3.png";
 import EditIcon from "../icons/SuperAdmindashboard/EditIcon";
 import EyeIcon from "../icons/SuperAdmindashboard/EyeIcon";
 import RestrictIcon from "../icons/SuperAdmindashboard/RestrictIcon";
@@ -16,23 +16,27 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import Link from "next/link";
-import warnigImg from '@/public/admin-dashboard/warning-img.png'
+import warnigImg from "@/public/admin-dashboard/warning-img.png";
 import CrossIcon from "../icons/others/CrossIcon";
 import RestrictUserIcon from "../icons/SuperAdmindashboard/RestrictUserIcon";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import DropDownIcon from "../icons/others/DropDownIcon";
 
 // Status color mapping
 const statusColors: Record<string, string> = {
   active: "bg-[#2a3d2e] text-[#18CC3F]",
- 
+
   alumni: "bg-[#2b2d40] text-[#6774FF]",
   restricted: "bg-[#402b2b] text-[#E9201D]",
   pending: "bg-[#443c29] text-[#ECAD11]",
-  
 };
 
- 
 const paymentStatusColors: Record<string, string> = {
   paid: "bg-[#2a3d2e] text-[#18CC3F]",
   overdue: "bg-[#402b2b] text-[#E9201D]",
@@ -40,7 +44,6 @@ const paymentStatusColors: Record<string, string> = {
   pending: "bg-[#443c29] text-[#ECAD11]",
   completed: "bg-[#2a3d2e] text-[#18CC3F]",
   unpaid: "bg-[#402b2b] text-[#E9201D]",
-   
 };
 
 const studentTypeOptions = ["Monthly", "Quarterly", "Yearly"];
@@ -59,6 +62,7 @@ export const studentManagementColumns = [
             width={32}
             height={32}
             className="object-cover w-full h-full"
+            unoptimized
           />
         </div>
         <div>
@@ -74,7 +78,8 @@ export const studentManagementColumns = [
     width: "100px",
     formatter: (value: string) => (
       <span
-        className={`capitalize px-2.5 py-1 rounded-full text-sm font-medium ${statusColors[value] 
+        className={`capitalize px-2.5 py-1 rounded-full text-sm font-medium ${
+          statusColors[value]
         }`}
       >
         {value}
@@ -113,7 +118,7 @@ export const studentManagementColumns = [
     formatter: (value: string) => (
       <span
         className={`capitalize px-2.5 py-1 rounded-full text-sm   ${
-          paymentStatusColors[value]  
+          paymentStatusColors[value]
         }`}
       >
         {value}
@@ -125,9 +130,7 @@ export const studentManagementColumns = [
     accessor: "payment_type",
     width: "120px",
     formatter: (value: string) => (
-      <span
-        className={`capitalize   text-sm text-white font-medium `}
-      >
+      <span className={`capitalize   text-sm text-white font-medium `}>
         {value}
       </span>
     ),
@@ -140,14 +143,19 @@ export const studentManagementColumns = [
       <div className="flex items-center gap-6">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer" type="button">
+            <button
+              className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer"
+              type="button"
+            >
               <EditIcon />
             </button>
           </DialogTrigger>
 
           <DialogContent className="border-none py-8 px-6 rounded-2xl bg-[#0A1726] text-white [&>button]:hidden max-w-130">
             <DialogHeader>
-              <DialogTitle className="text-white text-xl font-semibold">Edit Student</DialogTitle>
+              <DialogTitle className="text-white text-xl font-semibold">
+                Edit Student
+              </DialogTitle>
               <DialogDescription className="text-[#A5A5AB]">
                 Update student information.
               </DialogDescription>
@@ -156,7 +164,9 @@ export const studentManagementColumns = [
             <div className="mt-4 space-y-4">
               <div>
                 <label className="text-xs text-[#B2B5B8]">Student Type</label>
-                <Select defaultValue={row.student_type || row.payment_type || ""}>
+                <Select
+                  defaultValue={row.student_type || row.payment_type || ""}
+                >
                   <SelectTrigger
                     icon={<DropDownIcon className="h-4 w-4" />}
                     className="w-full rounded-2xl border-[#3D4566] p-6 text-[#3D4566]"
@@ -206,34 +216,47 @@ export const studentManagementColumns = [
           </DialogContent>
         </Dialog>
 
-        <Link href={`/dashboard/student-management/student-details/${row.id}`} className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
+        <Link
+          href={`/dashboard/student-management/student-details/${row?.user?.id}`}
+          className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer"
+        >
           <EyeIcon />
         </Link>
 
         <Dialog>
           <DialogTrigger asChild>
-            <button className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer" type="button">
+            <button
+              className=" hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer"
+              type="button"
+            >
               <RestrictIcon />
             </button>
           </DialogTrigger>
           <DialogContent className=" border-none py-14 px-8 rounded-2xl bg-[#0A1726] text-white [&>button]:hidden">
             <div className=" flex items-center justify-center">
-              <Image src={warnigImg} alt="Warning"   />
+              <Image src={warnigImg} alt="Warning" />
             </div>
-            <h2 className=" text-white text-xl font-semibold text-center mt-4 ">Restrict User</h2>
-            <p className=" text-center text-[#A5A5AB] text-sm ">Are you sure to Restrict the User?</p>
-          <div className=" mt-10 flex items-center justify-center gap-3">
-            <DialogClose asChild>
-              <button className=" text-white text-base font-medium flex items-center gap-2.5 border border-[#3D4566] py-4 px-14 rounded-2xl cursor-pointer"><CrossIcon/> Cancel</button>
-            </DialogClose>
-            <DialogClose asChild>
-              <button className=" text-white text-base font-medium flex items-center gap-2.5 bg-[#e9201d] py-4 px-14 rounded-2xl cursor-pointer"><RestrictUserIcon/> Yes, Restrict</button>
-            </DialogClose>
-          </div>
-           </DialogContent>
-         </Dialog>
+            <h2 className=" text-white text-xl font-semibold text-center mt-4 ">
+              Restrict User
+            </h2>
+            <p className=" text-center text-[#A5A5AB] text-sm ">
+              Are you sure to Restrict the User?
+            </p>
+            <div className=" mt-10 flex items-center justify-center gap-3">
+              <DialogClose asChild>
+                <button className=" text-white text-base font-medium flex items-center gap-2.5 border border-[#3D4566] py-4 px-14 rounded-2xl cursor-pointer">
+                  <CrossIcon /> Cancel
+                </button>
+              </DialogClose>
+              <DialogClose asChild>
+                <button className=" text-white text-base font-medium flex items-center gap-2.5 bg-[#e9201d] py-4 px-14 rounded-2xl cursor-pointer">
+                  <RestrictUserIcon /> Yes, Restrict
+                </button>
+              </DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
-      
     ),
   },
 ];

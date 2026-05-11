@@ -112,6 +112,14 @@ export const UserService = {
     });
   },
 
+  // Student Details (admin)
+  getStudentDetails: async ({ id, token = "", context = null }: { id: string; token?: string; context?: any }) => {
+    return await Fetch.get(
+      `/admin/student-management/student/${id}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   // get all instructors
   getAllInstructors: async ({
     token = "",
