@@ -827,30 +827,65 @@ export const AdminEventService = {
     token = "",
     context = null,
     search = "",
+    status = "",
+    page = 1,
+    limit = 10,
   }: {
     token?: string;
     context?: any;
     search?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
   } = {}) => {
-    return await Fetch.get(`/events`, {
+    return await Fetch.get(`/admin/events`, {
       ...withAuthConfig({ token, context }),
       params: {
         search,
+        status,
+        page,
+        limit,
       },
     });
   },
   getEventById: async (id: string, token: string) => {
-    return await Fetch.get(`/events/${id}`, withAuthConfig({ token }));
+    return await Fetch.get(`/admin/events/${id}`, withAuthConfig({ token }));
+  },
+  getEventMembersById: async ({
+    id,
+    token = "",
+    context = null,
+    search = "",
+    date = "",
+    page = 1,
+    limit = 10,
+  }: {
+    id: string;
+    token?: string;
+    context?: any;
+    search?: string;
+    date?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    return await Fetch.get(`/admin/events/${id}/members`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        search,
+        date,
+        page,
+        limit,
+      },
+    });
   },
 
   createEvent: async (data: any, token: string) => {
-    return await Fetch.post(`/events`, data, withAuthConfig({ token }));
+    return await Fetch.post(`/admin/events`, data, withAuthConfig({ token }));
   },
-
   updateEvent: async (id: string, data: any, token: string) => {
-    //  /events/update/:eventId
+    //  /events/:eventId
     return await Fetch.patch(
-      `/events/update/${id}`,
+      `/admin/events/${id}`,
       data,
       withAuthConfig({ token }),
     );

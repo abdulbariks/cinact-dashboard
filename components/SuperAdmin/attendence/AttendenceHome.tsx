@@ -68,7 +68,7 @@ export default function AttendenceHome() {
     setCurrentPage(1);
   };
 
-  //   console.log("allAttendance==========", allAttendance);
+    console.log("allAttendance==========", allAttendance);
 
   const statsData = [
     {

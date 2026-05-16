@@ -13,16 +13,16 @@ export default function EditEvent() {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
-  console.log("eventId==========", id);
 
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
-    date: "",
+    start_at: "",
     time: "",
     location: "",
     amount: "",
     description: "",
+    overview: "",
   });
 
   // Fetch data on mount
@@ -35,19 +35,18 @@ export default function EditEvent() {
         const token = cookies.token || cookies.accessToken || "";
         const response = await AdminEventService?.getEventById(id, token);
 
-        // console.log("response===========", response);
-
-        // Assuming response matches your data structure
         const eventData = response?.data?.data;
-        // Format ISO date for HTML inputs
-        const dateObj = new Date(eventData.date);
+        const eventDate = eventData?.start_at
+          ? new Date(eventData.start_at).toISOString().split("T")[0]
+          : "";
         setFormData({
-          name: eventData.name,
-          date: dateObj.toISOString().split("T")[0], // Convert to YYYY-MM-DD
-          time: dateObj.toTimeString().slice(0, 5), // Convert to HH:mm
-          location: eventData.location,
-          amount: eventData.amount.toString(),
-          description: eventData.description,
+          name: eventData?.name || "",
+          start_at: eventDate,
+          time: eventData?.time || "",
+          location: eventData?.location || "",
+          amount: eventData?.amount?.toString() || "",
+          description: eventData?.description || "",
+          overview: eventData?.overview || "",
         });
       } catch (error) {
         // console.error("Failed to fetch event:", error);
@@ -73,13 +72,14 @@ export default function EditEvent() {
     e.preventDefault();
     if (!id) return;
     setIsLoading(true);
-    const isoDate = new Date(
-      `${formData.date}T${formData.time}:00.000Z`,
-    ).toISOString();
     const dataToSubmit = {
-      ...formData,
-      date: isoDate,
+      name: formData.name,
+      start_at: formData.start_at,
+      time: formData.time,
+      location: formData.location,
       amount: formData.amount ? Number(formData.amount) : 0,
+      description: formData.description,
+      overview: formData.overview,
     };
     try {
       const cookies = parseCookies();
@@ -140,10 +140,10 @@ export default function EditEvent() {
                 </label>
                 <div className="relative">
                   <input
-                    id="date"
+                    id="start_at"
                     type="date"
-                    name="date"
-                    value={formData.date}
+                    name="start_at"
+                    value={formData.start_at}
                     onChange={handleInputChange}
                     className={`${inputClassName} pr-12 appearance-none scheme-dark [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
                   />
@@ -188,6 +188,7 @@ export default function EditEvent() {
                 <input
                   id="amount"
                   type="number"
+                  step="0.01"
                   name="amount"
                   value={formData.amount}
                   onChange={handleInputChange}
@@ -195,6 +196,21 @@ export default function EditEvent() {
                   className={inputClassName}
                 />
               </div>
+            </div>
+
+            <div>
+              <label htmlFor="overview" className={labelClassName}>
+                Overview
+              </label>
+              <textarea
+                id="overview"
+                name="overview"
+                value={formData.overview}
+                onChange={handleInputChange}
+                placeholder="Write event overview"
+                rows={4}
+                className={`${inputClassName} resize-none`}
+              />
             </div>
 
             <div>

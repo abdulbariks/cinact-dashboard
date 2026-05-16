@@ -12,12 +12,13 @@ import { useRouter } from "next/navigation";
 export default function AddEvent() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    title: "",
-    date: "",
+    name: "",
+    start_at: "",
     time: "",
     location: "",
     amount: "",
     description: "",
+    overview: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,20 +36,20 @@ export default function AddEvent() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    const isoDate = new Date(
-      `${formData.date}T${formData.time}:00.000Z`,
-    ).toISOString();
     const dataToSubmit = {
-      ...formData,
-      date: isoDate,
+      name: formData.name,
+      start_at: formData.start_at,
+      time: formData.time,
+      location: formData.location,
       amount: formData.amount ? Number(formData.amount) : 0,
+      description: formData.description,
+      overview: formData.overview,
     };
 
     try {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
       const response = await AdminEventService.createEvent(dataToSubmit, token);
-      // console.log("response============", response.data);
       showSuccessToast(
         response?.data?.message || "Event created successfully!",
       );
@@ -84,9 +85,9 @@ export default function AddEvent() {
                 Event Name
               </label>
               <input
-                id="title"
-                name="title"
-                value={formData.title}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 placeholder="Enter event name"
                 className={inputClassName}
@@ -100,10 +101,10 @@ export default function AddEvent() {
                 </label>
                 <div className="relative">
                   <input
-                    id="date"
+                    id="start_at"
                     type="date"
-                    name="date"
-                    value={formData.date}
+                    name="start_at"
+                    value={formData.start_at}
                     onChange={handleInputChange}
                     className={`${inputClassName} pr-12 appearance-none scheme-dark [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
                   />
@@ -148,6 +149,7 @@ export default function AddEvent() {
                 <input
                   id="amount"
                   type="number"
+                  step="0.01"
                   name="amount"
                   value={formData.amount}
                   onChange={handleInputChange}
@@ -155,6 +157,21 @@ export default function AddEvent() {
                   className={inputClassName}
                 />
               </div>
+            </div>
+
+            <div>
+              <label htmlFor="overview" className={labelClassName}>
+                Overview
+              </label>
+              <textarea
+                id="overview"
+                name="overview"
+                value={formData.overview}
+                onChange={handleInputChange}
+                placeholder="Write event overview"
+                rows={4}
+                className={`${inputClassName} resize-none`}
+              />
             </div>
 
             <div>

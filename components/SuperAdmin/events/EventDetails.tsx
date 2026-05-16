@@ -9,7 +9,6 @@ import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { DatePickerButton } from "@/components/reusable/DatePickerButton";
 import DynamicTable from "@/components/reusable/DynamicTable";
 import { eventMembersColumns as eventsColumn } from "@/components/columns/EventMembersColumn";
-import { eventMembersData as eventsData } from "@/public/demoData/EventMembersData";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -21,10 +20,12 @@ export default function EventDetails() {
   const params = useParams();
   const id = params.id as string;
   const [eventData, setEventData] = useState<any>(null);
+  const [eventMembers, setEventMembers] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [membersLoading, setMembersLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [date, setDate] = useState<Date | null>(null);
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -44,15 +45,47 @@ export default function EventDetails() {
     if (id) fetchEvent();
   }, [id]);
 
-  // console.log("eventData==============", eventData);
+  useEffect(() => {
+    const fetchEventMembers = async () => {
+      try {
+        setMembersLoading(true);
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await AdminEventService.getEventMembersById({
+          id,
+          token,
+          search,
+          date: date ? date.toISOString().split("T")[0] : "",
+          page: currentPage,
+          limit: itemsPerPage,
+        });
+
+        setEventMembers(response?.data || null);
+      } catch (error) {
+        showErrorToast("Failed to fetch event members");
+      } finally {
+        setMembersLoading(false);
+      }
+    };
+
+    if (id) fetchEventMembers();
+  }, [currentPage, date, id, itemsPerPage, search]);
 
   if (loading) return <div className="text-white p-10">Loading Event...</div>;
   if (!eventData)
     return <div className="text-white p-10">Event not found.</div>;
 
-  const members = eventData?.data?.members || [];
-  const totalItems = eventData.registeredMembersCount || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const members = Array.isArray(eventMembers)
+    ? eventMembers
+    : Array.isArray(eventMembers?.data)
+      ? eventMembers.data
+      : [];
+  const totalItems =
+    eventMembers?.meta_data?.total ??
+    eventMembers?.pagination?.total ??
+    eventMembers?.total ??
+    members.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   // console.log("members========", members);
   const formatDate = (dateString: string) => {
@@ -65,6 +98,11 @@ export default function EventDetails() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleDateChange = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
     setCurrentPage(1);
   };
   return (
@@ -106,7 +144,8 @@ export default function EventDetails() {
                 <RedCalender />
                 <p className=" text-white text-sm ">
                   {/* 12 July, Monday 󠁯•󠁏󠁏 1:30 PM */}
-                  {formatDate(eventData?.data?.date)} at {eventData?.data?.time}
+                  {formatDate(eventData?.data?.start_at)} at{" "}
+                  {eventData?.data?.time}
                 </p>
               </div>
               <div className=" flex items-center gap-1">
@@ -136,7 +175,7 @@ export default function EventDetails() {
             </p>
           </div>
 
-          <div>
+          {/* <div>
             <h3 className=" text-white text-sm mt-4">Key Learning Outcomes</h3>
             <ul className=" mt-2.5 text-white">
               <li className=" text-sm text-[#D2D2D5]">
@@ -155,11 +194,11 @@ export default function EventDetails() {
                 skillse
               </li>
             </ul>
-          </div>
+          </div> */}
 
           <div className=" mt-4">
             <h3 className=" text-white text-sm font-semibold">
-              Ticket Information
+              Description
             </h3>
             <p className=" text-white text-sm mt-2.5">
               {/* Limited tickets available — reserve early! */}
@@ -174,7 +213,7 @@ export default function EventDetails() {
       <div className=" bg-[#0a1726] p-6 rounded-2xl mt-5">
         <div className=" flex flex-col lg:flex-row items-center justify-between mb-6">
           <h3 className=" text-white text-xl font-semibold">
-            Event Members({members.length})
+            Event Members({totalItems})
           </h3>
           <div className=" flex flex-col md:flex-row items-center gap-2">
             <div className=" relative w-80">
@@ -190,7 +229,7 @@ export default function EventDetails() {
                 <SearchIcon />
               </button>
             </div>
-            <DatePickerButton date={date} setDate={setDate} />
+            <DatePickerButton date={date} setDate={handleDateChange} />
           </div>
         </div>
 
@@ -205,7 +244,7 @@ export default function EventDetails() {
           onPageChange={setCurrentPage}
           setItemsPerPage={setItemsPerPage}
           noDataMessage="No event members found"
-          loading={false}
+          loading={membersLoading}
         />
       </div>
     </div>

@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import DownloadIcon from "../icons/others/DownloadIcon";
 
 export interface EventMemberRow {
-  user_id: string;
+  id: string;
+  created_at: string;
   user_name: string;
-  event_name: string;
-  event_amount: string;
-  payment_id: string;
-  event_date: string;
+  user_email: string;
+  paid_amount: number;
+  transaction_ref: string;
   action?: "download";
 }
 
@@ -25,44 +25,45 @@ interface EventMemberColumn {
 
 export const eventMembersColumns: EventMemberColumn[] = [
   {
-    label: "User ID",
-    accessor: "user_id",
-    width: "130px",
-    // formatter: (value) => (
-    //   <span className="text-sm text-white ">{value || "N/A"}</span>
-    // ),
-    formatter: (_: any, row: any) => (
-      <span className="text-sm text-white">{row.user?.id || "N/A"}</span>
+    label: "Member ID",
+    accessor: "id",
+    width: "220px",
+    formatter: (value) => (
+      <span className="text-sm text-white">{value || "N/A"}</span>
     ),
   },
   {
     label: "User Name",
     accessor: "user_name",
-    width: "220px",
-    // formatter: (value) => <span className="text-sm text-white  ">{value}</span>,
-    formatter: (_: any, row: any) => (
-      <span className="text-sm text-white">{row.user?.name || "N/A"}</span>
+    width: "180px",
+    formatter: (value) => (
+      <span className="text-sm text-white">{value || "N/A"}</span>
     ),
   },
   {
-    label: "Event Name",
-    accessor: "event_name",
+    label: "Email",
+    accessor: "user_email",
     width: "240px",
     formatter: (value) => (
       <span className="text-sm text-white  ">{value || "N/A"}</span>
     ),
   },
   {
-    label: "Amount",
-    accessor: "event_amount",
+    label: "Paid Amount",
+    accessor: "paid_amount",
     width: "120px",
-    formatter: (value) => (
-      <span className="text-sm text-white font-medium">{value || "N/A"}</span>
-    ),
+    formatter: (value) => {
+      const amount = Number(value);
+      return (
+        <span className="text-sm text-white font-medium">
+          {Number.isFinite(amount) ? `$ ${amount}` : "N/A"}
+        </span>
+      );
+    },
   },
   {
     label: "Transaction ID",
-    accessor: "payment_id",
+    accessor: "transaction_ref",
     width: "180px",
     formatter: (value) => (
       <span className="text-sm text-white">{value || "N/A"}</span>
@@ -70,17 +71,19 @@ export const eventMembersColumns: EventMemberColumn[] = [
   },
   {
     label: "Date",
-    accessor: "event_date",
+    accessor: "created_at",
     width: "160px",
     formatter: (value) => {
       const parsedDate = new Date(String(value));
       return (
         <span className="text-sm text-white  ">
-          {parsedDate.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
+          {Number.isNaN(parsedDate.getTime())
+            ? "N/A"
+            : parsedDate.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
         </span>
       );
     },
