@@ -16,11 +16,12 @@ const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 const courseSchema = z.object({
   title: z.string().min(1, "Title is required"),
   course_overview: z.string().min(1, "Overview is required"),
-  course_module_details: z.string().min(1, "Module details are required"),
+  rules_regulations: z.string().min(1, "Module details are required"),
+  contract: z.string().min(1, "Module contract are required"),
   duration: z.string().min(1, "Duration is required"),
   start_date: z.string().min(1, "Date is required"),
   class_time: z.string().min(1, "Time is required"),
-  fee: z.string().min(1, "Fee is required"),
+  fee_pence: z.string().min(1, "Fee is required"),
   seat_capacity: z.string().min(1, "Seat capacity is required"),
   installment_process: z.string().min(1, "Installment details are required"),
 });
@@ -47,11 +48,12 @@ export function AddCourseModal({
     defaultValues: {
       title: "",
       course_overview: "",
-      course_module_details: "",
+      rules_regulations: "",
+      contract: "",
       duration: "",
       start_date: "",
       class_time: "",
-      fee: "",
+      fee_pence: "",
       seat_capacity: "",
       installment_process: "",
     },
@@ -86,11 +88,12 @@ export function AddCourseModal({
         payload: {
           title: data.title,
           course_overview: data.course_overview,
-          course_module_details: data.course_module_details,
+          rules_regulations: data.rules_regulations,
+          contract: data.contract,
           duration: data.duration,
           start_date: startDate,
           class_time: data.class_time,
-          fee: Number(data.fee),
+          fee_pence: Number(data.fee_pence),
           installment_process: data.installment_process,
           seat_capacity: data.seat_capacity,
         },
@@ -161,10 +164,10 @@ export function AddCourseModal({
 
           {/* 3. Course Module Details */}
           <div>
-            <label className={labelStyles}>Course Module Details</label>
+            <label className={labelStyles}>Course Rules Regulations Details</label>
             <div className="mt-2 border border-[#242D3D] rounded-[12px] overflow-hidden">
               <Controller
-                name="course_module_details"
+                name="rules_regulations"
                 control={control}
                 render={({ field }) => (
                   <JoditEditor
@@ -176,9 +179,33 @@ export function AddCourseModal({
                 )}
               />
             </div>
-            {errors.course_module_details && (
+            {errors.rules_regulations && (
               <p className={errorStyles}>
-                {errors.course_module_details.message}
+                {errors.rules_regulations.message}
+              </p>
+            )}
+          </div>
+
+        {/* 3. Course contract Details */}
+          <div>
+            <label className={labelStyles}>Course Contract Details</label>
+            <div className="mt-2 border border-[#242D3D] rounded-[12px] overflow-hidden">
+              <Controller
+                name="contract"
+                control={control}
+                render={({ field }) => (
+                  <JoditEditor
+                    value={field.value}
+                    config={config}
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+            {errors.contract && (
+              <p className={errorStyles}>
+                {errors.contract.message}
               </p>
             )}
           </div>
@@ -232,11 +259,11 @@ export function AddCourseModal({
           <div>
             <label className={labelStyles}>Course Fee</label>
             <input
-              {...register("fee")}
+              {...register("fee_pence")}
               placeholder="Course price"
               className={inputStyles}
             />
-            {errors.fee && <p className={errorStyles}>{errors.fee.message}</p>}
+            {errors.fee_pence && <p className={errorStyles}>{errors.fee_pence.message}</p>}
           </div>
 
           {/* 8. Seat Capacity */}

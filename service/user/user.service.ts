@@ -535,7 +535,7 @@ export const AdminCourseManagementService = {
     page?: number;
     limit?: number;
   } = {}) => {
-    return await Fetch.get(`/courses`, {
+    return await Fetch.get(`/admin/courses`, {
       ...withAuthConfig({ token, context }),
       params: {
         search,
@@ -556,7 +556,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.post(
-      `/courses`,
+      `/admin/courses`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -572,7 +572,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/${courseId}`,
+      `/admin/courses/${courseId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -589,7 +589,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.patch(
-      `/courses/${courseId}`,
+      `/admin/courses/${courseId}`,
       payload,
       withAuthConfig({ token, context }),
     );

@@ -11,12 +11,13 @@ export type TCourse = {
   updated_at: string;
   start_date: string;
   class_time: string;
-  status: "ACTIVE" | "INACTIVE";
-  seat_capacity: string;
-  fee: string;
-  duration: string;
+  status: "DRAFT" | "UPCOMING" | "ACTIVE" | "INACTIVE" | "COMPLETED";
+  seat_capacity: string | number;
+  fee: string | number;
+  fee_pence?: number;
+  duration: string | number;
   createdBy: string;
-  instructor: TInstructor;
+  instructor: TInstructor | null;
   total_modules: number;
   total_enrollments: number;
   course_overview:string;
@@ -26,6 +27,12 @@ export type TGetCoursesResponse = {
   message: string;
   success: boolean;
   data: TCourse[];
+  meta_data?: {
+    page: number;
+    limit: number;
+    total: number;
+    status?: string;
+  };
 };
 
 

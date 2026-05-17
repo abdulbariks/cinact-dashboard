@@ -48,7 +48,7 @@ export default function CourseDetails() {
     instructor: "",
     startDate: "",
     classTime: "",
-    assignInstructor: "",
+    status: "DRAFT",
     students: "",
   });
   const [classData, setClassData] = useState({

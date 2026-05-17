@@ -9,7 +9,7 @@ import {
 import CalenderIcon from "@/components/icons/SuperAdmindashboard/CalenderIcon";
 import ClockIcon from "@/components/icons/SuperAdmindashboard/ClockIcon";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
-import { AllStatus } from "@/components/reusable/AllStatus";
+import { AllStatus } from "./AllStatus";
 import Link from "next/link";
 import { AddCourseModal } from "./AddCourseModal";
 import { parseCookies } from "nookies";
@@ -17,6 +17,7 @@ import { AdminCourseManagementService } from "@/service/user/user.service";
 import { showErrorToast } from "@/lib/hotToast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TCourse } from "@/types/tutor.mycourse";
+import PaginationPage from "@/components/reusable/PaginationPage";
 
 const formatDate = (value?: string) => {
   if (!value) return "No Date";
@@ -46,6 +47,23 @@ const getInstructorMeta = (course: TCourse | any) =>
 const getCourseFee = (course: TCourse | any) =>
   course?.fee || course?.course_fee || "0";
 
+const getStatusClassName = (status?: string) => {
+  switch (status) {
+    case "ACTIVE":
+      return "text-[#18CC3F] bg-[#2a3d2e]";
+    case "INACTIVE":
+      return "text-[#B2B5B8] bg-[#2B3442]";
+    case "DRAFT":
+      return "text-[#F3C96B] bg-[#3B3420]";
+    case "UPCOMING":
+      return "text-[#75B8FF] bg-[#18334F]";
+    case "COMPLETED":
+      return "text-[#9FD7A9] bg-[#1E3A2A]";
+    default:
+      return "text-[#B2B5B8] bg-[#2B3442]";
+  }
+};
+
 const CourseManagementSkeleton = () => (
   <div>
     <Skeleton className="h-8 w-60 bg-[#1d2a3e]" />
@@ -71,6 +89,9 @@ export default function CourseManagementHome() {
   const [courses, setCourses] = useState<TCourse[]>([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -85,10 +106,20 @@ export default function CourseManagementHome() {
         token,
         search,
         status: status === "all" ? "" : status,
+        page: currentPage,
+        limit: itemsPerPage,
       });
 
       const responseData = response?.data?.data;
+      const metaData = response?.data?.meta_data;
       setCourses(Array.isArray(responseData) ? responseData : []);
+      setTotalItems(
+        typeof metaData?.total === "number"
+          ? metaData.total
+          : Array.isArray(responseData)
+            ? responseData.length
+            : 0,
+      );
     } catch (err: any) {
       const message =
         err?.response?.data?.message ||
@@ -104,7 +135,24 @@ export default function CourseManagementHome() {
 
   useEffect(() => {
     loadCourses();
-  }, [search, status]);
+  }, [search, status, currentPage, itemsPerPage]);
+  
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(e.target.value);
+      setCurrentPage(1);
+    };
+
+  const handleStatusChange = (value: string) => {
+    setStatus(value);
+    setCurrentPage(1);
+  };
+
+  const handleItemsPerPageChange = (count: number) => {
+    setItemsPerPage(count);
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   if (loading) {
     return <CourseManagementSkeleton />;
@@ -126,7 +174,7 @@ export default function CourseManagementHome() {
                 type="text"
                 name="search"
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={handleSearchChange}
                 className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search Course"
               />
@@ -135,7 +183,7 @@ export default function CourseManagementHome() {
               </button>
             </div>
 
-            <AllStatus value={status} onValueChange={setStatus} />
+            <AllStatus value={status} onValueChange={handleStatusChange} />
           </div>
         </div>
 
@@ -159,8 +207,10 @@ export default function CourseManagementHome() {
             >
               <h2 className=" text-white text-lg font-medium">
                 {course.title || (course as any).course_name}
-                <span className=" py-1 px-2.5 rounded-full text-sm text-[#18CC3F] bg-[#2a3d2e]  ml-2">
-                  {course.status?.toLowerCase()}
+                <span
+                  className={`py-1 px-2.5 rounded-full text-sm ml-2 ${getStatusClassName(course.status)}`}
+                >
+                  {course.status}
                 </span>
               </h2>
               <div className=" mt-3 flex items-center gap-3">
@@ -227,7 +277,7 @@ export default function CourseManagementHome() {
                 </div>
                 <Link
                   href={`/dashboard/course-management/course-details/${course.id}`}
-                  className=" text-white inline-flex items-center gap-3 bg-[#5F6CA0] py-3 pl-3 pr-1.5  rounded-[8px]"
+                  className=" text-white inline-flex items-center gap-3 bg-[#5F6CA0] py-3 pl-3 pr-1.5  rounded-xl"
                 >
                   View Course
                   <RightArrowIcon />
@@ -238,7 +288,7 @@ export default function CourseManagementHome() {
           <button
             onClick={() => setIsAddCourseModalOpen(true)}
             type="button"
-            className=" bg-[#07121d] p-4 rounded-[12px] border border-dashed border-[#505B86] min-h-[260px] flex  items-center gap-2 justify-center text-center text-white hover:bg-[#0b1b2b] transition-colors cursor-pointer"
+            className=" bg-[#07121d] p-4 rounded-[12px] border border-dashed border-[#505B86] min-h-65 flex  items-center gap-2 justify-center text-center text-white hover:bg-[#0b1b2b] transition-colors cursor-pointer"
           >
             <span className=" text-3xl leading-none">+</span>
             <span className=" mt-2 text-lg font-medium">Add Course</span>
@@ -249,6 +299,17 @@ export default function CourseManagementHome() {
             onCourseCreated={loadCourses}
           />
         </div>
+      </div>
+      <div>
+        <PaginationPage
+          totalPages={totalPages}
+          dataLength={courses.length}
+          totalItems={totalItems}
+          onPageChange={setCurrentPage}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={handleItemsPerPageChange}
+        />
       </div>
     </div>
   );

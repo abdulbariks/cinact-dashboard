@@ -30,7 +30,7 @@ type EditCourseData = {
   instructor: string;
   startDate: string;
   classTime: string;
-  assignInstructor: string;
+  status: string;
   students: string;
 };
 
@@ -48,6 +48,14 @@ type InstructorOption = {
   name: string;
   email?: string;
 };
+
+const COURSE_STATUSES = [
+  "DRAFT",
+  "UPCOMING",
+  "ACTIVE",
+  "INACTIVE",
+  "COMPLETED",
+] as const;
 
 const toDateInputValue = (value?: string) => {
   if (!value) return "";
@@ -119,21 +127,15 @@ export default function EditCourseModal({
         selectedInstructor?.id || (course?.instructor as any)?.id || "",
       startDate: toDateInputValue(course.start_date),
       classTime: course.class_time || "",
-      assignInstructor:
-        selectedInstructor?.name || course?.instructor?.name || "",
+      status: course.status || "DRAFT",
       students: String(course.seat_capacity || ""),
     });
   }, [course, instructors, open, setEditCourseData]);
 
   const handleInstructorChange = (value: string) => {
-    const selectedInstructor = instructors.find(
-      (instructor) => instructor.id === value,
-    );
-
     setEditCourseData((prev) => ({
       ...prev,
       instructor: value,
-      assignInstructor: selectedInstructor?.name || "",
     }));
   };
 
@@ -156,7 +158,7 @@ export default function EditCourseModal({
           start_date: startDate,
           class_time: editCourseData.classTime,
           instructorId: editCourseData.instructor,
-          assignInstructor: editCourseData.assignInstructor,
+          status: editCourseData.status,
           seat_capacity: editCourseData.students,
         },
       });
@@ -288,13 +290,30 @@ export default function EditCourseModal({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className={labelClassName}>Assign Instructor</label>
-              <input
-                value={editCourseData.assignInstructor}
-                placeholder="Assign instructor"
-                readOnly
-                className={`${inputClassName} cursor-not-allowed opacity-80`}
-              />
+              <label className={labelClassName}>Status</label>
+              <Select
+                value={editCourseData.status}
+                onValueChange={(value) =>
+                  setEditCourseData((prev) => ({
+                    ...prev,
+                    status: value,
+                  }))
+                }
+              >
+                <SelectTrigger
+                  icon={<DropDownIcon className="h-4 w-4" />}
+                  className="w-full rounded-2xl border-[#3D4566] px-4 py-6 text-white"
+                >
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent className="border-[#3D4566] bg-[#07121d] text-white">
+                  {COURSE_STATUSES.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className={labelClassName}>Students</label>
