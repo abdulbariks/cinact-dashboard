@@ -1,5 +1,6 @@
 import EditIcon from "../icons/SuperAdmindashboard/EditIcon";
 import EyeIcon from "../icons/SuperAdmindashboard/EyeIcon";
+import TrashIconRed from "../icons/course-management/TrashIconRed";
 import Link from "next/link";
 
 const teacherStatusColors: Record<string, string> = {
@@ -7,9 +8,14 @@ const teacherStatusColors: Record<string, string> = {
 	inactive: "bg-[#402b2b] text-[#E9201D]",
 };
 
-export const teachersColumns = [
+const formatUserType = (value?: string) => {
+	if (!value) return "-";
+	return value.replaceAll("_", " ");
+};
+
+export const getTeachersColumns = (onDelete?: (id: string) => void) => [
 	{
-		label: "Teacher Name",
+		label: "User Name",
 		accessor: "teacher_name",
 		width: "260px",
 		formatter: (value: string, row: any) => (
@@ -33,11 +39,13 @@ export const teachersColumns = [
 		),
 	},
 	{
-		label: "Classes",
-		accessor: "classes",
+		label: "User Type",
+		accessor: "user_type",
 		width: "120px",
-		formatter: (value: number) => (
-			<span className="text-sm text-white font-medium">{value}</span>
+		formatter: (value: string) => (
+			<span className="text-sm text-white font-medium capitalize">
+				{formatUserType(value)}
+			</span>
 		),
 	},
 	{
@@ -83,16 +91,25 @@ export const teachersColumns = [
 	{
 		label: "Actions",
 		accessor: "action",
-		width: "120px",
+		width: "150px",
 		formatter: (_: any, row: any) => (
-			<div className="flex items-center gap-6">
+			<div className="flex items-center gap-4">
 				<Link href={`/dashboard/teacher-management/edit-teacher/${row.id}`} className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
 					<EditIcon />
 				</Link>
 				<Link href={`/dashboard/teacher-management/teacher-details/${row.id}`} className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer">
 					<EyeIcon />
 				</Link>
+				<button
+					type="button"
+					onClick={() => onDelete?.(row.id)}
+					className="hover:bg-[#282e44] p-1.5 rounded-lg cursor-pointer"
+				>
+					<TrashIconRed />
+				</button>
 			</div>
 		),
 	},
 ];
+
+export const teachersColumns = getTeachersColumns();

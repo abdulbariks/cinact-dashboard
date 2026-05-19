@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
-import CalenderIcon from "@/components/icons/SuperAdmindashboard/CalenderIcon";
 import DropDownIcon from "@/components/icons/others/DropDownIcon";
 import Link from "next/link";
 import {
@@ -18,21 +17,18 @@ import { UserService } from "@/service/user/user.service";
 import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { useRouter } from "next/navigation";
 
-const experienceOptions = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
-const teacherTypeOptions = ["Full Time", "Part Time", "Guest Faculty"];
-const teacherStatusOptions = ["ACTIVE", "INACTIVE"];
+const userTypeOptions = ["student", "teacher", "admin", "su_admin"];
 
 export default function AddTeacher() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone_number: "",
+    phone: "",
     password: "",
-    experienceLevel: "",
+    experience: "",
     joinDate: "",
-    teacherType: "",
-    teacherStatus: "",
+    type: "",
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -57,21 +53,16 @@ export default function AddTeacher() {
       setSubmitting(true);
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
-      const joinDate = formData.joinDate
-        ? new Date(`${formData.joinDate}T00:00:00.000Z`).toISOString()
-        : "";
-
       const response = await UserService.createInstructor({
         token,
         payload: {
           name: formData.name,
           email: formData.email,
-          phone_number: formData.phone_number,
+          phone: formData.phone,
           password: formData.password,
-          experienceLevel: formData.experienceLevel,
-          joinDate,
-          teacherType: formData.teacherType,
-          teacherStatus: formData.teacherStatus,
+          type: formData.type,
+          join_date: formData.joinDate,
+          experience: formData.experience,
         },
       });
 
@@ -106,14 +97,14 @@ export default function AddTeacher() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label htmlFor="name" className={labelClassName}>
-                Teacher Name
+                Name
               </label>
               <input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="Enter teacher name"
+                placeholder="Enter name"
                 className={inputClassName}
                 required
               />
@@ -136,13 +127,13 @@ export default function AddTeacher() {
             </div>
 
             <div>
-              <label htmlFor="phone_number" className={labelClassName}>
+              <label htmlFor="phone" className={labelClassName}>
                 Phone
               </label>
               <input
-                id="phone_number"
-                name="phone_number"
-                value={formData.phone_number}
+                id="phone"
+                name="phone"
+                value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="Enter phone number"
                 className={inputClassName}
@@ -167,25 +158,18 @@ export default function AddTeacher() {
             </div>
 
             <div>
-              <label className={labelClassName}>Experience Level</label>
-              <Select
-                value={formData.experienceLevel}
-                onValueChange={handleSelectChange("experienceLevel")}
-              >
-                <SelectTrigger
-                  icon={<DropDownIcon className="h-4 w-4" />}
-                  className="w-full rounded-2xl border-[#3D4566]   px-4 py-7 text-white"
-                >
-                  <SelectValue placeholder="Select experience level" />
-                </SelectTrigger>
-                <SelectContent className="border-[#3D4566] bg-[#07121d] text-white">
-                  {experienceOptions.map((level) => (
-                    <SelectItem key={level} value={level}>
-                      {level.toLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <label htmlFor="experience" className={labelClassName}>
+                Experience
+              </label>
+              <input
+                id="experience"
+                name="experience"
+                value={formData.experience}
+                onChange={handleInputChange}
+                placeholder="Enter experience"
+                className={inputClassName}
+                required
+              />
             </div>
 
             <div>
@@ -207,43 +191,21 @@ export default function AddTeacher() {
             </div>
 
             <div>
-              <label className={labelClassName}>Teacher Type</label>
+              <label className={labelClassName}>Type</label>
               <Select
-                value={formData.teacherType}
-                onValueChange={handleSelectChange("teacherType")}
+                value={formData.type}
+                onValueChange={handleSelectChange("type")}
               >
                 <SelectTrigger
                   icon={<DropDownIcon className="h-4 w-4" />}
                   className="w-full rounded-2xl border-[#3D4566]   px-4 py-7 text-white"
                 >
-                  <SelectValue placeholder="Select teacher type" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent className="border-[#3D4566] bg-[#07121d] text-white">
-                  {teacherTypeOptions.map((type) => (
+                  {userTypeOptions.map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className={labelClassName}>Teacher Status</label>
-              <Select
-                value={formData.teacherStatus}
-                onValueChange={handleSelectChange("teacherStatus")}
-              >
-                <SelectTrigger
-                  icon={<DropDownIcon className="h-4 w-4" />}
-                  className="w-full rounded-2xl border-[#3D4566] px-4 py-7 text-white"
-                >
-                  <SelectValue placeholder="Select teacher status" />
-                </SelectTrigger>
-                <SelectContent className="border-[#3D4566] bg-[#07121d] text-white">
-                  {teacherStatusOptions.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.toLowerCase()}
+                      {type.replaceAll("_", " ")}
                     </SelectItem>
                   ))}
                 </SelectContent>

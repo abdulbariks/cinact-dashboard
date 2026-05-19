@@ -18,27 +18,14 @@ import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { useParams, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const experienceOptions = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
-const teacherTypeOptions = ["Full Time", "Part Time", "Guest Faculty"];
-const teacherStatusOptions = ["ACTIVE", "INACTIVE"];
+const userTypeOptions = ["student", "teacher", "admin", "su_admin"];
+const teacherStatusOptions = ["ACTIVE", "DEACTIVATED", "BLOCKED","REJECTED"];
 
 const formatDateInput = (value?: string | null) => {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return date.toISOString().slice(0, 10);
-};
-
-const normalizeExperience = (value?: string | null) =>
-  value ? value.toUpperCase() : "";
-
-const normalizeTeacherType = (value?: string | null) => {
-  if (!value) return "";
-  const normalized = value.toLowerCase().replaceAll("_", " ");
-  if (normalized === "full time") return "Full Time";
-  if (normalized === "part time") return "Part Time";
-  if (normalized === "guest faculty") return "Guest Faculty";
-  return value;
 };
 
 const normalizeTeacherStatus = (value?: string | null) =>
@@ -65,11 +52,11 @@ export default function EditTeacher() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone_number: "",
-    experienceLevel: "",
+    phone: "",
+    experience: "",
     joinDate: "",
-    teacherType: "",
-    teacherStatus: "",
+    type: "",
+    status: "",
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -95,13 +82,13 @@ export default function EditTeacher() {
         setFormData({
           name: instructor?.name || "",
           email: instructor?.email || "",
-          phone_number: instructor?.phone_number || "",
-          experienceLevel: normalizeExperience(instructor?.experience_level),
+          phone: instructor?.phone_number || "",
+          experience: instructor?.experience || "",
           joinDate: formatDateInput(
             instructor?.joined_at || instructor?.created_at,
           ),
-          teacherType: normalizeTeacherType((instructor as any)?.teacherType),
-          teacherStatus: normalizeTeacherStatus(instructor?.status),
+          type: instructor?.type || "",
+          status: normalizeTeacherStatus(instructor?.status),
         });
       } catch (error: any) {
         showErrorToast(
@@ -133,26 +120,22 @@ export default function EditTeacher() {
       setSubmitting(true);
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
-      const joinDate = formData.joinDate
-        ? new Date(`${formData.joinDate}T00:00:00.000Z`).toISOString()
-        : "";
-
       const payload: {
         name: string;
         // email: string;
-        // phone_number: string;
-        // teacherType: string;
-        // teacherStatus: string;
-        // experienceLevel: string;
-        // joinDate: string;
+        phone_number: string;
+        type: string;
+        status: string;
+        join_date: string;
+        experience: string;
       } = {
         name: formData.name,
         // email: formData.email,
-        // phone_number: formData.phone_number,
-        // teacherType: formData.teacherType,
-        // teacherStatus: formData.teacherStatus,
-        // experienceLevel: formData.experienceLevel,
-        // joinDate,
+        phone_number: formData.phone,
+        type: formData.type,
+        status: formData.status,
+        join_date: formData.joinDate,
+        experience: formData.experience,
       };
 
       const response = await UserService.updateInstructor({
@@ -198,14 +181,14 @@ export default function EditTeacher() {
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div>
               <label htmlFor="name" className={labelClassName}>
-                Teacher Name
+                Name
               </label>
               <input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="Enter teacher name"
+                placeholder="Enter name"
                 className={inputClassName}
                 required
               />
@@ -228,13 +211,13 @@ export default function EditTeacher() {
             </div>
 
             <div>
-              <label htmlFor="phone_number" className={labelClassName}>
+              <label htmlFor="phone" className={labelClassName}>
                 Phone
               </label>
               <input
-                id="phone_number"
-                name="phone_number"
-                value={formData.phone_number}
+                id="phone"
+                name="phone"
+                value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="Enter phone number"
                 className={inputClassName}
@@ -243,25 +226,17 @@ export default function EditTeacher() {
             </div>
 
             <div>
-              <label className={labelClassName}>Experience Level</label>
-              <Select
-                value={formData.experienceLevel}
-                onValueChange={handleSelectChange("experienceLevel")}
-              >
-                <SelectTrigger
-                  icon={<DropDownIcon className="h-4 w-4" />}
-                  className="w-full rounded-2xl border-[#3D4566] px-4 py-7 text-white"
-                >
-                  <SelectValue placeholder="Select experience level" />
-                </SelectTrigger>
-                <SelectContent className="border-[#3D4566] bg-[#07121d] text-white">
-                  {experienceOptions.map((level) => (
-                    <SelectItem key={level} value={level}>
-                      {level.toLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <label htmlFor="experience" className={labelClassName}>
+                Experience
+              </label>
+              <input
+                id="experience"
+                name="experience"
+                value={formData.experience}
+                onChange={handleInputChange}
+                placeholder="Enter experience"
+                className={inputClassName}
+              />
             </div>
 
             <div>
@@ -283,21 +258,21 @@ export default function EditTeacher() {
             </div>
 
             <div>
-              <label className={labelClassName}>Teacher Type</label>
+              <label className={labelClassName}>Type</label>
               <Select
-                value={formData.teacherType}
-                onValueChange={handleSelectChange("teacherType")}
+                value={formData.type}
+                onValueChange={handleSelectChange("type")}
               >
                 <SelectTrigger
                   icon={<DropDownIcon className="h-4 w-4" />}
                   className="w-full rounded-2xl border-[#3D4566] px-4 py-7 text-white"
                 >
-                  <SelectValue placeholder="Select teacher type" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent className="border-[#3D4566] bg-[#07121d] text-white">
-                  {teacherTypeOptions.map((type) => (
+                  {userTypeOptions.map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type}
+                      {type.replaceAll("_", " ")}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -305,10 +280,10 @@ export default function EditTeacher() {
             </div>
 
             <div>
-              <label className={labelClassName}>Teacher Status</label>
+              <label className={labelClassName}>Status</label>
               <Select
-                value={formData.teacherStatus}
-                onValueChange={handleSelectChange("teacherStatus")}
+                value={formData.status}
+                onValueChange={handleSelectChange("status")}
               >
                 <SelectTrigger
                   icon={<DropDownIcon className="h-4 w-4" />}

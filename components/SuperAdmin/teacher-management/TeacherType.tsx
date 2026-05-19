@@ -27,6 +27,7 @@ export function TeacherType({ value, onValueChange }: TeacherTypeProps) {
           <SelectItem value="all">All Type</SelectItem>
           <SelectItem value="STUDENT">Student</SelectItem>
           <SelectItem value="TEACHER">Teacher</SelectItem>
+          <SelectItem value="ADMIN">Admin</SelectItem>
           <SelectItem value="SU_ADMIN">Super Admin</SelectItem>
         </SelectGroup>
       </SelectContent>

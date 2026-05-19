@@ -126,6 +126,7 @@ export const UserService = {
     context = null,
     search = "",
     status = "",
+    type = "",
     page = 1,
     limit = 10,
   }: {
@@ -133,13 +134,29 @@ export const UserService = {
     context?: any;
     search?: string;
     status?: string;
+    type?: string;
     page?: number;
     limit?: number;
   } = {}) => {
-    const queryString = buildQueryString({ status, search, page, limit });
+    const queryString = buildQueryString({ status, type, search, page, limit });
 
     return await Fetch.get(
-      `/admin/instructors${queryString}`,
+      `/admin/users${queryString}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  deleteUser: async ({
+    userId,
+    token = "",
+    context = null,
+  }: {
+    userId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.delete(
+      `/admin/users/${userId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -154,7 +171,7 @@ export const UserService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/instructors/details/${instructorId}`,
+      `/admin/users/${instructorId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -167,18 +184,17 @@ export const UserService = {
     payload: {
       name: string;
       email: string;
-      phone_number: string;
-      teacherType: string;
-      teacherStatus: string;
       password: string;
-      experienceLevel: string;
-      joinDate: string;
+      phone: string;
+      type: string;
+      join_date: string;
+      experience: string;
     };
     token?: string;
     context?: any;
   }) => {
     return await Fetch.post(
-      `/instructors`,
+      `/admin/users`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -192,19 +208,19 @@ export const UserService = {
   }: {
     instructorId: string;
     payload: {
-      name: string;
-      // email: string;
-      // phone_number: string;
-      // teacherType: string;
-      // teacherStatus: string;
-      // experienceLevel: string;
-      // joinDate: string;
+      name?: string;
+      // email?: string;
+      phone_number?: string;
+      type?: string;
+      status?: string;
+      join_date?: string;
+      experience?: string;
     };
     token?: string;
     context?: any;
   }) => {
     return await Fetch.patch(
-      `/instructors/update/${instructorId}`,
+      `/admin/users/${instructorId}`,
       payload,
       withAuthConfig({ token, context }),
     );
