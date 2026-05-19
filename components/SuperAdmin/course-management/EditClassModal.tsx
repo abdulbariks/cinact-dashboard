@@ -19,6 +19,7 @@ type EditClassModalProps = {
 	onOpenChange: (open: boolean) => void
 	classData: EditClassData
 	setClassData: React.Dispatch<React.SetStateAction<EditClassData>>
+	onEditClass: () => void
 }
 
 export default function EditClassModal({
@@ -26,6 +27,7 @@ export default function EditClassModal({
 	onOpenChange,
 	classData,
 	setClassData,
+	onEditClass,
 }: EditClassModalProps) {
 	const inputClassName =
 		"w-full rounded-2xl border border-[#3D4566] bg-transparent px-4 py-3 text-white placeholder:text-[#3D4566] outline-none focus:border-[#5F6CA0]"
@@ -152,7 +154,7 @@ export default function EditClassModal({
 						</button>
 						<button
 							type="button"
-							onClick={() => onOpenChange(false)}
+							onClick={onEditClass}
 							className="flex cursor-pointer items-center gap-2 rounded-2xl bg-[#E9201D] px-11 py-4 text-base font-medium text-white transition-colors hover:bg-[#ff3b1f]"
 						>
 							Edit Class

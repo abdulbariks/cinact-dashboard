@@ -30,8 +30,8 @@ export default function ModuleDetails({ module, onClassAdded }: ModuleDetailsPro
     className: "",
     classOverview: "",
     duration: "",
-    date: "",
-    time: "",
+    class_date: "",
+    class_time: "",
   });
 
   const path = usePathname();
@@ -41,11 +41,6 @@ export default function ModuleDetails({ module, onClassAdded }: ModuleDetailsPro
     try {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
-      const startDate =
-        classData.date && classData.time
-          ? new Date(`${classData.date}T${classData.time}:00`).toISOString()
-          : classData.date;
-
       const response = await AdminCourseManagementService.createClass({
         moduleId: module.id,
         token,
@@ -53,9 +48,9 @@ export default function ModuleDetails({ module, onClassAdded }: ModuleDetailsPro
           class_title: classData.classTitle,
           class_name: classData.className,
           class_overview: classData.classOverview,
-          duration: classData.duration,
-          start_date: startDate,
-          class_time: classData.time,
+          duration: Number(classData.duration),
+          class_date: classData.class_date,
+          class_time: classData.class_time,
         },
       });
 
@@ -65,8 +60,8 @@ export default function ModuleDetails({ module, onClassAdded }: ModuleDetailsPro
         className: "",
         classOverview: "",
         duration: "",
-        date: "",
-        time: "",
+        class_date: "",
+        class_time: "",
       });
       setIsAddClassOpen(false);
       onClassAdded?.();

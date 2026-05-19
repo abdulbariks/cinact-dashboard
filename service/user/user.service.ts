@@ -139,7 +139,7 @@ export const UserService = {
     const queryString = buildQueryString({ status, search, page, limit });
 
     return await Fetch.get(
-      `/instructors${queryString}`,
+      `/admin/instructors${queryString}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -605,7 +605,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/${courseId}/modules`,
+      `/admin/courses/${courseId}/modules`,
       withAuthConfig({ token, context }),
     );
   },
@@ -622,7 +622,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.post(
-      `/courses/${courseId}/modules`,
+      `/admin/courses/${courseId}/modules`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -638,7 +638,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/classes/${classId}`,
+      `/admin/courses/modules/classes/${classId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -655,7 +655,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.post(
-      `/courses/modules/${moduleId}/classes`,
+      `/admin/courses/modules/${moduleId}/classes`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -673,7 +673,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.patch(
-      `/courses/classes/${classId}`,
+      `/admin/courses/modules/classes/${classId}`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -689,7 +689,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/classes/${classId}/assignments`,
+      `/admin/courses/modules/classes/${classId}/assignments`,
       withAuthConfig({ token, context }),
     );
   },
@@ -755,7 +755,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/classes/${classId}/media`,
+      `/admin/courses/modules/classes/${classId}/assets`,
       withAuthConfig({ token, context }),
     );
   },
@@ -778,6 +778,21 @@ export const AdminCourseManagementService = {
       `/courses/classes/${classId}/media`,
       payload,
       config,
+    );
+  },
+
+  deleteAssets: async ({
+    assetId,
+    token = "",
+    context = null,
+  }: {
+    assetId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.delete(
+      `/admin/courses/modules/classes/assets/${assetId}`,
+      withAuthConfig({ token, context }),
     );
   },
 };

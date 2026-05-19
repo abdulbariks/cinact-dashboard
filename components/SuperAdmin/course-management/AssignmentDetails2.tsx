@@ -3,7 +3,6 @@ import React from 'react'
 import BreadCrumpRightArrow from '@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { assignments } from './AllAssignments'
 import { classes } from './ModuleDetails';
 import TeacherIcon from '@/components/icons/course-management/TeacherIcon'
 
@@ -25,7 +24,6 @@ export default function AssignmentDetails2() {
   const assignmentId = params?.assignmentId
 
   const classNo = classes.find((cls) => cls.id === classId)?.classNo || 'Class Details'
-  const assignmentNo = assignments.find((assignment) => assignment.id === assignmentId)?.assignmentNo || 'Assignment Details'
 
   return (
     <div>

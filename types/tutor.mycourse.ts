@@ -49,12 +49,16 @@ export type TClass = {
   id: string;
   class_title: string;
   class_name: string;
-  class_overview:string;
-  duration:string 
+  class_overview: string | null;
+  duration: string | number;
+  start_at?: string | null;
+  end_at?: string | null;
+  module_id?: string;
   status:string;
   createdAt: string;
-  instructor:TInstructor
+  instructor:TInstructor | null;
   enrollmentCount: string | number;
+  total_enrollments?: string | number;
 };
 
 export type TModule = {
@@ -86,11 +90,13 @@ export type TAssignment={
   description:string
   submissions:string | number
   grades: string | number
-  due_date: string
-  average_score:string | number
-  total_marks: string | number
-  submission_Date: string
-  instructor:TInstructor
+  due_date?: string
+  due_days?: string | number
+  average_score?:string | number
+  total_marks?: string | number
+  submission_Date?: string
+  submission_date?: string
+  instructor?:TInstructor
 }
 
 export type TGetAssignmentsResponse ={
@@ -137,13 +143,19 @@ export type TGetAllSubmittedAssignmentsResponse={
 
 export type TVideos={
   id:string;
-  asset_url:string
+  asset_url?:string
+  file_path?:string
   file_name:string
+  type?: string
+  mime_type?: string
 }
 export type TFiles={
   id:string;
-  asset_url:string
+  asset_url?:string
+  file_path?:string
   file_name:string
+  type?: string
+  mime_type?: string
 }
 
 export type TGetAssetsResponse={
@@ -161,7 +173,8 @@ export interface CreateTutorClassPayload {
   class_title: string;
   class_name: string;
   class_overview: string;
-  duration: string;
-  start_date: string;
+  duration: string | number;
+  start_date?: string;
+  class_date?: string;
   class_time: string;
 }

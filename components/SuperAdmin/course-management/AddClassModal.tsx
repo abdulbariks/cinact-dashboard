@@ -10,8 +10,8 @@ type AddClassData = {
   className: string
   classOverview: string
   duration: string
-  date: string
-  time: string
+  class_date: string
+  class_time: string
 }
 
 type AddClassModalProps = {
@@ -100,9 +100,9 @@ export default function AddClassModal({
               <div className="relative">
                 <input
                   type="date"
-                  value={classData.date}
+                  value={classData.class_date}
                   onChange={(e) =>
-                    setClassData((prev) => ({ ...prev, date: e.target.value }))
+                    setClassData((prev) => ({ ...prev, class_date: e.target.value }))
                   }
                   onClick={(e) => {
                     const input = e.currentTarget as HTMLInputElement & { showPicker?: () => void }
@@ -123,9 +123,9 @@ export default function AddClassModal({
               <div className="relative">
                 <input
                   type="time"
-                  value={classData.time}
+                  value={classData.class_time}
                   onChange={(e) =>
-                    setClassData((prev) => ({ ...prev, time: e.target.value }))
+                    setClassData((prev) => ({ ...prev, class_time: e.target.value }))
                   }
                   onClick={(e) => {
                     const input = e.currentTarget as HTMLInputElement & { showPicker?: () => void }

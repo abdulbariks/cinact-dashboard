@@ -56,9 +56,10 @@ export default function CourseDetails() {
     className: "",
     classOverview: "",
     duration: "",
-    date: "",
-    time: "",
+    class_date: "",
+    class_time: "",
   });
+
   const [moduleData, setModuleData] = useState({
     moduleTitle: "",
     moduleName: "",
@@ -236,11 +237,11 @@ export default function CourseDetails() {
             </div>
             {/* item-4 */}
             <div>
-              <div className=" flex items-center justify-between mt-4">
-                <h4 className=" text-base text-white font-medium">
+              <div className="flex items-center justify-between mt-4">
+                <h4 className="text-base text-white font-medium">
                   Course Progress
                 </h4>
-                <p className=" text-sm text-white ">65%</p>
+                <p className="text-sm text-white ">65%</p>
               </div>
 
               <div className="mt-3 h-2 w-full rounded-full bg-[#202a3f] overflow-hidden">
@@ -273,13 +274,13 @@ export default function CourseDetails() {
                 })}
               </TabsList>
               <div className="flex items-center gap-3">
-                <button
+                {/* <button
                   onClick={() => setIsAddClassOpen(true)}
                   className="bg-[#5f6ca0] text-sm text-white font-medium px-4 py-2.5 rounded-[10px] hover:bg-[#6b78ad] flex items-center gap-2 cursor-pointer"
                 >
                   <PlusIcon />
                   Add Class
-                </button>
+                </button> */}
                 <button
                   onClick={() => setIsAddModuleOpen(true)}
                   className="bg-[#5f6ca0] text-sm text-white font-medium px-4 py-2.5 rounded-[10px] hover:bg-[#6b78ad] flex items-center gap-2 cursor-pointer"
