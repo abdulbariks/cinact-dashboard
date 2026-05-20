@@ -102,7 +102,7 @@ export default function ModaretionRequest({
 
       const response = await AdminCommunityService.getAllRequestedPosts({
         token,
-        status: statusParam,
+        status: "REQUEST",
         role: roleParam,
         page: currentPage,
         limit: itemsPerPage,

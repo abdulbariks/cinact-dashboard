@@ -10,6 +10,10 @@ import PaginationPage from "@/components/reusable/PaginationPage";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import warnigImg from "@/public/admin-dashboard/warning-img.png";
+import CrossIcon from "@/components/icons/others/CrossIcon";
+import TrashIcon from "@/components/icons/others/TrashIcon";
 
 import { parseCookies } from "nookies";
 import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
@@ -90,6 +94,8 @@ export default function AllPosts({
   const [failedAvatars, setFailedAvatars] = useState<Record<string, boolean>>(
     {},
   );
+  const [isWarningOpen, setIsWarningOpen] = useState(false);
+  const [selectedPostToDelete, setSelectedPostToDelete] = useState<string | null>(null);
 
   // console.log("posts============", posts);
 
@@ -133,13 +139,21 @@ export default function AllPosts({
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   const handleDelete = async (postId: string) => {
-    // Optional: Add a confirmation dialog
-    if (!confirm("Are you sure you want to delete this post?")) return;
+    // Open confirmation dialog for delete
+    setSelectedPostToDelete(postId);
+    setIsWarningOpen(true);
+  };
 
+  // Actual deletion performed after confirming in dialog
+  const performDelete = async () => {
+    if (!selectedPostToDelete) return;
     try {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
-      const response = await AdminCommunityService.deletePost(postId, token);
+      const response = await AdminCommunityService.deletePost(
+        selectedPostToDelete,
+        token,
+      );
 
       if (response?.data?.success) {
         showSuccessToast(response.data.message || "Post deleted successfully");
@@ -148,6 +162,9 @@ export default function AllPosts({
       }
     } catch (error: any) {
       showErrorToast(error?.data?.message || "Failed to delete post");
+    } finally {
+      setIsWarningOpen(false);
+      setSelectedPostToDelete(null);
     }
   };
   return (
@@ -252,6 +269,40 @@ export default function AllPosts({
         itemsPerPage={itemsPerPage}
         setItemsPerPage={setItemsPerPage}
       />
+      {/* Delete confirmation dialog (only for delete) */}
+      <Dialog open={isWarningOpen} onOpenChange={setIsWarningOpen}>
+        <DialogContent
+          hideCloseButton
+          className="w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-8 text-white"
+        >
+          <div className="flex flex-col items-center text-center">
+            <Image src={warnigImg} alt="Warning" />
+            <h3 className="mt-4 text-xl font-semibold text-white">Delete Post?</h3>
+            <p className="mt-2 text-sm text-[#B2B5B8]">
+              Are you sure you want to delete this post?
+            </p>
+
+            <div className="mt-6 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsWarningOpen(false)}
+                className="flex items-center gap-2.5 rounded-2xl border border-[#3D4566] px-11 py-4 text-sm font-medium text-white hover:bg-[#5F6CA0]"
+              >
+                <CrossIcon />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={performDelete}
+                className="flex items-center gap-2.5 rounded-2xl bg-[#E9201D] px-11 py-4 text-sm font-medium text-white hover:bg-[#ff3b1f]"
+              >
+                <TrashIcon />
+                Delete
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

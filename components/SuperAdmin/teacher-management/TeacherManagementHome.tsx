@@ -167,14 +167,14 @@ export default function TeacherManagementHome() {
   const handleDeleteUser = useCallback(async () => {
     if (!selectedTeacher?.id) return
 
-    console.log("selectedTeacher?.id",selectedTeacher?.id);
+    // console.log("selectedTeacher?.id",selectedTeacher?.id);
     
 
     try {
       const cookies = parseCookies()
       const token = cookies.token || cookies.accessToken || ''
       const response = await UserService.deleteUser({ userId: selectedTeacher.id, token })
-     console.log("response==========",response);
+    //  console.log("response==========",response);
      
       showSuccessToast(response?.data?.message || 'User deleted successfully')
       setIsWarningOpen(false)

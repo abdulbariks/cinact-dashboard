@@ -29,7 +29,6 @@ export default function CommunityType({ value, onChange }: CommunityTypeProps) {
           <SelectItem value="all-role">All Role</SelectItem>
           <SelectItem value="ADMIN">Admin</SelectItem>
           <SelectItem value="STUDENT">Student</SelectItem>
-          <SelectItem value="FINANCE">Finance</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

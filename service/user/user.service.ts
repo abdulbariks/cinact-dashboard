@@ -941,7 +941,7 @@ export const AdminCommunityService = {
     limit?: number;
     search?: string;
   } = {}) => {
-    return await Fetch.get(`/admin/community-management/posts`, {
+    return await Fetch.get(`/admin/community/posts`, {
       ...withAuthConfig({ token, context }),
       params: {
         status,
@@ -955,7 +955,7 @@ export const AdminCommunityService = {
   getAllRequestedPosts: async ({
     token = "",
     context = null,
-    status = "",
+    status = "Request",
     role = "",
     page = 1,
     limit = 10,
@@ -970,7 +970,7 @@ export const AdminCommunityService = {
     search?: string;
   } = {}) => {
     // admin/community-management/requested-posts
-    return await Fetch.get(`/admin/community-management/requested-posts`, {
+    return await Fetch.get(`/admin/community/posts`, {
       ...withAuthConfig({ token, context }),
       params: {
         status,
@@ -987,33 +987,33 @@ export const AdminCommunityService = {
     context: any = null,
   ) => {
     return await Fetch.get(
-      `/admin/community-management/requested-posts/${id}`,
+      `/admin/community/posts/${id}`,
       {
         ...withAuthConfig({ token, context }),
       },
     );
   },
-  approvePost: async (id: string, token: string) =>
+  statusUpdatePost: async (id: string, token: string, status: string) =>
     await Fetch.patch(
-      `/admin/community-management/approve-post/${id}`,
-      {},
+      `/admin/community/post/${id}/status`,
+      { status },
       withAuthConfig({ token }),
     ),
-  rejectPost: async (id: string, token: string) =>
-    await Fetch.patch(
-      `/admin/community-management/reject-post/${id}`,
-      {},
-      withAuthConfig({ token }),
-    ),
-  flagPost: async (id: string, token: string) =>
-    await Fetch.patch(
-      `/admin/community-management/flag-unflag-post/${id}`,
-      {},
-      withAuthConfig({ token }),
-    ),
+  // rejectPost: async (id: string, token: string) =>
+  //   await Fetch.patch(
+  //     `/admin/community-management/reject-post/${id}`,
+  //     {},
+  //     withAuthConfig({ token }),
+  //   ),
+  // flagPost: async (id: string, token: string) =>
+  //   await Fetch.patch(
+  //     `/admin/community-management/flag-unflag-post/${id}`,
+  //     {},
+  //     withAuthConfig({ token }),
+  //   ),
   deletePost: async (id: string, token: string = "") => {
-    // admin/community-management/delete-post/cmm7df5lm0001kg90ajhm9olt
-    return await Fetch.delete(`/admin/community-management/delete-post/${id}`, {
+    // admin/community/post/cmm7df5lm0001kg90ajhm9olt
+    return await Fetch.delete(`/admin/community/post/${id}`, {
       ...withAuthConfig({ token }),
     });
   },
