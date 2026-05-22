@@ -343,13 +343,13 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
               w-full rounded-lg 
               transition-all duration-200
               ${effectiveCollapsed ? "justify-center" : ""}
-              text-gray-700 hover:bg-red-50 hover:text-red-600
+              bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 cursor-pointer
               group
             `}
               title={effectiveCollapsed ? "Log Out Account" : ""}
               type="button"
             >
-              <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
+              <div className="w-7.5 h-7.5 flex justify-center items-center shrink-0">
                 <LogOutIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </div>
 

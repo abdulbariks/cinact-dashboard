@@ -26,9 +26,9 @@ export function StudentStatusFilter({ value, onValueChange }: StudentStatusFilte
         <SelectGroup>
           <SelectItem value="all">All Status</SelectItem>
           <SelectItem value="ACTIVE">Active</SelectItem>
-          <SelectItem value="PENDING">Pending</SelectItem>
-          <SelectItem value="ALUMNI">Alumni</SelectItem>
-          <SelectItem value="RESTRICTED">Restricted</SelectItem>
+          <SelectItem value="DEACTIVATED">Deactivated</SelectItem>
+          <SelectItem value="BLOCKED">Blocked</SelectItem>
+          <SelectItem value="REJECTED">Rejected</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

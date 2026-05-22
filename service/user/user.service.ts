@@ -73,7 +73,7 @@ export const UserService = {
 
   // super admin overview
   getDashboardOverview: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/dashboard`, withAuthConfig({ token, context }));
+    return await Fetch.get(`/admin/overview`, withAuthConfig({ token, context }));
   },
 
   // get all courses
@@ -89,6 +89,7 @@ export const UserService = {
     search = "",
     status = "",
     paymentStatus = "",
+    type = "",
     page = 1,
     limit = 10,
   }: {
@@ -97,15 +98,17 @@ export const UserService = {
     search?: string;
     status?: string;
     paymentStatus?: string | boolean;
+    type?: string;
     page?: number;
     limit?: number;
   } = {}) => {
-    return await Fetch.get(`/admin/student-management`, {
+    return await Fetch.get(`/admin/users`, {
       ...withAuthConfig({ token, context }),
       params: {
         search,
         status,
         paymentStatus,
+        type,
         page,
         limit,
       },
@@ -115,7 +118,7 @@ export const UserService = {
   // Student Details (admin)
   getStudentDetails: async ({ id, token = "", context = null }: { id: string; token?: string; context?: any }) => {
     return await Fetch.get(
-      `/admin/student-management/student/${id}`,
+      `/admin/users/${id}`,
       withAuthConfig({ token, context }),
     );
   },

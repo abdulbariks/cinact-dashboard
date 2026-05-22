@@ -72,6 +72,14 @@ export const studentManagementColumns = [
       </div>
     ),
   },
+    {
+    label: "Phone Number",
+    accessor: "phone_number",
+    width: "200px",
+    formatter: (value: string) => (
+      <span className="text-sm text-white font-medium">{value}</span>
+    ),
+  },
   {
     label: "Status",
     accessor: "status",
@@ -87,54 +95,54 @@ export const studentManagementColumns = [
     ),
   },
   {
-    label: "Course Name",
-    accessor: "course_name",
+    label: "Total Enrolled",
+    accessor: "total_enrolled",
     width: "200px",
     formatter: (value: string) => (
       <span className="text-sm text-white font-medium">{value}</span>
     ),
   },
-  {
-    label: "Join Date",
-    accessor: "join_date",
-    width: "120px",
-    formatter: (value: string) => {
-      const date = new Date(value);
-      return (
-        <span className="text-sm text-white font-medium">
-          {date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </span>
-      );
-    },
-  },
-  {
-    label: "Payment Status",
-    accessor: "payment_status",
-    width: "140px",
-    formatter: (value: string) => (
-      <span
-        className={`capitalize px-2.5 py-1 rounded-full text-sm   ${
-          paymentStatusColors[value]
-        }`}
-      >
-        {value}
-      </span>
-    ),
-  },
-  {
-    label: "Payment Type",
-    accessor: "payment_type",
-    width: "120px",
-    formatter: (value: string) => (
-      <span className={`capitalize   text-sm text-white font-medium `}>
-        {value}
-      </span>
-    ),
-  },
+  // {
+  //   label: "Join Date",
+  //   accessor: "join_date",
+  //   width: "120px",
+  //   formatter: (value: string) => {
+  //     const date = new Date(value);
+  //     return (
+  //       <span className="text-sm text-white font-medium">
+  //         {date.toLocaleDateString("en-US", {
+  //           year: "numeric",
+  //           month: "short",
+  //           day: "numeric",
+  //         })}
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   label: "Payment Status",
+  //   accessor: "payment_status",
+  //   width: "140px",
+  //   formatter: (value: string) => (
+  //     <span
+  //       className={`capitalize px-2.5 py-1 rounded-full text-sm   ${
+  //         paymentStatusColors[value]
+  //       }`}
+  //     >
+  //       {value}
+  //     </span>
+  //   ),
+  // },
+  // {
+  //   label: "Payment Type",
+  //   accessor: "payment_type",
+  //   width: "120px",
+  //   formatter: (value: string) => (
+  //     <span className={`capitalize   text-sm text-white font-medium `}>
+  //       {value}
+  //     </span>
+  //   ),
+  // },
   {
     label: "Actions",
     accessor: "action",

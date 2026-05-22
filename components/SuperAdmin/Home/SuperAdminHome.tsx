@@ -64,7 +64,9 @@ export default function SuperAdminHome() {
         const cookies = parseCookies();
         const token = cookies.token || cookies.accessToken || "";
         const response = await UserService.getDashboardOverview({ token });
-        setOverview(response?.data || null);
+
+        console.log("Dashboard Overview Response:", response?.data?.data);
+        setOverview(response?.data?.data || null);
       } catch (error: any) {
         showErrorToast(
           error?.response?.data?.message ||

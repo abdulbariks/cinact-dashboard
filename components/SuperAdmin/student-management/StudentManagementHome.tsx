@@ -99,7 +99,8 @@ const StudentManagementSkeleton = () => {
 export default function StudentManagementHome() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [status, setStatus] = useState("all");
   const [paymentStatus, setPaymentStatus] = useState("all");
   const [allStudentManagementData, setAllStudentManagementData] = useState<
@@ -107,6 +108,14 @@ export default function StudentManagementHome() {
   >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        setDebouncedSearch(search)
+      }, 300)
+  
+      return () => clearTimeout(timeout)
+    }, [search])
 
   useEffect(() => {
     setCurrentPage(1);
@@ -123,6 +132,7 @@ export default function StudentManagementHome() {
         search,
         status: status === "all" ? "" : status,
         paymentStatus: paymentStatus === "all" ? "" : paymentStatus,
+        type: "Student",
         page: currentPage,
         limit: itemsPerPage,
       });
@@ -183,10 +193,10 @@ export default function StudentManagementHome() {
                 <SearchIcon />
               </button>
             </div>
-            <PaymentTypeFilter
+            {/* <PaymentTypeFilter
               value={paymentStatus}
               onValueChange={setPaymentStatus}
-            />
+            /> */}
             <StudentStatusFilter value={status} onValueChange={setStatus} />
           </div>
         </div>
