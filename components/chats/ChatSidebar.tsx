@@ -30,14 +30,14 @@ export default function ChatSidebar() {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
       const res = await ChatsService.getConversations({ token });
-      // console.log("res============", res);
-      setConversations(res?.data);
+      // console.log("res============", res?.data?.data );
+      setConversations(Array.isArray(res?.data?.data) ? res?.data?.data : []);
     };
     loadData();
   }, []);
 
   const filteredConversations = useMemo(() => {
-    return conversations.filter((item) => {
+    return conversations?.filter((item) => {
       // Logic for title based on type
       const displayTitle = item.type === "DM" ? item.receiverTitle : item.title;
       const matchTab = activeTab === "all" ? true : item.type === activeTab;
@@ -106,8 +106,8 @@ export default function ChatSidebar() {
       </Tabs>
 
       <div className="mt-4 min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
-        {filteredConversations.length > 0 ? (
-          filteredConversations.map((item) => {
+        {filteredConversations?.length > 0 ? (
+          filteredConversations?.map((item) => {
             const displayTitle =
               item.type === "DM" ? item.receiverTitle : item.title;
             const initials = (displayTitle || "??")

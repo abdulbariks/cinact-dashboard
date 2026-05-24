@@ -60,7 +60,7 @@ export const ChatsService = {
   },
   // All Users
   getAllUsers: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/admin/user`, withAuthConfig({ token, context }));
+    return await Fetch.get(`/admin/users`, withAuthConfig({ token, context }));
   },
   // Get Conversations
   getConversations: async ({ token = "", context = null } = {}) => {
@@ -100,7 +100,7 @@ export const ChatsService = {
   //  create DM
   createDM: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
     return await Fetch.post(
-      `/conversations/dm`, 
+      `/conversations`, 
       data, 
       withAuthConfig({ token, context })
     );

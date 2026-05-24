@@ -328,7 +328,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                 effectiveCollapsed ? "justify-center" : ""
               }`}
             >
-              <Skeleton className="w-[30px] h-[30px] rounded-md bg-[#1d2a3e]" />
+              <Skeleton className="w-7.5 h-7.5 rounded-md bg-[#1d2a3e]" />
               {(isMobile || !effectiveCollapsed) && (
                 <Skeleton className="h-4 w-24 bg-[#1d2a3e]" />
               )}
