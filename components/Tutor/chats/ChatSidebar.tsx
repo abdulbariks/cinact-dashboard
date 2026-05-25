@@ -31,7 +31,7 @@ export default function ChatSidebar() {
       const token = cookies.token || cookies.accessToken || "";
       const res = await ChatsService.getConversations({ token });
       // console.log("res============", res);
-      setConversations(res?.data);
+       setConversations(Array.isArray(res?.data?.data) ? res?.data?.data : []);
     };
     loadData();
   }, []);

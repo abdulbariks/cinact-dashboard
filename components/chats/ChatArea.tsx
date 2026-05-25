@@ -296,9 +296,9 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  console.log("chatId===========", chatId);
-  console.log("messages=====", messages);
-  console.log("currentUserId=====", currentUserId);
+  // console.log("chatId===========", chatId);
+  // console.log("messages=====", messages);
+  // console.log("currentUserId=====", currentUserId);
 
   const socketRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);

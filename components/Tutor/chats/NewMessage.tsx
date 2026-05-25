@@ -8,11 +8,22 @@ import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCr
 import { useRouter } from "next/navigation";
 import { ChatsService } from "@/service/chats/chats.service";
 
+// interface User {
+//   id: string;
+//   name: string | null;
+//   email: string;
+//   role_users: { role: { name: string } }[];
+// }
+
 interface User {
   id: string;
   name: string | null;
   email: string;
-  role_users: { role: { name: string } }[];
+  avatar: string | null;
+  avatar_url: string | null;
+  status: string;
+  type: "student" | "teacher" | "admin" | "su_admin";
+  phone_number: string;
 }
 
 const getAvatarText = (name: string) => {
@@ -34,25 +45,34 @@ export default function NewMessage() {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
       const response = await ChatsService.getAllUsers({ token });
+       console.log("response============", response);
 
       if (response?.data?.success) {
         const allUsers: User[] = response.data.data;
 
-        setStudents(
-          allUsers.filter((u) =>
-            u.role_users?.some((r) => r.role.name === "STUDENT"),
-          ),
-        );
-        setTeachers(
-          allUsers.filter((u) =>
-            u.role_users?.some((r) => r.role.name === "TEACHER"),
-          ),
-        );
-        setAdmin(
-          allUsers.filter((u) =>
-            u.role_users?.some((r) => r.role.name === "su_admin"),
-          ),
-        );
+        const studentList = allUsers.filter((user) => user.type === "student");
+        const teacherList = allUsers.filter((user) => user.type === "teacher");
+        const adminList = allUsers.filter((user) => user.type === "teacher");
+
+        setStudents(studentList);
+        setTeachers(teacherList);
+        setAdmin(adminList);
+
+        // setStudents(
+        //   allUsers.filter((u) =>
+        //     u.role_users?.some((r) => r.role.name === "STUDENT"),
+        //   ),
+        // );
+        // setTeachers(
+        //   allUsers.filter((u) =>
+        //     u.role_users?.some((r) => r.role.name === "TEACHER"),
+        //   ),
+        // );
+        // setAdmin(
+        //   allUsers.filter((u) =>
+        //     u.role_users?.some((r) => r.role.name === "su_admin"),
+        //   ),
+        // );
       }
     } catch (error: any) {
       showErrorToast(error?.data?.message || "Failed to load users");

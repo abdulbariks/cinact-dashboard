@@ -1,250 +1,139 @@
-// "use client";
-// import React, { useCallback, useEffect, useState } from "react";
-// import BreadCrumpRightArrow from "../icons/SuperAdmindashboard/BreadCrumpRightArrow";
-// import Link from "next/link";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// // import { conversations } from "./chat-data";
-// import { parseCookies } from "nookies";
-// import { showErrorToast } from "@/lib/hotToast";
-// import { ChatsService } from "@/service/chats/chats.service";
-
-// // const students = conversations.filter((user) => user.type === "student");
-// // const teachers = conversations.filter((user) => user.type === "teacher");
-
-// interface User {
-//   id: string;
-//   name: string | null;
-//   email: string;
-//   avatar: string | null;
-//   avatar_url: string | null;
-//   status: string;
-//   type: "student" | "teacher" | "admin" | "su_admin";
-//   phone_number: string;
-// }
-
-// const getAvatarText = (name: string) => {
-//   return name.replace(/\s+/g, "").slice(0, 2).toUpperCase();
-// };
-// // const getAvatarText = (name: string | null, email: string | null) => {
-// //   const text = name || email || "";
-// //   if (!text) return "??";
-// //   return text.trim().replace(/\s+/g, "").slice(0, 2).toUpperCase();
-// // };
-
-// export default function NewMessage() {
-//   const [students, setStudents] = useState<User[]>([]);
-//   const [teachers, setTeachers] = useState<User[]>([]);
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const [isLoading, setIsLoading] = useState(true);
-
-//   const fetchAllUsers = useCallback(async () => {
-//     try {
-//       setIsLoading(true);
-//       const cookies = parseCookies();
-//       const token = cookies.token || cookies.accessToken || "";
-
-//       const response = await ChatsService.getAllUsers({ token });
-
-//       // console.log("response============", response);
-
-//       // Based on your JSON, the users are inside response.data.data
-//       if (response?.data?.success) {
-//         const allUsers: User[] = response.data.data;
-
-//         const studentList = allUsers.filter((user) => user.type === "student");
-//         const teacherList = allUsers.filter((user) => user.type === "teacher");
-
-//         setStudents(studentList);
-//         setTeachers(teacherList);
-//       }
-//     } catch (error: any) {
-//       showErrorToast(error?.data?.message || "Failed to load users");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     fetchAllUsers();
-//   }, [fetchAllUsers]);
-
-//   // Filtering logic for the search bar
-//   const filterBySearch = (list: User[]) =>
-//     list.filter((u) =>
-//       (u.name || u.email).toLowerCase().includes(searchQuery.toLowerCase()),
-//     );
-
-//   const filteredStudents = filterBySearch(students);
-//   const filteredTeachers = filterBySearch(teachers);
-
-//   console.log("filteredStudents====", filteredStudents);
-//   console.log("filteredTeachers====", filteredTeachers);
-
-//   return (
-//     <div>
-//       <div className="flex items-center gap-2">
-//         <Link
-//           href="/dashboard/chats"
-//           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
-//         >
-//           Chat
-//         </Link>
-//         <BreadCrumpRightArrow />
-//         <p className="text-base font-medium text-[#8D9CDC]">New Message</p>
-//       </div>
-
-//       <div className=" p-8 bg-[#0a1726] rounded-2xl max-w-173.75 h-[80vh]  mx-auto mt-10">
-//         <h2 className=" text-2xl text-white font-semibold pb-4 border-b border-[#141B34]">
-//           New Message
-//         </h2>
-
-//         <div className="relative mt-4 mb-5">
-//           <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[#3D4566] ">
-//             To:
-//           </span>
-//           <input
-//             className="pl-10  pr-4 py-3.5 w-full border border-[#3D4566] rounded-full placeholder:text-[#8C9196] placeholder:text-sm text-white"
-//             type="text"
-//             placeholder="Type a user name or email"
-//             value={searchQuery}
-//             onChange={(e) => setSearchQuery(e.target.value)}
-//           />
-//         </div>
-
-//         <Link
-//           href="/dashboard/create-group"
-//           className="block w-full text-center text-sm text-white font-medium rounded-[12px] bg-[#E9201D] py-4 px-8 cursor-pointer"
-//         >
-//           Create Group Chat
-//         </Link>
-
-//         <p className=" text-sm text-[#B2B5B8] my-4">Suggested</p>
-
-//         <Tabs defaultValue="students">
-//           <TabsList className="grid h-auto   grid-cols-2 bg-transparent p-1 gap-1.5">
-//             <TabsTrigger
-//               value="students"
-//               className="text-sm font-normal text-[#B2B5B8] data-[state=active]:font-medium data-[state=active]:text-white data-[state=active]:bg-[#3d4566] cursor-pointer rounded-full py-1.5 px-4 border border-[#1F283D]"
-//             >
-//               Students
-//             </TabsTrigger>
-//             <TabsTrigger
-//               value="teachers"
-//               className="text-sm font-normal text-[#B2B5B8] data-[state=active]:font-medium data-[state=active]:text-white data-[state=active]:bg-[#3d4566] cursor-pointer rounded-full py-1.5 px-4 border border-[#1F283D]"
-//             >
-//               Teachers
-//             </TabsTrigger>
-//           </TabsList>
-
-//           <div className="mt-4 max-h-[40vh] overflow-y-auto pr-1">
-//             <TabsContent value="students" className="mt-0">
-//               <div className="space-y-4">
-//                 {filteredStudents.map((student) => (
-//                   <Link
-//                     href={`/dashboard/chats/${student.id}`}
-//                     key={student.id}
-//                     type="button"
-//                     className="w-full flex items-center gap-2.5 text-left py-2 text-sm text-[#E6E7E8] hover:text-white hover:border-[#3d4566] transition-colors cursor-pointer"
-//                   >
-//                     <span className="size-9 rounded-full bg-[#1a2336] text-white text-xs font-semibold grid place-items-center">
-//                       {getAvatarText(student.name || "Unknown User")}
-//                       {/* {student.name || student.email || "Unknown User"} */}
-//                     </span>
-//                     <span>{student.name}</span>
-//                   </Link>
-//                 ))}
-//               </div>
-//             </TabsContent>
-//             <TabsContent value="teachers" className="mt-0">
-//               <div className="space-y-4">
-//                 {filteredTeachers?.map((teacher) => (
-//                   <Link
-//                     href={`/dashboard/chats/${teacher.id}`}
-//                     key={teacher.id}
-//                     type="button"
-//                     className="w-full  flex items-center gap-2.5 text-left      py-2 text-sm text-[#E6E7E8] hover:text-white hover:border-[#3d4566] transition-colors cursor-pointer"
-//                   >
-//                     <span className="size-9 rounded-full bg-[#1a2336] text-white text-xs font-semibold grid place-items-center">
-//                       {getAvatarText(teacher.name || "Unknown User")}
-//                       {/* {teacher.name || teacher.email || "Unknown User"} */}
-//                     </span>
-//                     <span>{teacher.name}</span>
-//                   </Link>
-//                 ))}
-//               </div>
-//             </TabsContent>
-//           </div>
-//         </Tabs>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 "use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { parseCookies } from "nookies";
-import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
-import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow"; // Ensure correct path
 import { useRouter } from "next/navigation";
+import { parseCookies } from "nookies";
+import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { ChatsService } from "@/service/chats/chats.service";
+
+type DiscoverUserType = "student" | "teacher" | "admin";
 
 interface User {
   id: string;
+  username: string | null;
   name: string | null;
-  email: string;
   avatar: string | null;
-  avatar_url: string | null;
-  status: string;
-  type: "student" | "teacher" | "admin" | "su_admin";
-  phone_number: string;
 }
+
+interface UsersByType {
+  student: User[];
+  teacher: User[];
+  admin: User[];
+}
+
+interface CursorByType {
+  student: string | null;
+  teacher: string | null;
+  admin: string | null;
+}
+
+const USER_TYPES: { label: string; value: DiscoverUserType }[] = [
+  { label: "Students", value: "student" },
+  { label: "Teachers", value: "teacher" },
+  { label: "Admins", value: "admin" },
+];
 
 const getAvatarText = (name: string) => {
   return name.replace(/\s+/g, "").slice(0, 2).toUpperCase();
 };
 
 export default function NewMessage() {
-  const [students, setStudents] = useState<User[]>([]);
-  const [teachers, setTeachers] = useState<User[]>([]);
-  const [admin, setAdmin] = useState<User[]>([]);
+  const [activeType, setActiveType] = useState<DiscoverUserType>("student");
+  const [usersByType, setUsersByType] = useState<UsersByType>({
+    student: [],
+    teacher: [],
+    admin: [],
+  });
+  const [cursorByType, setCursorByType] = useState<CursorByType>({
+    student: null,
+    teacher: null,
+    admin: null,
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
 
-  const fetchAllUsers = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const cookies = parseCookies();
-      const token = cookies.token || cookies.accessToken || "";
-      const response = await ChatsService.getAllUsers({ token });
+  const fetchUsers = useCallback(
+    async ({
+      type,
+      search,
+      cursor,
+      append = false,
+    }: {
+      type: DiscoverUserType;
+      search: string;
+      cursor?: string | null;
+      append?: boolean;
+    }) => {
+      try {
+        append ? setIsLoadingMore(true) : setIsLoading(true);
 
-      
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await ChatsService.getAllUsers({
+          token,
+          search,
+          type,
+          limit: 10,
+          cursor: cursor || "",
+        });
 
-      if (response?.data?.success) {
-        const allUsers: User[] = response.data.data;
+        if (response?.data?.success) {
+          const discoveredUsers = response.data.data || [];
+          const nextCursor = response.data.meta_data?.next_cursor || null;
 
-           console.log("response============", response);
-
-        const studentList = allUsers.filter((user) => user.type === "student");
-        const teacherList = allUsers.filter((user) => user.type === "teacher");
-
-        setStudents(studentList);
-        setTeachers(teacherList);
+          setUsersByType((previous) => ({
+            ...previous,
+            [type]: append
+              ? [...previous[type], ...discoveredUsers]
+              : discoveredUsers,
+          }));
+          setCursorByType((previous) => ({
+            ...previous,
+            [type]: nextCursor,
+          }));
+        }
+      } catch (error: any) {
+        showErrorToast(
+          error?.response?.data?.message ||
+            error?.data?.message ||
+            "Failed to load users",
+        );
+      } finally {
+        append ? setIsLoadingMore(false) : setIsLoading(false);
       }
-    } catch (error: any) {
-      showErrorToast(error?.data?.message || "Failed to load users");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   useEffect(() => {
-    fetchAllUsers();
-  }, [fetchAllUsers]);
+    const timeout = setTimeout(() => {
+      fetchUsers({
+        type: activeType,
+        search: searchQuery,
+      });
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [activeType, fetchUsers, searchQuery]);
+
+  const handleLoadMore = () => {
+    const nextCursor = cursorByType[activeType];
+
+    if (!nextCursor || isLoadingMore) return;
+
+    fetchUsers({
+      type: activeType,
+      search: searchQuery,
+      cursor: nextCursor,
+      append: true,
+    });
+  };
 
   const handleCreateDM = async (userId: string) => {
     if (isCreating) return;
@@ -253,19 +142,17 @@ export default function NewMessage() {
       setIsCreating(true);
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
-
       const payload = {
-         type: "DM",
-         participant_id: userId
-         };
+        type: "DM",
+        participant_id: userId,
+      };
 
       const response = await ChatsService.createDM({
         data: payload,
-        token: token,
+        token,
       });
 
       showSuccessToast("Conversation started");
-      // Use the ID returned from the created or existing DM
       const chatId = response?.data?.id;
       router.push(`/dashboard/chats/${chatId}`);
     } catch (error: any) {
@@ -277,34 +164,39 @@ export default function NewMessage() {
     }
   };
 
-  const filterBySearch = (list: User[]) =>
-    list.filter((u) =>
-      (u.name || u.email).toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-
-  // Render User Item
   const renderUserItem = (user: User) => (
     <button
       key={user.id}
       onClick={() => handleCreateDM(user.id)}
       disabled={isCreating}
-      className="w-full flex items-center gap-2.5 text-left py-2 text-sm text-[#E6E7E8] hover:bg-[#1a2336] px-2 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+      className="w-full flex items-center gap-2.5 rounded-lg px-2 py-2 text-left text-sm text-[#E6E7E8] transition-colors hover:bg-[#1a2336] disabled:opacity-50"
     >
-      <span className="size-9 shrink-0 rounded-full bg-[#1a2336] text-white text-xs font-semibold grid place-items-center border border-[#3D4566]">
-        {getAvatarText(user.name || "UN")}
+      <span className="size-9 shrink-0 rounded-full border border-[#3D4566] bg-[#1a2336] text-white text-xs font-semibold grid place-items-center">
+        {getAvatarText(user.name || user.username || "UN")}
       </span>
-      <div className="flex flex-col">
-        <span className="font-medium">{user.name || "Unknown User"}</span>
-        <span className="text-[10px] text-[#5F6CA0]">{user.email}</span>
+      <div className="flex min-w-0 flex-col">
+        <span className="truncate font-medium">
+          {user.name || "Unknown User"}
+        </span>
+        {user.username && (
+          <span className="truncate text-[10px] text-[#5F6CA0]">
+            @{user.username}
+          </span>
+        )}
       </div>
     </button>
   );
+
+  const users = usersByType[activeType];
+  const activeLabel =
+    USER_TYPES.find((userType) => userType.value === activeType)?.label ||
+    "Users";
 
   return (
     <div className="p-4">
       <div className="flex items-center gap-2 mb-6">
         <Link
-          href="/tutor-dashboard/chats"
+          href="/dashboard/chats"
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
           Chat
@@ -325,9 +217,9 @@ export default function NewMessage() {
           <input
             className="pl-12 pr-4 py-3.5 w-full border border-[#3D4566] bg-transparent rounded-full placeholder:text-[#8C9196] text-white outline-none focus:border-[#E9201D]"
             type="text"
-            placeholder="Search by name or email"
+            placeholder="Search users"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(event) => setSearchQuery(event.target.value)}
           />
         </div>
 
@@ -340,33 +232,57 @@ export default function NewMessage() {
 
         <p className="text-sm text-[#B2B5B8] my-4">Suggested</p>
 
-        <Tabs defaultValue="students">
+        <Tabs
+          value={activeType}
+          onValueChange={(value) => setActiveType(value as DiscoverUserType)}
+        >
           <TabsList className="grid h-auto grid-cols-3 bg-transparent p-1 gap-1.5">
-            {["students", "teachers", "su_admin"].map((tab) => (
+            {USER_TYPES.map((userType) => (
               <TabsTrigger
-                key={tab}
-                value={tab}
-                className="text-sm text-[#B2B5B8] data-[state=active]:text-white data-[state=active]:bg-[#3d4566] rounded-full py-1.5 border border-[#1F283D] capitalize"
+                key={userType.value}
+                value={userType.value}
+                className="text-sm text-[#B2B5B8] data-[state=active]:text-white data-[state=active]:bg-[#3d4566] rounded-full py-1.5 border border-[#1F283D]"
               >
-                {tab === "su_admin" ? "Admin" : tab}
+                {userType.label}
               </TabsTrigger>
             ))}
           </TabsList>
 
           <div className="mt-6 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
-            <TabsContent value="students" className="space-y-2">
-              {filterBySearch(students).map(renderUserItem)}
-            </TabsContent>
-            <TabsContent value="teachers" className="space-y-2">
-              {filterBySearch(teachers).map(renderUserItem)}
-            </TabsContent>
-            <TabsContent value="su_admin" className="space-y-2">
-              {filterBySearch(admin).map(renderUserItem)}
-            </TabsContent>
+            {USER_TYPES.map((userType) => (
+              <TabsContent
+                key={userType.value}
+                value={userType.value}
+                className="space-y-2"
+              >
+                {isLoading && activeType === userType.value ? (
+                  <p className="py-4 text-center text-sm text-[#B2B5B8]">
+                    Loading users...
+                  </p>
+                ) : users.length ? (
+                  <>
+                    {users.map(renderUserItem)}
+                    {cursorByType[activeType] && (
+                      <button
+                        type="button"
+                        onClick={handleLoadMore}
+                        disabled={isLoadingMore}
+                        className="mt-3 w-full rounded-lg border border-[#3D4566] py-2 text-sm font-medium text-[#E6E7E8] transition-colors hover:bg-[#1a2336] disabled:opacity-50"
+                      >
+                        {isLoadingMore ? "Loading..." : "Load more"}
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <p className="py-4 text-center text-sm text-[#B2B5B8]">
+                    No {activeLabel.toLowerCase()} found
+                  </p>
+                )}
+              </TabsContent>
+            ))}
           </div>
         </Tabs>
       </div>
     </div>
   );
 }
-

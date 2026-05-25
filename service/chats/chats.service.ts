@@ -59,8 +59,27 @@ export const ChatsService = {
     return await Fetch.get(`/auth/me`, withAuthConfig({ token, context }));
   },
   // All Users
-  getAllUsers: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/admin/users`, withAuthConfig({ token, context }));
+  getAllUsers: async ({
+    token = "",
+    context = null,
+    search = "",
+    type = "",
+    limit = 10,
+    cursor = "",
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    type?: string;
+    limit?: number;
+    cursor?: string;
+  } = {}) => {
+    const queryString = buildQueryString({ search, type, limit, cursor });
+
+    return await Fetch.get(
+      `/users/discover${queryString}`,
+      withAuthConfig({ token, context }),
+    );
   },
   // Get Conversations
   getConversations: async ({ token = "", context = null } = {}) => {
