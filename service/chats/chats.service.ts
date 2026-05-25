@@ -74,7 +74,7 @@ export const ChatsService = {
     limit?: number;
     cursor?: string;
   } = {}) => {
-    const queryString = buildQueryString({ search, type, limit, cursor });
+    const queryString = buildQueryString({ search, type, limit,cursor });
 
     return await Fetch.get(
       `/users/discover${queryString}`,
