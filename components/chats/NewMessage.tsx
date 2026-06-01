@@ -135,7 +135,7 @@ export default function NewMessage() {
     });
   };
 
-  const handleCreateDM = async (userId: string) => {
+  const handleCreateDM = async (userId: string, userName: string) => {
     if (isCreating) return;
 
     try {
@@ -144,6 +144,7 @@ export default function NewMessage() {
       const token = cookies.token || cookies.accessToken || "";
       const payload = {
         type: "DM",
+        title:userName,
         participant_id: userId,
       };
 
@@ -153,7 +154,7 @@ export default function NewMessage() {
       });
 
       showSuccessToast("Conversation started");
-      const chatId = response?.data?.id;
+      const chatId = response?.data?.data?.id;
       router.push(`/dashboard/chats/${chatId}`);
     } catch (error: any) {
       showErrorToast(
@@ -167,7 +168,7 @@ export default function NewMessage() {
   const renderUserItem = (user: User) => (
     <button
       key={user.id}
-      onClick={() => handleCreateDM(user.id)}
+      onClick={() => handleCreateDM(user.id, user?.name)}
       disabled={isCreating}
       className="w-full flex items-center gap-2.5 rounded-lg px-2 py-2 text-left text-sm text-[#E6E7E8] transition-colors hover:bg-[#1a2336] disabled:opacity-50"
     >

@@ -82,40 +82,55 @@ export const ChatsService = {
     );
   },
   // Get Conversations
-  getConversations: async ({ token = "", context = null } = {}) => {
+  getConversations: async ({
+    token = "",
+    context = null,
+    search = "",
+    type = "",
+    limit = 10,
+    cursor = "",
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    type?: "DM" | "GROUP" | string;
+    limit?: number;
+    cursor?: string;
+  } = {}) => {
+    const searchParams = new URLSearchParams();
+
+    if (type) searchParams.set("type", type);
+    searchParams.set("limit", String(limit));
+    if (cursor) searchParams.set("cursor", cursor);
+    searchParams.set("search", search);
+
     return await Fetch.get(
-      `/conversations`, 
+      `/conversations?${searchParams.toString()}`,
       withAuthConfig({ token, context })
     );
   },
   // get Conversation By Id
-  // getConversationById: async ({ id ="", token = "", context = null } = {}) => {
-  //   return await Fetch.get(
-  //     `/conversations/${id}/messages`, 
-  //     withAuthConfig({ token, context })
-  //   );
-  // },
-  // get Conversation By Id with Cursor Pagination
-  getConversationById: async ({ 
-    id = "", 
-    token = "", 
-    cursor = null, 
-    take = 500, 
-    context = null 
+  getConversationById: async ({
+    id = "",
+    token = "",
+    cursor = "",
+    limit = 20,
+    context = null,
+  }: {
+    id?: string;
+    token?: string;
+    cursor?: string;
+    limit?: number;
+    context?: any;
   } = {}) => {
-    // Build query parameters
-    const params = new URLSearchParams();
-    if (cursor) params.append("cursor", cursor);
-    if (take) params.append("limit", take.toString());
-
-    const queryString = params.toString();
-    const url = `/conversations/${id}/messages${queryString ? `?${queryString}` : ""}`;
+    const queryString = buildQueryString({ limit, cursor });
 
     return await Fetch.get(
-      url, 
+      `/conversations/${id}/messages${queryString}`,
       withAuthConfig({ token, context })
     );
   },
+
   //  create DM
   createDM: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
     return await Fetch.post(
@@ -125,13 +140,13 @@ export const ChatsService = {
     );
   },
   // create Group
-  createGroup: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
-    return await Fetch.post(
-      `/conversations/group`, 
-      data,
-      withAuthConfig({ token, context })
-    );
-  },
+  // createGroup: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
+  //   return await Fetch.post(
+  //     `/conversations/group`, 
+  //     data,
+  //     withAuthConfig({ token, context })
+  //   );
+  // },
   // send Message
 sendMessage: async ({ conversationId, data, token = "" }) => {
   return await Fetch.post(
@@ -143,7 +158,7 @@ sendMessage: async ({ conversationId, data, token = "" }) => {
 // upload Message
 uploadMessage: async ({ conversationId, formData, token = "" }) => {
   return await Fetch.post(
-    `/conversations/${conversationId}/messages/upload`,
+    `/conversations/${conversationId}/messages`,
     formData,
     withMultipartAuthConfig({ token })
   );
