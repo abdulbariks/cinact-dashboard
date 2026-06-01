@@ -360,9 +360,9 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
           <button className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
             <VideoIcon />
           </button>
-          <button className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
+          <Link href={`/dashboard/group/${chatId}`} className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
             <WarningIcon />
-          </button>
+          </Link>
         </div>
       </div>
 
