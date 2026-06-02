@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -64,9 +64,60 @@ export default function ChatSidebar() {
     });
   }, [activeTab, search, conversations]);
 
+  const getLastMessageItem = (item: any) => item.last_message || item.messages?.[0];
+
+  const getMessageId = (message: any) =>
+    message?.id || message?._id || message?.message_id || message?.messageId;
+
+  const handleMarkConversationRead = useCallback(async (item: any) => {
+    if (!item?.id || !item?.unread_messages) return;
+
+    const lastMessageId = getMessageId(getLastMessageItem(item));
+    if (!lastMessageId) return;
+
+    setConversations((prev) =>
+      prev.map((conversation) =>
+        conversation.id === item.id
+          ? { ...conversation, unread_messages: 0 }
+          : conversation,
+      ),
+    );
+
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+
+      await ChatsService.markConversationRead({
+        conversationId: item.id,
+        token,
+        data: {
+          up_to_message_id: lastMessageId,
+        },
+      });
+    } catch (error) {
+      setConversations((prev) =>
+        prev.map((conversation) =>
+          conversation.id === item.id
+            ? { ...conversation, unread_messages: item.unread_messages }
+            : conversation,
+        ),
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    const activeConversation = conversations.find((item) =>
+      pathname?.includes(item.id),
+    );
+
+    if (activeConversation?.unread_messages > 0) {
+      handleMarkConversationRead(activeConversation);
+    }
+  }, [conversations, handleMarkConversationRead, pathname]);
+
   // Helper to get last message preview
   const getLastMessage = (item: any) => {
-    const lastMsg = item.last_message || item.messages?.[0];
+    const lastMsg = getLastMessageItem(item);
     if (!lastMsg) {
       return item.type === "GROUP" && item.total_members
         ? `${item.total_members} members`
@@ -150,6 +201,7 @@ export default function ChatSidebar() {
               <Link
                 key={item.id}
                 href={`/dashboard/chats/${item.id}`}
+                onClick={() => handleMarkConversationRead(item)}
                 className={cn(
                   "flex w-full items-start gap-2.5 text-left transition-colors pt-4 px-3 rounded-[10px]",
                   pathname?.includes(item.id)

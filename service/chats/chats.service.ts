@@ -81,34 +81,37 @@ export const ChatsService = {
       withAuthConfig({ token, context }),
     );
   },
-  // Get Conversations
-  getConversations: async ({
-    token = "",
-    context = null,
-    search = "",
-    type = "",
-    limit = 10,
-    cursor = "",
-  }: {
-    token?: string;
-    context?: any;
-    search?: string;
-    type?: "DM" | "GROUP" | string;
-    limit?: number;
-    cursor?: string;
-  } = {}) => {
-    const searchParams = new URLSearchParams();
+// Get Conversations
+   getConversations: async ({
+     token = "",
+     context = null,
+     search = "",
+     type = "",
+     limit = 10,
+     cursor = "",
+     userId = "",
+   }: {
+     token?: string;
+     context?: any;
+     search?: string;
+     type?: "DM" | "GROUP" | string;
+     limit?: number;
+     cursor?: string;
+     userId?: string;
+   } = {}) => {
+     const searchParams = new URLSearchParams();
 
-    if (type) searchParams.set("type", type);
-    searchParams.set("limit", String(limit));
-    if (cursor) searchParams.set("cursor", cursor);
-    searchParams.set("search", search);
+     if (type) searchParams.set("type", type);
+     searchParams.set("limit", String(limit));
+     if (cursor) searchParams.set("cursor", cursor);
+     searchParams.set("search", search);
+     if (userId) searchParams.set("userId", userId);
 
-    return await Fetch.get(
-      `/conversations?${searchParams.toString()}`,
-      withAuthConfig({ token, context })
-    );
-  },
+     return await Fetch.get(
+       `/conversations?${searchParams.toString()}`,
+       withAuthConfig({ token, context })
+     );
+   },
   // get Conversation By Id
   getConversationById: async ({
     id = "",
@@ -163,4 +166,19 @@ uploadMessage: async ({ conversationId, formData, token = "" }) => {
     withMultipartAuthConfig({ token })
   );
 },
+// mark Conversation Read
+ markConversationRead: async ({ conversationId, data, token = "" }) => {
+   return await Fetch.patch(
+     `/conversations/${conversationId}/read`,
+     data,
+     withAuthConfig({ token })
+   );
+ },
+ // delete Conversation
+ deleteConversation: async ({ conversationId, token = "" }) => {
+   return await Fetch.delete(
+     `/conversations/${conversationId}`,
+     withAuthConfig({ token })
+   );
+ },
 };

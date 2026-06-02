@@ -120,6 +120,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
   const socketRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const isSendingRef = useRef(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -214,6 +215,8 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
   //  SEND MESSAGE
   const handleSendMessage = async () => {
+    if (isSendingRef.current) return;
+
     const text = draftMessage.trim();
     if (!text && attachments.length === 0) return;
 
@@ -224,6 +227,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
     setDraftMessage("");
     setAttachments([]);
+    isSendingRef.current = true;
     setIsSending(true);
 
     const payload = {
@@ -235,6 +239,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       {
         ...payload,
         id: clientId,
+        clientId,
         conversationId: chatId,
         senderId: currentUserId,
         is_me: true,
@@ -291,11 +296,6 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
         );
         return sortMessagesByCreatedAt(next);
       });
-
-      socketRef.current?.emit("message:send", {
-        conversationId: chatId,
-        ...savedMessage,
-      });
     } catch (err) {
       console.error("Send failed", err);
       showErrorToast("Message failed to send");
@@ -305,6 +305,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
         prev.filter((message) => getMessageId(message) !== clientId),
       );
     } finally {
+      isSendingRef.current = false;
       setIsSending(false);
     }
   };
@@ -360,7 +361,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
           <button className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
             <VideoIcon />
           </button>
-          <Link href={`/dashboard/group/${chatId}`} className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
+          <Link href={`/dashboard/chats-details/${chatId}`} className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
             <WarningIcon />
           </Link>
         </div>

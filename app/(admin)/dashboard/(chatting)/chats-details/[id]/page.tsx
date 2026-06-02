@@ -5,11 +5,11 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default async function page({ params }: PageProps) {
+export default async function ChatsDetailsPage({ params }: PageProps) {
   const { id } = await params;
   return (
     <div>
-      <ConversationDetails userId={id} />
+      <ConversationDetails chatId={id} />
     </div>
   );
 }
