@@ -10,6 +10,8 @@ import VideoIcon from "../icons/chats/VideoIcon";
 import BreadCrumpRightArrow from "../icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import { ChatsService } from "@/service/chats/chats.service";
 import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
+import MediaFilesDialog from "./MediaFilesDialog";
+import MembersDialog from "./MembersDialog";
 
 type ConversationDetailsProps = {
   chatId?: string;
@@ -88,6 +90,14 @@ function TrashIcon() {
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
       <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#E9201D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M10 11v6M14 11v6" stroke="#E9201D" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SeeMembersIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05C16.19 13.89 17 14.99 17 16.5V19h5v-2.5C22 14.17 17.33 13 16 13Z" fill="#B2B5B8" />
     </svg>
   );
 }
@@ -199,7 +209,6 @@ export default function ConversationDetails({ chatId, participantUserId }: Conve
       </div>
       <div className="flex items-start justify-center min-h-full p-6">
         <div className="w-full max-w-sm bg-[#0a1929] rounded-2xl p-6 mt-6">
-          {/* Avatar & Name */}
           <div className="flex flex-col items-center mb-5">
             <div className="size-20 rounded-full overflow-hidden mb-3 ring-2 ring-[#1a2336] bg-[#5f6ca0] flex items-center justify-center text-white text-2xl font-bold">
               {displayAvatar ? (
@@ -223,7 +232,6 @@ export default function ConversationDetails({ chatId, participantUserId }: Conve
             )}
           </div>
 
-          {/* Quick Action Buttons */}
           <div className="flex justify-center gap-6 mb-5">
             <button className="flex flex-col items-center gap-1.5">
               <div className="size-11 bg-[#17212c] rounded-xl flex items-center justify-center">
@@ -251,31 +259,22 @@ export default function ConversationDetails({ chatId, participantUserId }: Conve
             </button>
           </div>
 
-          {/* Divider */}
           <hr className="border-[#1a2336] mb-4" />
 
-          {/* Chat Info for Groups */}
           {isGroup && (
             <>
               <div className="mb-4">
                 <p className="text-[#B2B5B8] text-xs mb-3">Chat info</p>
-                <button className="flex items-center gap-3 w-full text-left hover:opacity-80 transition-opacity">
-                  <SeeMembersIcon />
-                  <span className="text-white text-sm">See members</span>
-                </button>
+                <MembersDialog chatId={chatId || ""} />
               </div>
               <hr className="border-[#1a2336] mb-4" />
             </>
           )}
 
-          {/* Actions List */}
           <div>
             <p className="text-[#B2B5B8] text-xs mb-3">Action</p>
             <div className="space-y-4">
-              <button className="flex items-center gap-3 w-full text-left hover:opacity-80 transition-opacity">
-                <MediaIcon />
-                <span className="text-white text-sm">View media &amp; files</span>
-              </button>
+              <MediaFilesDialog chatId={chatId || ""} />
               <button className="flex items-center gap-3 w-full text-left hover:opacity-80 transition-opacity">
                 <ShareIcon />
                 <span className="text-white text-sm">Share contact</span>
@@ -299,13 +298,5 @@ export default function ConversationDetails({ chatId, participantUserId }: Conve
         </div>
       </div>
     </div>
-  );
-}
-
-function SeeMembersIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05C16.19 13.89 17 14.99 17 16.5V19h5v-2.5C22 14.17 17.33 13 16 13Z" fill="#B2B5B8" />
-    </svg>
   );
 }

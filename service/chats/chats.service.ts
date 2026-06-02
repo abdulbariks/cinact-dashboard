@@ -174,11 +174,29 @@ uploadMessage: async ({ conversationId, formData, token = "" }) => {
      withAuthConfig({ token })
    );
  },
- // delete Conversation
- deleteConversation: async ({ conversationId, token = "" }) => {
-   return await Fetch.delete(
-     `/conversations/${conversationId}`,
-     withAuthConfig({ token })
-   );
- },
+// delete Conversation
+  deleteConversation: async ({ conversationId, token = "" }) => {
+    return await Fetch.delete(
+      `/conversations/${conversationId}`,
+      withAuthConfig({ token })
+    );
+  },
+  // get Conversation Members
+  getConversationMembers: async ({
+    conversationId,
+    token = "",
+    role = "",
+  }: {
+    conversationId: string;
+    token?: string;
+    role?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (role) searchParams.set("role", role);
+    
+    return await Fetch.get(
+      `/conversations/${conversationId}/members${searchParams.toString() ? `?${searchParams.toString()}` : ""}`,
+      withAuthConfig({ token })
+    );
+  },
 };
