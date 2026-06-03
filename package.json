@@ -32,6 +32,7 @@
     "jodit-react": "^5.3.21",
     "katex": "^0.16.21",
     "lightningcss": "^1.32.0",
+    "livekit-client": "^2.19.1",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.503.0",
     "moment": "^2.30.1",

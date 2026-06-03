@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { parseCookies } from "nookies";
-import { cn } from "@/lib/utils";
-
-// Services & Socket
 import { ChatsService } from "@/service/chats/chats.service";
-import { connectSocket } from "@/lib/Socket";
 import { showErrorToast } from "@/lib/hotToast";
+import { cn } from "@/lib/utils";
+import { connectSocket } from "@/lib/Socket";
 
 // Icons
 import CallIcon from "../icons/chats/CallIcon";
@@ -19,6 +17,9 @@ import PlusChatIcon from "../icons/chats/PlusChatIcon";
 import ImageIcon from "../icons/chats/ImageIcon";
 import MicIcon from "../icons/chats/MicIcon";
 import EmojiIcon from "../icons/chats/EmojiIcon";
+
+// Call screen
+import CallScreen from "./CallScreen";
 
 type ChatAreaProps = {
   chatId: string;
@@ -30,6 +31,17 @@ const getMessageConversationId = (message: any) =>
 const getMessageContent = (message: any) => {
   if (typeof message?.content === "string") return message.content;
   return message?.content?.text || "";
+};
+
+const getCallContent = (message: any) => {
+  if (message?.kind !== "CALL" || typeof message?.content !== "object") return null;
+
+  return {
+    callKind: message.content?.call_kind || message.content?.callKind || "VIDEO",
+    status: message.content?.status || "ONGOING",
+    durationSeconds:
+      message.content?.duration_seconds ?? message.content?.durationSeconds ?? null,
+  };
 };
 
 const getMessageCreatedAt = (message: any) =>
@@ -78,6 +90,27 @@ const sortMessagesByCreatedAt = (items: any[]) => {
   });
 };
 
+const formatCallDuration = (seconds: number | null) => {
+  const totalSeconds = Number(seconds || 0);
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+
+  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+};
+
+const getCallMessageLabel = (message: any) => {
+  const content = getCallContent(message);
+  if (!content) return "";
+
+  const isVideo = content.callKind === "VIDEO";
+  const callType = isVideo ? "Video" : "Audio";
+
+  if (content.status === "ONGOING") return `${callType} call is ongoing`;
+  if (content.status === "MISSED") return `Missed ${callType.toLowerCase()} call`;
+
+  return `${callType} call - ${formatCallDuration(content.durationSeconds)}`;
+};
+
 const normalizeMessage = (message: any, fallback: any = {}) => {
   const source = message?.data || message?.message || message;
   const createdAt =
@@ -116,6 +149,18 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [activeCall, setActiveCall] = useState<{
+    type: "audio" | "video";
+    isIncoming: boolean;
+  } | null>(null);
+  const [incomingCall, setIncomingCall] = useState<{
+    type: "audio" | "video";
+    caller: {
+      id: string;
+      name: string;
+      avatar: string | null;
+    };
+  } | null>(null);
 
   const socketRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -160,7 +205,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     initChat();
   }, [initChat]);
 
-  //  SOCKET (REAL-TIME)
+    //  SOCKET (REAL-TIME)
   useEffect(() => {
     const cookies = parseCookies();
     const token = cookies.token || cookies.accessToken || "";
@@ -197,15 +242,101 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       });
     };
 
+    const upsertCallMessage = (payload: any) => {
+      const conversationId = payload?.conversation_id || payload?.conversationId;
+      if (conversationId !== chatId) return;
+
+      upsertMessage({
+        ...(payload?.message || payload),
+        conversation_id: conversationId,
+        conversationId,
+      });
+    };
+
+    // Handle incoming call notification
+    const handleCallIncoming = (call: any) => {
+      // Show incoming call notification
+      setIncomingCall({
+        type: call.kind === "VIDEO" ? "video" : "audio",
+        caller: {
+          id: call.caller?.id || "",
+          name: call.caller?.name || "Unknown",
+          avatar: call.caller?.avatar || null,
+        },
+      });
+      console.log("Incoming call:", call);
+    };
+
+    // Handle participant joined
+    const handleParticipantJoined = (payload: any) => {
+      console.log("Participant joined:", payload);
+      // Update UI to show new participant
+      // This would be handled by the call screen if it's open
+    };
+
+    // Handle participant left
+    const handleParticipantLeft = (payload: any) => {
+      console.log("Participant left:", payload);
+      // Update UI to remove participant
+      // This would be handled by the call screen if it's open
+    };
+
+    // Handle participant updated (camera/mic changes)
+    const handleParticipantUpdated = (payload: any) => {
+      console.log("Participant updated:", payload);
+      // Update UI to reflect media state changes
+      // This would be handled by the call screen if it's open
+    };
+
+    // Handle call declined
+    const handleCallDeclined = (payload: any) => {
+      console.log("Call declined:", payload);
+      // Show notification that call was declined
+      // Clear both active and incoming call states
+      setActiveCall(null);
+      setIncomingCall(null);
+    };
+
+    // Handle call ended
+    const handleCallEnded = (payload: any) => {
+      console.log("Call ended:", payload);
+      // End the call and return to chat
+      setActiveCall(null);
+      setIncomingCall(null);
+    };
+
     socket.off("message:new", upsertMessage);
     socket.on("message:new", upsertMessage);
     socket.off("message:sent", upsertMessage);
     socket.on("message:sent", upsertMessage);
+    socket.off("call:message_updated", upsertCallMessage);
+    socket.on("call:message_updated", upsertCallMessage);
+    
+    // Call events
+    socket.off("call:incoming", handleCallIncoming);
+    socket.on("call:incoming", handleCallIncoming);
+    socket.off("call:participant_joined", handleParticipantJoined);
+    socket.on("call:participant_joined", handleParticipantJoined);
+    socket.off("call:participant_left", handleParticipantLeft);
+    socket.on("call:participant_left", handleParticipantLeft);
+    socket.off("call:participant_updated", handleParticipantUpdated);
+    socket.on("call:participant_updated", handleParticipantUpdated);
+    socket.off("call:declined", handleCallDeclined);
+    socket.on("call:declined", handleCallDeclined);
+    socket.off("call:ended", handleCallEnded);
+    socket.on("call:ended", handleCallEnded);
 
     return () => {
       socket.emit("conversation:leave", { conversationId: chatId });
       socket.off("message:new", upsertMessage);
       socket.off("message:sent", upsertMessage);
+      socket.off("call:message_updated", upsertCallMessage);
+      socket.off("call:incoming", handleCallIncoming);
+      socket.off("call:participant_joined", handleParticipantJoined);
+      socket.off("call:participant_left", handleParticipantLeft);
+      socket.off("call:participant_updated", handleParticipantUpdated);
+      socket.off("call:declined", handleCallDeclined);
+      socket.off("call:ended", handleCallEnded);
     };
   }, [chatId]);
 
@@ -310,19 +441,22 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     }
   };
 
-  const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).filter((file) =>
-      file.type.startsWith("image/"),
-    );
+   const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const input = e.target;
+     if (!input.files) return;
+     
+     const files = Array.from(input.files).filter((file) =>
+       file.type.startsWith("image/"),
+     ) as File[];
 
-    if (!files.length) {
-      e.target.value = "";
-      return;
-    }
+     if (!files.length) {
+       e.target.value = "";
+       return;
+     }
 
-    setAttachments((prev) => [...prev, ...files]);
-    e.target.value = "";
-  };
+     setAttachments((prev) => [...prev, ...files]);
+     e.target.value = "";
+   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -336,36 +470,42 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       (message) => message.sender?.id && message.sender.id !== currentUserId,
     )?.sender || messages[0]?.sender;
 
-  return (
-    <section className="flex h-full w-full flex-col overflow-hidden bg-[#07121d]">
-      {/* Header */}
-      <div className="bg-[#0a1929] px-4 py-3 flex items-center justify-between border-b border-[#1a2336]">
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard/chats" className="lg:hidden text-white">
-            ←
-          </Link>
-          <div className="size-10 rounded-full bg-[#5f6ca0] flex items-center justify-center text-white font-bold">
-            {chatPartner?.name?.slice(0, 1) || "C"}
-          </div>
-          <div>
-            <p className="text-white font-medium text-sm leading-tight">
-              {chatPartner?.name || "User"}
-            </p>
-            <span className="text-[10px] text-green-500">Online</span>
-          </div>
-        </div>
-        <div className="flex gap-1">
-          <button className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
-            <CallIcon />
-          </button>
-          <button className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
-            <VideoIcon />
-          </button>
-          <Link href={`/dashboard/chats-details/${chatId}`} className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
-            <WarningIcon />
-          </Link>
-        </div>
-      </div>
+   return (
+     <section className="flex h-full w-full flex-col overflow-hidden bg-[#07121d]">
+         {/* Header */}
+         <div className="bg-[#0a1929] px-4 py-3 flex items-center justify-between border-b border-[#1a2336]">
+           <div className="flex items-center gap-3">
+             <Link href="/dashboard/chats" className="lg:hidden text-white">
+               ←
+             </Link>
+             <div className="size-10 rounded-full bg-[#5f6ca0] flex items-center justify-center text-white font-bold">
+               {chatPartner?.name?.slice(0, 1) || "C"}
+             </div>
+             <div>
+               <p className="text-white font-medium text-sm leading-tight">
+                 {chatPartner?.name || "User"}
+               </p>
+               <span className="text-[10px] text-green-500">Online</span>
+             </div>
+           </div>
+           <div className="flex gap-1">
+             <button
+               className="p-2 hover:bg-[#1a2336] rounded-lg text-white"
+               onClick={() => setActiveCall({ type: "audio", isIncoming: false })}
+             >
+               <CallIcon />
+             </button>
+             <button
+               className="p-2 hover:bg-[#1a2336] rounded-lg text-white"
+               onClick={() => setActiveCall({ type: "video", isIncoming: false })}
+             >
+               <VideoIcon />
+             </button>
+             <Link href={`/dashboard/chats-details/${chatId}`} className="p-2 hover:bg-[#1a2336] rounded-lg text-white">
+               <WarningIcon />
+             </Link>
+           </div>
+         </div>
 
       {/* Messages List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-[url('/chat-bg.png')] bg-repeat">
@@ -378,8 +518,62 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
           messages.map((msg) => {
             const isMe = getMessageSenderId(msg) === currentUserId || msg.is_me;
             const messageText = getMessageContent(msg);
+            const callContent = getCallContent(msg);
             const imageUrls = getMessageImageUrls(msg);
             const createdAt = getMessageCreatedAt(msg);
+
+            if (callContent) {
+              const isVideo = callContent.callKind === "VIDEO";
+              const isMissed = callContent.status === "MISSED";
+              const isOngoing = callContent.status === "ONGOING";
+
+              return (
+                <div
+                  key={getMessageId(msg)}
+                  className={cn(
+                    "flex flex-col w-full",
+                    isMe ? "items-end" : "items-start",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "flex max-w-[85%] items-center gap-3 rounded-2xl px-4 py-3 text-sm shadow-sm",
+                      isMe
+                        ? "rounded-tr-none bg-[#5f6ca0] text-white"
+                        : "rounded-tl-none bg-[#17212c] text-[#B2B5B8]",
+                      isOngoing && "border border-green-500/40",
+                      isMissed && "border border-[#E9201D]/40",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex size-9 shrink-0 items-center justify-center rounded-full",
+                        isOngoing
+                          ? "bg-green-500/20 text-green-300"
+                          : isMissed
+                            ? "bg-[#E9201D]/20 text-[#ff706e]"
+                            : "bg-white/10 text-white",
+                      )}
+                    >
+                      {isVideo ? <VideoIcon /> : <CallIcon />}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-medium leading-tight">
+                        {getCallMessageLabel(msg)}
+                      </p>
+                      <p className="mt-1 text-[10px] opacity-70">
+                        {createdAt
+                          ? new Date(createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
 
             // Skip empty text bubbles
             if (msg.kind === "TEXT" && !messageText && imageUrls.length === 0) return null;
@@ -433,69 +627,133 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="p-4 bg-[#0a1929] border-t border-[#1a2336]">
-        {attachments.length > 0 ? (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {attachments.map((file) => (
-              <div
-                key={`${file.name}-${file.lastModified}`}
-                className="rounded-full bg-[#17212c] px-3 py-1 text-xs text-white"
-              >
-                {file.name}
-              </div>
-            ))}
-          </div>
-        ) : null}
-        <div className="flex items-center gap-2 bg-[#17212c] rounded-full px-4 border border-transparent focus-within:border-[#5f6ca0] transition-all">
-          <button className="text-gray-400 hover:text-white">
-            <PlusChatIcon />
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={handleAttachmentChange}
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="text-gray-400 hover:text-white"
-          >
-            <ImageIcon />
-          </button>
-          <input
-            type="text"
-            value={draftMessage}
-            onChange={(e) => setDraftMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Write your message..."
-            className="flex-1 py-3 bg-transparent text-white outline-none text-sm"
-          />
-          <button className="text-gray-400 hover:text-white">
-            <EmojiIcon />
-          </button>
-          <button
-            onClick={handleSendMessage}
-            disabled={isSending}
-            className={cn(
-              "p-2 rounded-full transition-transform active:scale-90",
-              draftMessage.trim() || attachments.length > 0
-                ? "text-[#E9201D]"
-                : "text-gray-400",
-              isSending && "opacity-50",
-            )}
-          >
-            {draftMessage.trim() || attachments.length > 0 ? (
-              <PlusChatIcon className="rotate-45" />
-            ) : (
-              <MicIcon />
-            )}
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
+       {/* Input Area */}
+       <div className="p-4 bg-[#0a1929] border-t border-[#1a2336]">
+         {attachments.length > 0 ? (
+           <div className="mb-3 flex flex-wrap gap-2">
+             {attachments.map((file) => (
+               <div
+                 key={`${file.name}-${file.lastModified}`}
+                 className="rounded-full bg-[#17212c] px-3 py-1 text-xs text-white"
+               >
+                 {file.name}
+               </div>
+             ))}
+           </div>
+         ) : null}
+         <div className="flex items-center gap-2 bg-[#17212c] rounded-full px-4 border border-transparent focus-within:border-[#5f6ca0] transition-all">
+           <button className="text-gray-400 hover:text-white">
+             <PlusChatIcon />
+           </button>
+           <input
+             ref={fileInputRef}
+             type="file"
+             accept="image/*"
+             multiple
+             className="hidden"
+             onChange={handleAttachmentChange}
+           />
+           <button
+             type="button"
+             onClick={() => fileInputRef.current?.click()}
+             className="text-gray-400 hover:text-white"
+           >
+             <ImageIcon />
+           </button>
+           <input
+             type="text"
+             value={draftMessage}
+             onChange={(e) => setDraftMessage(e.target.value)}
+             onKeyDown={handleKeyDown}
+             placeholder="Write your message..."
+             className="flex-1 py-3 bg-transparent text-white outline-none text-sm"
+           />
+           <button className="text-gray-400 hover:text-white">
+             <EmojiIcon />
+           </button>
+           <button
+             onClick={handleSendMessage}
+             disabled={isSending}
+             className={cn(
+               "p-2 rounded-full transition-transform active:scale-90",
+               draftMessage.trim() || attachments.length > 0
+                 ? "text-[#E9201D]"
+                 : "text-gray-400",
+               isSending && "opacity-50",
+             )}
+           >
+             {draftMessage.trim() || attachments.length > 0 ? (
+               <PlusChatIcon className="rotate-45" />
+             ) : (
+               <MicIcon />
+             )}
+           </button>
+         </div>
+       </div>
+       
+       {/* Incoming Call Notification */}
+       {incomingCall && (
+         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+           <div className="w-full max-w-sm">
+             <div className="bg-[#0a1929] border border-[#1a2336] rounded-xl overflow-hidden">
+               <div className="px-6 py-4">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="flex items-center space-x-3">
+                     <div className="w-10 h-10 rounded-full bg-[#5f6ca0] flex items-center justify-center text-white font-semibold">
+                       {incomingCall.type === "video" ? "📹" : "📞"}
+                     </div>
+                     <div>
+                       <p className="text-white font-medium">{incomingCall.caller.name || "Someone"}</p>
+                       <p className="text-[12px] text-[#B2B5B8]">{incomingCall.type === "video" ? "Video Call" : "Audio Call"}</p>
+                     </div>
+                   </div>
+                   <button
+                     onClick={() => {
+                       // Accept the call
+                       setActiveCall({
+                         type: incomingCall.type,
+                         isIncoming: true,
+                       });
+                       setIncomingCall(null);
+                     }}
+                     className="p-2 rounded-full bg-green-500 text-white hover:bg-green-600"
+                   >
+                     ✓
+                   </button>
+                 </div>
+                 <div className="flex justify-end space-x-3">
+                   <button
+                     onClick={() => {
+                       // Decline the call
+                       setIncomingCall(null);
+                       // Trigger the decline API call
+                       const cookies = parseCookies();
+                       const token = cookies.token || cookies.accessToken || "";
+                       ChatsService.declineCall({
+                         conversationId: chatId,
+                         token,
+                       }).catch(err => console.error("Failed to decline call:", err));
+                     }}
+                     className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+                   >
+                     ✕
+                   </button>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       )}
+       
+       {/* Call Screen - shown when call is active */}
+       {activeCall && (
+         <CallScreen
+           conversationId={chatId}
+           type={activeCall.type}
+           isIncoming={activeCall.isIncoming}
+           onCallEnd={() => setActiveCall(null)}
+         />
+       )}
+     </section>
+   );
+ }

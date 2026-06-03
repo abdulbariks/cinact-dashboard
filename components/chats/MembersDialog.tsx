@@ -32,10 +32,11 @@ function SeeMembersIcon() {
 export default function MembersDialog({ chatId, trigger }: MembersDialogProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"ALL" | "ADMIN">("ALL");
 
-  const fetchMembers = useCallback(async () => {
+  const fetchMembers = useCallback(async (role: "ALL" | "ADMIN") => {
     if (!chatId) return;
-    
+
     try {
       setIsLoading(true);
       const cookies = parseCookies();
@@ -43,6 +44,7 @@ export default function MembersDialog({ chatId, trigger }: MembersDialogProps) {
       const res = await ChatsService.getConversationMembers({
         conversationId: chatId,
         token,
+        role: role === "ALL" ? "" : role,
       });
 
       const membersData = Array.isArray(res?.data?.data) ? res.data.data : [];
@@ -55,8 +57,8 @@ export default function MembersDialog({ chatId, trigger }: MembersDialogProps) {
   }, [chatId]);
 
   useEffect(() => {
-    fetchMembers();
-  }, [fetchMembers]);
+    fetchMembers(activeTab);
+  }, [fetchMembers, activeTab]);
 
   const initials = (name: string = "??") =>
     name
@@ -82,6 +84,28 @@ export default function MembersDialog({ chatId, trigger }: MembersDialogProps) {
             Members ({members.length})
           </DialogTitle>
         </DialogHeader>
+        <div className="flex gap-2 mb-4">
+          <button
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              activeTab === "ALL"
+                ? "bg-[#1a2336] text-white border border-[#2a3a56]"
+                : "text-[#7a8ba8] hover:text-white"
+            }`}
+            onClick={() => setActiveTab("ALL")}
+          >
+            All
+          </button>
+          <button
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              activeTab === "ADMIN"
+                ? "bg-[#E9201D] text-white"
+                : "text-[#7a8ba8] hover:text-white"
+            }`}
+            onClick={() => setActiveTab("ADMIN")}
+          >
+            Admin
+          </button>
+        </div>
         <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
           {isLoading ? (
             <div className="p-4 text-center text-sm text-[#5F6CA0]">Loading...</div>

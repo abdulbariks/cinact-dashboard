@@ -50,13 +50,68 @@ function DownloadIcon() {
   );
 }
 
+type MessageAttachment = {
+  url: string;
+  name: string;
+  date: string;
+  sender: string;
+  mime_type: string;
+};
+
+function ImageFileItem({ item }: { item: MessageAttachment }) {
+  const isMediaItem = item.mime_type && (item.mime_type.startsWith("image/") || item.mime_type.startsWith("video/"));
+
+  return (
+    <div className="group relative aspect-square rounded-lg overflow-hidden bg-[#17212c] flex items-center justify-center">
+      {isMediaItem ? (
+        <Image
+          src={item.url}
+          alt={item.name}
+          fill
+          className="object-cover"
+          unoptimized
+        />
+      ) : (
+        <FileIcon />
+      )}
+      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+        <p className="text-xs text-white truncate">{item.name}</p>
+        <p className="text-[10px] text-gray-300">
+          {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
+        </p>
+      </div>
+      <a
+        href={item.url}
+        download
+        className="absolute top-2 right-2 p-1 bg-[#E9201D] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <DownloadIcon />
+      </a>
+    </div>
+  );
+}
+
+function FileIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none">
+      <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="#B2B5B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M14 2V8H20" stroke="#B2B5B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M16 13H8" stroke="#B2B5B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M16 17H8" stroke="#B2B5B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M10 9H9H8" stroke="#B2B5B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
 export default function MediaFilesDialog({ chatId, trigger }: MediaFilesDialogProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"MEDIA" | "FILES">("MEDIA");
 
-  const fetchMedia = useCallback(async () => {
+  const fetchMedia = useCallback(async (tab: "MEDIA" | "FILES") => {
     if (!chatId) return;
-    
+
     try {
       setIsLoading(true);
       const cookies = parseCookies();
@@ -77,20 +132,30 @@ export default function MediaFilesDialog({ chatId, trigger }: MediaFilesDialogPr
   }, [chatId]);
 
   useEffect(() => {
-    fetchMedia();
-  }, [fetchMedia]);
+    fetchMedia(activeTab);
+  }, [fetchMedia, activeTab]);
 
-  const mediaMessages = messages.filter(msg => 
+  const mediaMessages = messages.filter(msg =>
     msg.kind === "FILE" && msg.attachments && msg.attachments.length > 0
   );
 
-  const allImages = mediaMessages.flatMap(msg => 
+  const allItems = mediaMessages.flatMap(msg =>
     msg.attachments.map(att => ({
       url: att.file_path,
       name: att.file_name,
       date: msg.created_at,
       sender: msg.sender.name,
+      mime_type: att.mime_type,
     }))
+  );
+
+  const isMedia = (mimeType: string) => {
+    if (!mimeType) return false;
+    return mimeType.startsWith("image/") || mimeType.startsWith("video/");
+  };
+
+  const filteredItems = allItems.filter(item =>
+    activeTab === "MEDIA" ? isMedia(item.mime_type) : !isMedia(item.mime_type)
   );
 
   return (
@@ -107,39 +172,41 @@ export default function MediaFilesDialog({ chatId, trigger }: MediaFilesDialogPr
         <DialogHeader>
           <DialogTitle className="text-white">Media & Files</DialogTitle>
         </DialogHeader>
+        <div className="flex gap-2 mb-4">
+          <button
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              activeTab === "MEDIA"
+                ? "bg-[#1a2336] text-white border border-[#2a3a56]"
+                : "text-[#7a8ba8] hover:text-white"
+            }`}
+            onClick={() => setActiveTab("MEDIA")}
+          >
+            Media
+          </button>
+          <button
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              activeTab === "FILES"
+                ? "bg-[#1a2336] text-white border border-[#2a3a56]"
+                : "text-[#7a8ba8] hover:text-white"
+            }`}
+            onClick={() => setActiveTab("FILES")}
+          >
+            Files
+          </button>
+        </div>
         <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
           {isLoading ? (
             <div className="p-4 text-center text-sm text-[#5F6CA0]">Loading...</div>
-          ) : allImages.length > 0 ? (
+          ) : filteredItems.length > 0 ? (
             <div className="grid grid-cols-3 gap-3 p-2">
-              {allImages.map((image, index) => (
-                <div key={`${image.url}-${index}`} className="group relative aspect-square rounded-lg overflow-hidden bg-[#17212c]">
-                  <Image
-                    src={image.url}
-                    alt={image.name}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
-                    <p className="text-xs text-white truncate">{image.name}</p>
-                    <p className="text-[10px] text-gray-300">
-                      {formatDistanceToNow(new Date(image.date), { addSuffix: true })}
-                    </p>
-                  </div>
-                  <a
-                    href={image.url}
-                    download
-                    className="absolute top-2 right-2 p-1 bg-[#E9201D] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <DownloadIcon />
-                  </a>
-                </div>
+              {filteredItems.map((item, index) => (
+                <ImageFileItem key={`${item.url}-${index}`} item={item} />
               ))}
             </div>
           ) : (
-            <div className="p-8 text-center text-sm text-[#5F6CA0]">No media files found</div>
+            <div className="p-8 text-center text-sm text-[#5F6CA0]">
+              {activeTab === "MEDIA" ? "No media found" : "No files found"}
+            </div>
           )}
         </div>
       </DialogContent>

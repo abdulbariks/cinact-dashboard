@@ -193,9 +193,87 @@ uploadMessage: async ({ conversationId, formData, token = "" }) => {
   }) => {
     const searchParams = new URLSearchParams();
     if (role) searchParams.set("role", role);
-    
+
     return await Fetch.get(
       `/conversations/${conversationId}/members${searchParams.toString() ? `?${searchParams.toString()}` : ""}`,
+      withAuthConfig({ token })
+    );
+  },
+  // start Call
+  startCall: async ({ conversationId, data, token = "" }) => {
+    // rtc/conversations/:conversation_id/start
+    return await Fetch.post(
+      `/rtc/conversations/${conversationId}/start`,
+      data,
+      withAuthConfig({ token })
+    );
+  },
+  
+  // join Call
+  joinCall: async ({ conversationId, token = "" }) => {
+    // rtc/conversations/:conversation_id/join
+    return await Fetch.post(
+      `/rtc/conversations/${conversationId}/join`,
+      {},
+      withAuthConfig({ token })
+    );
+  },
+  
+  // get Call token (refresh)
+  getCallToken: async ({ conversationId, token = "" }) => {
+    // rtc/conversations/:conversation_id/token
+    return await Fetch.post(
+      `/rtc/conversations/${conversationId}/token`,
+      {},
+      withAuthConfig({ token })
+    );
+  },
+  
+  // decline Call
+  declineCall: async ({ conversationId, token = "" }) => {
+    // rtc/conversations/:conversation_id/decline
+    return await Fetch.post(
+      `/rtc/conversations/${conversationId}/decline`,
+      {},
+      withAuthConfig({ token })
+    );
+  },
+  
+  // leave Call
+  leaveCall: async ({ conversationId, token = "" }) => {
+    // rtc/conversations/:conversation_id/leave
+    return await Fetch.post(
+      `/rtc/conversations/${conversationId}/leave`,
+      {},
+      withAuthConfig({ token })
+    );
+  },
+  
+  // end Call
+  endCall: async ({ conversationId, token = "" }) => {
+    // rtc/conversations/:conversation_id/end
+    return await Fetch.post(
+      `/rtc/conversations/${conversationId}/end`,
+      {},
+      withAuthConfig({ token })
+    );
+  },
+  
+  // update media state (camera/mic/screen share)
+  updateMediaState: async ({ conversationId, data, token = "" }) => {
+    // rtc/conversations/:conversation_id/participants/me
+    return await Fetch.patch(
+      `/rtc/conversations/${conversationId}/participants/me`,
+      data,
+      withAuthConfig({ token })
+    );
+  },
+  
+  // get call state
+  getCallState: async ({ conversationId, token = "" }) => {
+    // rtc/conversations/:conversation_id/state
+    return await Fetch.get(
+      `/rtc/conversations/${conversationId}/state`,
       withAuthConfig({ token })
     );
   },
