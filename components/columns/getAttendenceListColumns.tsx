@@ -18,11 +18,15 @@ type AttendanceStatus = "present" | "absent" | "late";
 type ChangeAttendanceStatus = "present" | "absent";
 
 export interface AttendenceListRow {
-  studentName: string;
-  studentId: string;
-  date: string;
-  status: string; // Adjusted to string as it comes from API
-  attendanceBy: string;
+  id: string | null;
+  student: {
+    id: string;
+    name: string;
+  };
+  created_at: string | null;
+  status: string;
+  attendance_by: string | null;
+  class_id: string;
 }
 
 interface AttendanceColumn {
@@ -117,23 +121,23 @@ export const getAttendenceListColumns = (
 ): AttendanceColumn[] => [
   {
     label: "Student Name",
-    accessor: "studentName",
+    accessor: "student",
     width: "220px",
     formatter: (value) => (
-      <span className="text-base text-white font-medium">{value}</span>
+      <span className="text-base text-white font-medium">{value?.name}</span>
     ),
   },
   {
     label: "Student ID",
-    accessor: "studentId",
+    accessor: "student",
     width: "130px",
     formatter: (value) => (
-      <span className="text-sm text-[#D2D2D5]">{value}</span>
+      <span className="text-sm text-[#D2D2D5]">{value?.id}</span>
     ),
   },
   {
     label: "Date",
-    accessor: "date",
+    accessor: "created_at",
     width: "150px",
     formatter: (value) => {
       if (!value) return <span className="text-sm text-gray-500">-</span>;
@@ -162,7 +166,7 @@ export const getAttendenceListColumns = (
   },
   {
     label: "Attendance By",
-    accessor: "attendanceBy",
+    accessor: "attendance_by",
     width: "140px",
     formatter: (value) => (
       <span className="capitalize text-sm text-white font-medium">
@@ -177,8 +181,8 @@ export const getAttendenceListColumns = (
     formatter: (_, row) => (
       <ChangeAttendenceSelect
         initialStatus={row.status}
-        studentId={row.studentId}
-        classId={row.classId}
+        studentId={row.student.id}
+        classId={row.class_id}
         onUpdate={onUpdate}
       />
     ),

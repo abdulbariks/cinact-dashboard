@@ -482,35 +482,40 @@ export const UserService = {
 };
 
 export const AdminAttendanceService = {
-  getAttendance: async ({
-    classId,
-    page = 1,
-    limit = 10,
-    status,
-    search,
-    token = "",
-    context = null,
-  }: {
-    classId: string;
-    page?: number;
-    limit?: number;
-    status?: string;
-    search?: string;
-    token?: string;
-    context?: any;
-  }) => {
-    const params = new URLSearchParams({
-      classId,
-      page: page.toString(),
-      limit: limit.toString(),
-    });
-    if (status) params.append("status", status);
-    if (search) params.append("search", search);
-    return await Fetch.get(
-      `/attendance?${params.toString()}`,
-      withAuthConfig({ token, context }),
-    );
-  },
+   getAttendance: async ({
+     page = 1,
+     limit = 10,
+     status,
+     search,
+     date,
+     classId,
+     courseId,
+     token = "",
+     context = null,
+   }: {
+     page?: number;
+     limit?: number;
+     status?: string;
+     search?: string;
+     date?: string;
+     classId: string;
+     courseId?: string;
+     token?: string;
+     context?: any;
+   }) => {
+     const params = new URLSearchParams();
+     params.append("page", page.toString());
+     params.append("limit", limit.toString());
+     if (status) params.append("status", status);
+     if (search) params.append("search", search);
+     if (date) params.append("date", date);
+     if(classId) params.append("class_id", classId);
+     if (courseId) params.append("course_id", courseId);
+     return await Fetch.get(
+       `/admin/courses/attendance?${params.toString()}`,
+       withAuthConfig({ token, context }),
+     );
+   },
   // Manual Attendance
   manualAttendance: async ({
     classId,
@@ -526,7 +531,7 @@ export const AdminAttendanceService = {
     context?: any;
   }) => {
     return await Fetch.post(
-      `/attendance/manual`,
+      `/admin/courses/attendance/manual`,
       {
         classId,
         studentId,

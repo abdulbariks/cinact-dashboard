@@ -349,31 +349,31 @@ export const TutorAttendanceService = {
     withAuthConfig({ token, context })
   );
 },
-// Manual Attendance
-manualAttendance: async ({
-  classId,
-  studentId,
-  status,
-  token = "",
-  context = null,
-}: {
-  classId: string;
-  studentId: string;
-  status: "PRESENT" | "ABSENT";
-  token?: string;
-  context?: any;
-}) => {
-  return await Fetch.post(
-    `/attendance/manual`,
-    {
-      classId,
-      studentId,
-      status,
-      attendedAt: new Date().toISOString(), // Current timestamp
-    },
-    withAuthConfig({ token, context })
-  );
-},
+  // Manual Attendance
+  manualAttendance: async ({
+    classId,
+    studentId,
+    status,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    studentId: string;
+    status: "PRESENT" | "ABSENT";
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.post(
+      `/admin/courses/attendance/manual`,
+      {
+        class_id: classId,
+        student_id: studentId,
+        status,
+        attended_at: new Date().toISOString(), // Current timestamp in ISO format
+      },
+      withAuthConfig({ token, context })
+    );
+  },
 }
 
 
