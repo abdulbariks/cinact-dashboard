@@ -166,6 +166,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isSendingRef = useRef(false);
+  const lastReadMessageIdRef = useRef<string | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -205,6 +206,41 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     initChat();
   }, [initChat]);
 
+  const markLatestIncomingRead = useCallback(
+    async (message: any) => {
+      const messageId = getMessageId(message);
+      if (!currentUserId) return;
+      if (!messageId || lastReadMessageIdRef.current === messageId) return;
+      if (getMessageConversationId(message) !== chatId) return;
+      if (getMessageSenderId(message) === currentUserId || message.is_me) return;
+
+      lastReadMessageIdRef.current = messageId;
+
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const at = getMessageCreatedAt(message) || new Date().toISOString();
+
+        await ChatsService.markConversationRead({
+          conversationId: chatId,
+          token,
+          data: {
+            up_to_message_id: messageId,
+          },
+        });
+
+        socketRef.current?.emit("message:read", {
+          conversation_id: chatId,
+          at: new Date(at).toISOString(),
+        });
+      } catch (error) {
+        console.error("Failed to mark conversation read:", error);
+        lastReadMessageIdRef.current = null;
+      }
+    },
+    [chatId, currentUserId],
+  );
+
     //  SOCKET (REAL-TIME)
   useEffect(() => {
     const cookies = parseCookies();
@@ -214,8 +250,14 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     const socket = connectSocket(token);
     socketRef.current = socket;
 
-    //  join room ONLY once per chatId
-    socket.emit("conversation:join", { conversationId: chatId });
+    const joinConversation = () => {
+      socket.emit("conversation:join", { conversation_id: chatId });
+    };
+
+    //  join room ONLY once per chatId and rejoin after reconnect
+    joinConversation();
+    socket.off("connect", joinConversation);
+    socket.on("connect", joinConversation);
 
     const upsertMessage = (message: any) => {
       const normalizedMessage = normalizeMessage(message);
@@ -240,6 +282,8 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
         return sortMessagesByCreatedAt([...prev, normalizedMessage]);
       });
+
+      void markLatestIncomingRead(normalizedMessage);
     };
 
     const upsertCallMessage = (payload: any) => {
@@ -255,6 +299,9 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
     // Handle incoming call notification
     const handleCallIncoming = (call: any) => {
+      const conversationId = call?.conversation_id || call?.conversationId;
+      if (conversationId !== chatId) return;
+
       // Show incoming call notification
       setIncomingCall({
         type: call.kind === "VIDEO" ? "video" : "audio",
@@ -290,6 +337,9 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
     // Handle call declined
     const handleCallDeclined = (payload: any) => {
+      const conversationId = payload?.conversation_id || payload?.conversationId;
+      if (conversationId && conversationId !== chatId) return;
+
       console.log("Call declined:", payload);
       // Show notification that call was declined
       // Clear both active and incoming call states
@@ -299,6 +349,9 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
     // Handle call ended
     const handleCallEnded = (payload: any) => {
+      const conversationId = payload?.conversation_id || payload?.conversationId;
+      if (conversationId && conversationId !== chatId) return;
+
       console.log("Call ended:", payload);
       // End the call and return to chat
       setActiveCall(null);
@@ -327,7 +380,8 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     socket.on("call:ended", handleCallEnded);
 
     return () => {
-      socket.emit("conversation:leave", { conversationId: chatId });
+      socket.off("connect", joinConversation);
+      socket.emit("conversation:leave", { conversation_id: chatId });
       socket.off("message:new", upsertMessage);
       socket.off("message:sent", upsertMessage);
       socket.off("call:message_updated", upsertCallMessage);
@@ -338,7 +392,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       socket.off("call:declined", handleCallDeclined);
       socket.off("call:ended", handleCallEnded);
     };
-  }, [chatId]);
+  }, [chatId, markLatestIncomingRead]);
 
   useEffect(() => {
     scrollToBottom();

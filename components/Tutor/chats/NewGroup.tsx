@@ -96,17 +96,17 @@ export default function NewGroup() {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
 
-      const response = await ChatsService.createGroup({
-        data: payload,
-        token: token,
-      });
+      // const response = await ChatsService.createGroup({
+      //   data: payload,
+      //   token: token,
+      // });
 
-      console.log("response===========", response);
+      // console.log("response===========", response);
 
       showSuccessToast("Group created successfully!");
       // Redirect to the new conversation or back to chat list
-      const newChatId = response?.data?.id;
-      router.push(`/tutor-dashboard/chats/${newChatId}`);
+      // const newChatId = response?.data?.id;
+      // router.push(`/tutor-dashboard/chats/${newChatId}`);
     } catch (error: any) {
       //   console.error("Group Creation Error:", error);
       showErrorToast(

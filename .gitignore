@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+video_audio_call_implementation_guide.md
+socket_implementation_guide.md

@@ -52,9 +52,9 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* Notification and Profile Group */}
         <div className="flex items-center gap-2 lg:gap-6 w-full justify-end">
-          <div className="hidden md:block w-auto max-w-md">
+          {/* <div className="hidden md:block w-auto max-w-md">
             <Search />
-          </div>
+          </div> */}
           <div className="flex items-center gap-2 lg:gap-5">
             <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger
@@ -143,9 +143,9 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </div>
-      <div className="md:hidden px-4">
+      {/* <div className="md:hidden px-4">
         <Search />
-      </div>
+      </div> */}
     </nav>
   );
 };
