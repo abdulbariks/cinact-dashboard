@@ -1,12 +1,25 @@
 "use client";
 import React, { useState } from "react";
-import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 
-type EnrollmentItem = DashboardOverviewResponse["recent_enrollments"][number];
+type EnrollmentItem = {
+  id: string;
+  status: string;
+  user_id?: string;
+  user_name?: string;
+  userName?: string | null;
+  avatar?: string | null;
+  user_avatar?: string | null;
+  course_id?: string;
+  course_title?: string;
+  courseName?: string;
+  created_at?: string;
+  updatedAt?: string;
+};
 
-const formatDate = (value: string) => {
+const formatDate = (value?: string) => {
+  if (!value) return "-";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
     return "-";
@@ -105,7 +118,7 @@ export default function RecentEnrollments({
           </div>
         )}
 
-{items?.map((item) => (
+        {items?.map((item) => (
            <div
              key={item.id}
              className=" bg-[#07121d] p-4 rounded-[10px] min-h-[104px]"
@@ -113,11 +126,11 @@ export default function RecentEnrollments({
              <div>
                <div className=" flex items-center justify-between">
                  <div className=" flex items-center gap-2">
-                   {normalizeAvatarUrl(item.user_avatar) && !brokenImages[item.id] ? (
+                   {normalizeAvatarUrl(item.user_avatar || item.avatar) && !brokenImages[item.id] ? (
                      <div className="relative w-10 h-10 rounded-full overflow-hidden">
                        <Image
-                         src={normalizeAvatarUrl(item.user_avatar)}
-                         alt={item.user_name || "avatar"}
+                         src={normalizeAvatarUrl(item.user_avatar || item.avatar)}
+                         alt={item.user_name || item.userName || "avatar"}
                          fill
                          className="object-cover"
                          onError={() => {
@@ -130,27 +143,27 @@ export default function RecentEnrollments({
                      </div>
                    ) : (
                      <div className="w-10 h-10 rounded-full bg-[#1d2a3e] flex items-center justify-center text-xs font-semibold text-white">
-                       {getInitials(item.user_name)}
+                       {getInitials(item.user_name || item.userName)}
                      </div>
                    )}
                    <div>
                      <h3 className=" text-white text-base font-medium mb-1">
-                       {item.user_name || "Unknown User"}
+                       {item.user_name || item.userName || "Unknown User"}
                      </h3>
                      <p className=" text-sm text-[#D2D2D5] font-medium">
-                       {formatDate(item.created_at)}
+                       {formatDate(item.created_at || item.updatedAt)}
                      </p>
                    </div>
                  </div>
 
                  <p
-                   className={` py-1 px-2.5 ${item.status === "ACTIVE" ? "bg-[#2a3d2e] text-[#18CC3F]" : "bg-[#22251b]  text-[#ECAD11]"}  rounded-full`}
+                   className={` py-1 px-2.5 ${(item.status === "ACTIVE" || item.status === "Enrolled") ? "bg-[#2a3d2e] text-[#18CC3F]" : "bg-[#22251b]  text-[#ECAD11]"}  rounded-full`}
                  >
                    {item.status}
                  </p>
                </div>
                <p className=" text-base text-[#D2D2D5] mt-3">
-                 Course: {item.course_title}
+                 Course: {item.course_title || item.courseName}
                </p>
              </div>
            </div>

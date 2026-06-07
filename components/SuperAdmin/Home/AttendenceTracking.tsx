@@ -1,10 +1,29 @@
 import DecreaseIcon from "@/components/icons/SuperAdmindashboard/DecreaseIcon";
 import IncreaseIcon from "@/components/icons/SuperAdmindashboard/IncreaseIcon";
 import React from "react";
-import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type AttendanceItem = DashboardOverviewResponse["attendance"][number];
+type AttendanceItem = {
+  id?: string;
+  class_title?: string;
+  classTitle?: string;
+  module_name?: string;
+  module?: string;
+  module_title?: string;
+  class_name?: string;
+  course_id?: string;
+  course?: string;
+  course_title?: string;
+  total_students?: number;
+  totalStudents?: number;
+  total_enrolled_students?: number;
+  totalEnrollments?: number;
+  attendance_percentage?: number;
+  previous_attendance_percentage?: number | null;
+  date?: string;
+  class_at?: string;
+  attendance_status?: string;
+};
 
 export default function AttendenceTracking({
   items,
@@ -46,17 +65,18 @@ export default function AttendenceTracking({
         )}
 
 {items?.map((item, index) => {
-           const percentage = item.attendance_percentage || 0;
+           const percentage = item.attendance_percentage || item.totalStudents || 0;
+           const students = item.total_enrolled_students ?? item.totalEnrollments ?? 0;
            const percentText = `${percentage}%`;
            const isIncrease = item.attendance_status === "increment";
 
            return (
              <div key={index} className=" p-4 bg-[#07121d] rounded-[10px] ">
                <div className=" flex items-center justify-between">
-                 <h3 className=" text-sm text-white">{item.class_title}</h3>
+                 <h3 className=" text-sm text-white">{item.class_title || item.classTitle || "-"}</h3>
                  <div className=" flex items-center gap-1">
                    <p className=" text-xs text-[#18CC3F] bg-[#1a2538] py-1 px-1.5 inline-block rounded-full">
-                     {item.total_enrolled_students} students
+                     {students} students
                    </p>
                    <div className=" bg-[#1a2538] inline-flex items-center gap-1 py-1 px-1.5 rounded-full">
                      <p

@@ -4,26 +4,24 @@ import RedTeacherIcon from "@/components/icons/SuperAdmindashboard/RedTeacherIco
 import RedUsers from "@/components/icons/SuperAdmindashboard/RedUsers";
 import bgImg from "@/public/admin-dashboard/stats-bg.png";
 import Image from "next/image";
-import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
+
+export interface StatsData {
+  total_students?: number;
+  total_teachers?: number;
+  ongoing_courses?: number;
+  monthly_revenue?: number;
+  totalStudents?: { current: number };
+  totalOngoingCourses?: { current: number };
+  monthlyRevenue?: { current: number };
+  totalTeachers?: { current: number };
+}
 
 type StatItem = {
   title: string;
   value: number | string;
   percentage: string;
   icon: React.ComponentType<{ className?: string }>;
-};
-
-// interface StatItemInterface {
-//   title: string
-//   value: number | string
-//   percentage: string
-//   icon: React.ComponentType<{ className?: string }>
-// }
-
-const formatChange = (value: number) => {
-  const abs = Math.abs(value).toFixed(1);
-  return `${value > 0 ? "+" : ""}${abs}%`;
 };
 
 const formatCurrency = (value: number) => {
@@ -34,31 +32,31 @@ export default function StatsCard({
   data,
   loading = false,
 }: {
-  data: DashboardOverviewResponse | null;
+  data: StatsData | null;
   loading?: boolean;
 }) {
   const statsData: StatItem[] = [
     {
       title: "Total Students",
-      value: data?.total_students ?? 0,
+      value: data?.total_students ?? data?.totalStudents?.current ?? 0,
       percentage: "0%",
       icon: RedUsers,
     },
     {
       title: "Ongoing Courses",
-      value: data?.ongoing_courses ?? 0,
+      value: data?.ongoing_courses ?? data?.totalOngoingCourses?.current ?? 0,
       percentage: "0%",
       icon: RedGradHat,
     },
     {
       title: "Monthly Revenue",
-      value: formatCurrency(data?.monthly_revenue ?? 0),
+      value: formatCurrency(data?.monthly_revenue ?? data?.monthlyRevenue?.current ?? 0),
       percentage: "0%",
       icon: RedGradHat,
     },
     {
       title: "Total Teachers",
-      value: data?.total_teachers ?? 0,
+      value: data?.total_teachers ?? data?.totalTeachers?.current ?? 0,
       percentage: "0%",
       icon: RedTeacherIcon,
     },

@@ -7,59 +7,27 @@ import { parseCookies } from "nookies";
 import { showErrorToast } from "@/lib/hotToast";
 import { FinanceService } from "@/service/finance/finance.service";
 
-type DashboardMetric = {
-  current: number;
-  previous: number;
-  percentageChange: number;
-};
-
-type DashboardEnrollment = {
-  id: string;
-  userName: string | null;
-  avatar: string | null;
-  courseName: string;
-  status: string;
-  updatedAt: string;
-};
-
-type DashboardClass = {
-  classTitle?: string;
-  title?: string;
-  course?: string;
-  date?: string;
-  startTime?: string;
-  time?: string;
-  instructorName?: string;
-  module?: string;
-  inst_name?: string;
-};
-
-type DashboardAttendance = {
-  classTitle: string;
-  course: string;
-  totalStudents: number;
-  totalEnrollments: number;
-  date: string;
-};
-
-type RecentTransactions = {
-  id: string;
-  userId: string | null;
-  userName: string | null;
-  amount: string | null;
-  paymentDate: string;
-};
-
-export type FinanceDashboardOverviewResponse = {
+type FinanceDashboardOverviewResponse = {
   role: string;
-  totalStudents: DashboardMetric;
-  totalOngoingCourses: DashboardMetric;
-  monthlyRevenue: DashboardMetric;
-  totalTeachers: DashboardMetric;
-  recentEnrollments: DashboardEnrollment[];
-  upcomingClasses: DashboardClass[];
-  attendanceTracking: DashboardAttendance[];
-  getRecentTransactions: RecentTransactions[];
+  total_students: number;
+  total_teachers: number;
+  ongoing_courses: number;
+  monthly_revenue: number;
+  recent_enrollments: {
+    id: string;
+    status: string;
+    user_name: string;
+    user_avatar: string | null;
+    course_title: string;
+    created_at: string;
+  }[];
+  getRecentTransactions: {
+    id: string;
+    userId: string | null;
+    userName: string | null;
+    amount: string | null;
+    paymentDate: string;
+  }[];
 };
 
 export default function FinanceDashboard() {
@@ -97,7 +65,7 @@ export default function FinanceDashboard() {
       <StatsCard data={overview} loading={loading} />
       <div className=" mt-4.5 grid grid-cols-1 lg:grid-cols-2 gap-5">
         <RecentEnrollments
-          items={overview?.recentEnrollments || []}
+          items={overview?.recent_enrollments || []}
           loading={loading}
         />
         <RecentTransactions

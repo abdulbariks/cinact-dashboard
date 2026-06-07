@@ -1,10 +1,27 @@
 import CalenderIcon from "@/components/icons/SuperAdmindashboard/CalenderIcon";
 import ClockIcon from "@/components/icons/SuperAdmindashboard/ClockIcon";
 import React from "react";
-import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type UpcomingClassItem = DashboardOverviewResponse["upcoming_classes"][number];
+type UpcomingClassItem = {
+  id?: string;
+  class_title?: string;
+  classTitle?: string;
+  title?: string;
+  course_title?: string;
+  course?: string;
+  inst_name?: string;
+  instructorName?: string;
+  instructor_name?: string;
+  duration?: number;
+  class_at?: string;
+  date?: string;
+  startTime?: string;
+  time?: string;
+  module_name?: string;
+  module?: string;
+  module_title?: string;
+};
 
 const formatDate = (value?: string) => {
   if (!value) return "-";
@@ -66,31 +83,31 @@ export default function UpcomingClasses({
           </div>
         )}
 {items?.map((item, index) => (
-           <div key={index} className=" bg-[#07121d] p-4 rounded-[10px]">
-             <h2 className=" text-white text-base font-medium">
-               {item.class_title || "-"}
-             </h2>
-             <p className=" text-sm text-[#D2D2D5] mt-1">
-               {item.course_title || "-"}
-             </p>
-             <p className=" text-sm text-[#8D9CDC] mt-1">
-               {item.instructor_name || "-"}
-             </p>
+            <div key={index} className=" bg-[#07121d] p-4 rounded-[10px]">
+              <h2 className=" text-white text-base font-medium">
+                {item.class_title || item.classTitle || item.title || "-"}
+              </h2>
+              <p className=" text-sm text-[#D2D2D5] mt-1">
+                {item.course_title || item.course || "-"}
+              </p>
+              <p className=" text-sm text-[#8D9CDC] mt-1">
+                {item.instructor_name || item.instructorName || "-"}
+              </p>
 
-             <div className=" flex items-center gap-3 mt-3">
-               <div className=" flex items-center gap-1">
-                 <CalenderIcon />
-                 <p className=" text-white text-sm">{formatDate(item.class_at)}</p>
-               </div>
-               <div className=" flex items-center gap-1">
-                 <ClockIcon />
-                 <p className=" text-white text-sm">
-                   {formatTime(undefined, item.class_at)}
-                 </p>
-               </div>
-             </div>
-           </div>
-         ))}
+              <div className=" flex items-center gap-3 mt-3">
+                <div className=" flex items-center gap-1">
+                  <CalenderIcon />
+                  <p className=" text-white text-sm">{formatDate(item.class_at || item.date)}</p>
+                </div>
+                <div className=" flex items-center gap-1">
+                  <ClockIcon />
+                  <p className=" text-white text-sm">
+                    {formatTime(item.startTime || item.time, item.class_at || item.date)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );

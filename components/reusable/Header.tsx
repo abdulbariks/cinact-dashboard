@@ -3,9 +3,10 @@
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdNotifications } from "react-icons/md";
+import { parseCookies } from "nookies";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +16,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Search from "./Search";
+import { UserService, UserMeResponse } from "@/service/user/user.service";
 
 interface HeaderProps {
   onNotificationClick?: () => void;
@@ -29,7 +31,29 @@ const Header: React.FC<HeaderProps> = ({
 }: HeaderProps) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<UserMeResponse | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        if (token) {
+          const response = await UserService.getMe({ token });
+          setUser(response?.data?.data || null);
+        }
+      } catch (error) {
+        console.error("Failed to load user", error);
+      }
+    };
+    loadUser();
+  }, []);
+
+  const handleLogout = () => {
+    UserService.logout();
+    router.push("/");
+  };
 
   return (
     <nav className=" text-blackColor border-b bg-[#0a1929] border-[#343745]  py-3">
@@ -68,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({
                 <MdNotifications className="text-gray-700" size={24} />
               </PopoverTrigger>
 
-              <PopoverContent className="w-70 md:w-[267px] mt-4 p-0 max-h-[500px] flex flex-col">
+              <PopoverContent className="w-70 md:w-66.75 mt-4 p-0 max-h-125 flex flex-col">
                 {/* Header */}
                 <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
                   <h4 className="text-base font-bold md:text-lg text-headerColor">
@@ -77,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({
 
                   <button
                     onClick={() => setPopoverOpen(false)}
-                    className="text-[#455468] bg-bgColor w-[35px] h-[35px] shadow-sm rounded-full cursor-pointer text-lg font-bold flex items-center justify-center"
+                    className="text-[#455468] bg-bgColor w-8.75 h-8.75 shadow-sm rounded-full cursor-pointer text-lg font-bold flex items-center justify-center"
                   >
                     <X className="" />
                   </button>
@@ -121,18 +145,16 @@ const Header: React.FC<HeaderProps> = ({
                 <DropdownMenuContent align="end" className="w-48">
                   <div className="px-4 py-2">
                     <p className="text-sm font-semibold text-headerColor">
-                      {"User"}
+                      {user?.name || "User"}
                     </p>
                     <p className="text-xs text-textColor">
-                      {"admin@company.com"}
+                      {user?.email || "admin@company.com"}
                     </p>
                   </div>
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem
-                    onClick={() => {
-                      router.push("/login");
-                    }}
+                    onClick={handleLogout}
                     className="text-redColor hover:bg-redColor/10! flex justify-center w-full hover:text-redColor! hover:border hover:border-redColor font-semibold cursor-pointer"
                   >
                     Log Out

@@ -61,6 +61,20 @@ const buildQueryString = (
   return queryString ? `?${queryString}` : "";
 };
 
+export type UserMeResponse = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string | null;
+  address: string | null;
+  phone_number: string;
+  type: string;
+  date_of_birth: string | null;
+  experience: string;
+  about: string | null;
+  created_at: string;
+};
+
 export const UserService = {
   // login
   login: async ({ email, password }: { email: string; password: string }) => {
@@ -69,6 +83,11 @@ export const UserService = {
       password: password,
     };
     return await Fetch.post("/auth/login/", data, jsonConfig);
+  },
+
+  // get current user
+  getMe: async ({ token = "", context = null } = {}) => {
+    return await Fetch.get(`/auth/me`, withAuthConfig({ token, context }));
   },
 
   // super admin overview

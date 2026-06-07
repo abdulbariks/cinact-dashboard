@@ -8,7 +8,7 @@ import { UserService } from "@/service/user/user.service";
 import { parseCookies } from "nookies";
 import { showErrorToast } from "@/lib/hotToast";
 
-type DashboardEnrollment = {
+export type SuperAdminDashboardEnrollment = {
   id: string;
   status: string;
   user_id: string;
@@ -19,7 +19,7 @@ type DashboardEnrollment = {
   created_at: string;
 };
 
-type DashboardClass = {
+export type SuperAdminDashboardClass = {
   id: string;
   class_title: string;
   class_name: string;
@@ -33,7 +33,7 @@ type DashboardClass = {
   instructor_name?: string;
 };
 
-type DashboardAttendance = {
+export type SuperAdminDashboardAttendance = {
   id: string;
   module_name: string;
   module_title: string;
@@ -48,19 +48,19 @@ type DashboardAttendance = {
   attendance_status: string;
 };
 
-export type DashboardOverviewResponse = {
+export type SuperAdminDashboardOverviewResponse = {
   role: string;
   total_students: number;
   total_teachers: number;
   ongoing_courses: number;
   monthly_revenue: number;
-  attendance: DashboardAttendance[];
-  recent_enrollments: DashboardEnrollment[];
-  upcoming_classes: DashboardClass[];
+  attendance: SuperAdminDashboardAttendance[];
+  recent_enrollments: SuperAdminDashboardEnrollment[];
+  upcoming_classes: SuperAdminDashboardClass[];
 };
 
 export default function SuperAdminHome() {
-  const [overview, setOverview] = useState<DashboardOverviewResponse | null>(null);
+  const [overview, setOverview] = useState<SuperAdminDashboardOverviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
