@@ -4,7 +4,7 @@ import React from "react";
 import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type UpcomingClassItem = DashboardOverviewResponse["upcomingClasses"][number];
+type UpcomingClassItem = DashboardOverviewResponse["upcoming_classes"][number];
 
 const formatDate = (value?: string) => {
   if (!value) return "-";
@@ -65,29 +65,32 @@ export default function UpcomingClasses({
             <p className=" text-sm text-[#D2D2D5]">No upcoming classes.</p>
           </div>
         )}
-        {items?.map((item, index) => (
-          <div key={index} className=" bg-[#07121d] p-4 rounded-[10px]">
-            <h2 className=" text-white text-base font-medium">
-              {item.classTitle || item.title || item.module || "-"}
-            </h2>
-            <p className=" text-sm text-[#D2D2D5] mt-1">
-              {item.course || item.inst_name || item.instructorName || "-"}
-            </p>
+{items?.map((item, index) => (
+           <div key={index} className=" bg-[#07121d] p-4 rounded-[10px]">
+             <h2 className=" text-white text-base font-medium">
+               {item.class_title || "-"}
+             </h2>
+             <p className=" text-sm text-[#D2D2D5] mt-1">
+               {item.course_title || "-"}
+             </p>
+             <p className=" text-sm text-[#8D9CDC] mt-1">
+               {item.instructor_name || "-"}
+             </p>
 
-            <div className=" flex items-center gap-3 mt-3">
-              <div className=" flex items-center gap-1">
-                <CalenderIcon />
-                <p className=" text-white text-sm">{formatDate(item.date)}</p>
-              </div>
-              <div className=" flex items-center gap-1">
-                <ClockIcon />
-                <p className=" text-white text-sm">
-                  {formatTime(item.startTime || item.time, item.date)}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
+             <div className=" flex items-center gap-3 mt-3">
+               <div className=" flex items-center gap-1">
+                 <CalenderIcon />
+                 <p className=" text-white text-sm">{formatDate(item.class_at)}</p>
+               </div>
+               <div className=" flex items-center gap-1">
+                 <ClockIcon />
+                 <p className=" text-white text-sm">
+                   {formatTime(undefined, item.class_at)}
+                 </p>
+               </div>
+             </div>
+           </div>
+         ))}
       </div>
     </div>
   );

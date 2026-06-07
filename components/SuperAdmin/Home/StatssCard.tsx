@@ -40,28 +40,26 @@ export default function StatsCard({
   const statsData: StatItem[] = [
     {
       title: "Total Students",
-      value: data?.totalStudents?.current ?? 0,
-      percentage: formatChange(data?.totalStudents?.percentageChange ?? 0),
+      value: data?.total_students ?? 0,
+      percentage: "0%",
       icon: RedUsers,
     },
     {
       title: "Ongoing Courses",
-      value: data?.totalOngoingCourses?.current ?? 0,
-      percentage: formatChange(
-        data?.totalOngoingCourses?.percentageChange ?? 0,
-      ),
+      value: data?.ongoing_courses ?? 0,
+      percentage: "0%",
       icon: RedGradHat,
     },
     {
       title: "Monthly Revenue",
-      value: formatCurrency(data?.monthlyRevenue?.current ?? 0),
-      percentage: formatChange(data?.monthlyRevenue?.percentageChange ?? 0),
+      value: formatCurrency(data?.monthly_revenue ?? 0),
+      percentage: "0%",
       icon: RedGradHat,
     },
     {
       title: "Total Teachers",
-      value: data?.totalTeachers?.current ?? 0,
-      percentage: formatChange(data?.totalTeachers?.percentageChange ?? 0),
+      value: data?.total_teachers ?? 0,
+      percentage: "0%",
       icon: RedTeacherIcon,
     },
   ];

@@ -4,12 +4,7 @@ import React from "react";
 import { DashboardOverviewResponse } from "./SuperAdminHome";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type AttendanceItem = DashboardOverviewResponse["attendanceTracking"][number];
-
-const getPercentage = (totalStudents: number, totalEnrollments: number) => {
-  if (!totalEnrollments) return 0;
-  return Math.round((totalStudents / totalEnrollments) * 100);
-};
+type AttendanceItem = DashboardOverviewResponse["attendance"][number];
 
 export default function AttendenceTracking({
   items,
@@ -50,40 +45,38 @@ export default function AttendenceTracking({
           </div>
         )}
 
-        {items?.map((item, index) => {
-          const percentage = getPercentage(
-            item.totalStudents || 0,
-            item.totalEnrollments || 0,
-          );
-          const percentText = `${percentage}%`;
+{items?.map((item, index) => {
+           const percentage = item.attendance_percentage || 0;
+           const percentText = `${percentage}%`;
+           const isIncrease = item.attendance_status === "increment";
 
-          return (
-            <div key={index} className=" p-4 bg-[#07121d] rounded-[10px] ">
-              <div className=" flex items-center justify-between">
-                <h3 className=" text-sm text-white">{item.classTitle}</h3>
-                <div className=" flex items-center gap-1">
-                  <p className=" text-xs text-[#18CC3F] bg-[#1a2538] py-1 px-1.5 inline-block rounded-full">
-                    {item.totalStudents} students
-                  </p>
-                  <div className=" bg-[#1a2538] inline-flex items-center gap-1 py-1 px-1.5 rounded-full">
-                    <p
-                      className={` text-xs  ${percentage < 50 ? "text-[#E9201D]" : "text-white"}`}
-                    >
-                      {percentText}
-                    </p>
-                    {percentage > 50 ? <IncreaseIcon /> : <DecreaseIcon />}
-                  </div>
-                </div>
-              </div>
-              <div className="w-full bg-[#202a3f] rounded-full h-2 mt-3">
-                <div
-                  className={`h-2 rounded-full transition-all duration-300 bg-[#5f6ca0] `}
-                  style={{ width: `${Math.min(percentage, 100)}%` }}
-                />
-              </div>
-            </div>
-          );
-        })}
+           return (
+             <div key={index} className=" p-4 bg-[#07121d] rounded-[10px] ">
+               <div className=" flex items-center justify-between">
+                 <h3 className=" text-sm text-white">{item.class_title}</h3>
+                 <div className=" flex items-center gap-1">
+                   <p className=" text-xs text-[#18CC3F] bg-[#1a2538] py-1 px-1.5 inline-block rounded-full">
+                     {item.total_enrolled_students} students
+                   </p>
+                   <div className=" bg-[#1a2538] inline-flex items-center gap-1 py-1 px-1.5 rounded-full">
+                     <p
+                       className={` text-xs  ${percentage < 50 ? "text-[#E9201D]" : "text-white"}`}
+                     >
+                       {percentText}
+                     </p>
+                     {isIncrease ? <IncreaseIcon /> : <DecreaseIcon />}
+                   </div>
+                 </div>
+               </div>
+               <div className="w-full bg-[#202a3f] rounded-full h-2 mt-3">
+                 <div
+                   className={`h-2 rounded-full transition-all duration-300 bg-[#5f6ca0] `}
+                   style={{ width: `${Math.min(percentage, 100)}%` }}
+                 />
+               </div>
+             </div>
+           );
+         })}
       </div>
     </div>
   );

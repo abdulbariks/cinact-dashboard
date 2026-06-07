@@ -8,50 +8,55 @@ import { UserService } from "@/service/user/user.service";
 import { parseCookies } from "nookies";
 import { showErrorToast } from "@/lib/hotToast";
 
-type DashboardMetric = {
-  current: number;
-  previous: number;
-  percentageChange: number;
-};
-
 type DashboardEnrollment = {
   id: string;
-  userName: string | null;
-  avatar: string | null;
-  courseName: string;
   status: string;
-  updatedAt: string;
+  user_id: string;
+  user_name: string;
+  user_avatar: string | null;
+  course_id: string;
+  course_title: string;
+  created_at: string;
 };
 
 type DashboardClass = {
-  classTitle?: string;
-  title?: string;
-  course?: string;
-  date?: string;
-  startTime?: string;
-  time?: string;
-  instructorName?: string;
-  module?: string;
-  inst_name?: string;
+  id: string;
+  class_title: string;
+  class_name: string;
+  duration: number;
+  class_at: string;
+  module_name: string;
+  module_title: string;
+  course_id: string;
+  course_title: string;
+  instructor_id?: string;
+  instructor_name?: string;
 };
 
 type DashboardAttendance = {
-  classTitle: string;
-  course: string;
-  totalStudents: number;
-  totalEnrollments: number;
-  date: string;
+  id: string;
+  module_name: string;
+  module_title: string;
+  class_name: string;
+  class_title: string;
+  class_at: string;
+  course_id: string;
+  course_title: string;
+  total_enrolled_students: number;
+  attendance_percentage: number;
+  previous_attendance_percentage: number | null;
+  attendance_status: string;
 };
 
 export type DashboardOverviewResponse = {
   role: string;
-  totalStudents: DashboardMetric;
-  totalOngoingCourses: DashboardMetric;
-  monthlyRevenue: DashboardMetric;
-  totalTeachers: DashboardMetric;
-  recentEnrollments: DashboardEnrollment[];
-  upcomingClasses: DashboardClass[];
-  attendanceTracking: DashboardAttendance[];
+  total_students: number;
+  total_teachers: number;
+  ongoing_courses: number;
+  monthly_revenue: number;
+  attendance: DashboardAttendance[];
+  recent_enrollments: DashboardEnrollment[];
+  upcoming_classes: DashboardClass[];
 };
 
 export default function SuperAdminHome() {
@@ -85,9 +90,9 @@ export default function SuperAdminHome() {
     <div>
       <StatssCard data={overview} loading={loading} />
       <div className=" mt-4.5 grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <RecentEnrollments items={overview?.recentEnrollments || []} loading={loading} />
-        <UpcomingClasses items={overview?.upcomingClasses || []} loading={loading} />
-        <AttendenceTracking items={overview?.attendanceTracking || []} loading={loading} />
+        <RecentEnrollments items={overview?.recent_enrollments || []} loading={loading} />
+        <UpcomingClasses items={overview?.upcoming_classes || []} loading={loading} />
+        <AttendenceTracking items={overview?.attendance || []} loading={loading} />
       </div>
     </div>
   );
