@@ -5,26 +5,22 @@ import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllPaymentPlan } from "@/components/reusable/AllPaymentPlan";
 import { DatePickerButton } from "@/components/reusable/DatePickerButton";
+import { PaymentStatusDropdown } from "@/components/reusable/PaymentStatusDropdown";
+import { showErrorToast } from "@/lib/hotToast";
+import { parseCookies } from "nookies";
+import { FinanceService } from "@/service/finance/finance.service";
 import StatsCard from "./StatsCard";
-import { transactionsData } from "@/public/demoData/transactionsData";
 import DynamicTable from "@/components/reusable/DynamicTable";
 import Link from "next/link";
-import { parseCookies } from "nookies";
-import { showErrorToast } from "@/lib/hotToast";
-import { FinanceService } from "@/service/finance/finance.service";
 
 type StatsCardData = {
-  current: number;
-  previous: number;
-  percentageChange: number;
+  total_revenue?: number;
+  total_course_revenue?: number;
+  total_event_revenue?: number;
+  current_month_revenue?: number;
 };
 
-export type StatsCard = {
-  courseRevenue: StatsCardData;
-  currentMonthRevenue: StatsCardData;
-  eventsRevenue: StatsCardData;
-  totalRevenueThisYear: StatsCardData;
-};
+export type StatsCard = StatsCardData;
 
 type AllPaymentsTransactionsRow = {
   userId: string;
@@ -36,13 +32,16 @@ type AllPaymentsTransactionsRow = {
   paymentPlan: string;
 };
 
+type PaymentPlanFilter = "all" | "ONE_TIME" | "MONTHLY";
+
 export default function FinancePayments() {
   const [statsCardData, setStatsCardData] = useState<StatsCard | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [search, setSearch] = useState("");
   const [date, setDate] = useState<Date | undefined>();
-  const [paymentPlan, setPaymentStatus] = useState("all");
+  const [paymentPlan, setPaymentPlan] = useState<PaymentPlanFilter>("all");
+  const [status, setStatus] = useState("SUCCESS");
   const [allPaymentsTransactions, setAllPaymentsTransactions] = useState<
     AllPaymentsTransactionsRow[]
   >([]);
@@ -59,7 +58,7 @@ export default function FinancePayments() {
         const response = await FinanceService.getFinancePaymentsStats({
           token,
         });
-        setStatsCardData(response?.data || null);
+        setStatsCardData(response?.data?.data || null);
       } catch (error: any) {
         showErrorToast(
           error?.response?.data?.message ||
@@ -76,7 +75,7 @@ export default function FinancePayments() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [itemsPerPage, search, date, paymentPlan]);
+  }, [itemsPerPage, search, date, paymentPlan, status]);
 
   useEffect(() => {
     const loadsetAllPaymentsTransactions = async () => {
@@ -89,22 +88,36 @@ export default function FinancePayments() {
         const response = await FinanceService.getAllPaymentsTransactions({
           token,
           search,
-          // date: date === "undefined" ? "" : date,
-          paymentPlan: paymentPlan === "all" ? "" : paymentPlan,
+          date: date ? new Date(date) : undefined,
+          payment_type:
+            paymentPlan === "all"
+              ? "ALL"
+              : (() => {
+                  const plan = (paymentPlan || "").toUpperCase() as
+                    | "ALL"
+                    | "ONE_TIME"
+                    | "MONTHLY"
+                    | "";
+                  return plan === "ALL" ||
+                    plan === "ONE_TIME" ||
+                    plan === "MONTHLY"
+                    ? plan
+                    : "";
+                })(),
+          status,
           page: currentPage,
           limit: itemsPerPage,
         });
 
         const paymentsTransactionsData = response?.data?.data || [];
-        const pagination = response?.data?.pagination || {};
+        const meta = response?.data?.meta_data || {};
         setAllPaymentsTransactions(paymentsTransactionsData);
 
-        // setStudents(studentsData.map(mapStudentRow));
-        setTotalItems(pagination.total ?? paymentsTransactionsData.length);
+        setTotalItems(meta.total ?? paymentsTransactionsData.length);
         setTotalPages(
-          pagination.totalPages ??
+          meta.total_pages ??
             Math.ceil(
-              (pagination.total ?? paymentsTransactionsData.length) /
+              (meta.total ?? paymentsTransactionsData.length) /
                 itemsPerPage,
             ),
         );
@@ -124,7 +137,7 @@ export default function FinancePayments() {
     };
 
     loadsetAllPaymentsTransactions();
-  }, [currentPage, itemsPerPage, search, date, paymentPlan]);
+  }, [currentPage, itemsPerPage, search, date, paymentPlan, status]);
 
   // console.log("statsCardDatastatsCardData====", statsCardData);
   // console.log(allPaymentsTransactions);
@@ -154,26 +167,27 @@ export default function FinancePayments() {
           <h3 className=" text-white text-xl font-semibold">
             Transactions (44)
           </h3>
-          <div className=" flex flex-col md:flex-row items-center gap-2">
-            <div className=" relative w-80">
-              <input
-                type="text"
-                name="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
-                placeholder="Search Transaction ID"
-              />
-              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
-                <SearchIcon />
-              </button>
-            </div>
-            <DatePickerButton date={date} setDate={setDate} />
-            <AllPaymentPlan
-              paymentPlan={paymentPlan}
-              setPaymentPlan={setPaymentStatus}
-            />
-          </div>
+<div className=" flex flex-col md:flex-row items-center gap-2">
+             <div className=" relative w-80">
+               <input
+                 type="text"
+                 name="search"
+                 value={search}
+                 onChange={(e) => setSearch(e.target.value)}
+                 className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
+                 placeholder="Search Transaction ID"
+               />
+               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
+                 <SearchIcon />
+               </button>
+             </div>
+             <DatePickerButton date={date} setDate={setDate} />
+             <PaymentStatusDropdown status={status} setStatus={setStatus} />
+             <AllPaymentPlan
+               paymentPlan={paymentPlan}
+               setPaymentPlan={setPaymentStatus}
+             />
+           </div>
         </div>
         <DynamicTable
           columns={transactionsColumns}

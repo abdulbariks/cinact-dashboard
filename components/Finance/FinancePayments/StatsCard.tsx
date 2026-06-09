@@ -2,7 +2,6 @@ import React from "react";
 import bgImg from "@/public/admin-dashboard/stats-bg.png";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatsCard as StatsCardType } from "./FinancePayments";
 import RedRevenueIcon from "@/components/icons/SuperAdmindashboard/RedRevenueIcon";
 import RedUsersIcon from "@/components/icons/SuperAdmindashboard/RedUsersIcon";
 import RedCardIcon from "@/components/icons/SuperAdmindashboard/RedCardIcon";
@@ -10,40 +9,50 @@ import RedCardIcon from "@/components/icons/SuperAdmindashboard/RedCardIcon";
 type StatItem = {
   title: string;
   value: number | string;
-  percentage: number | string;
+  percentage: string;
   icon: React.ComponentType<{ className?: string }>;
+};
+
+const formatCurrency = (value: number | string) => {
+  const num = typeof value === "number" ? value : parseFloat(value) || 0;
+  return `$${num.toLocaleString()}`;
 };
 
 export default function StatsCard({
   data,
   loading = false,
 }: {
-  data: StatsCardType | null;
+  data: {
+    total_revenue?: number;
+    total_course_revenue?: number;
+    total_event_revenue?: number;
+    current_month_revenue?: number;
+  } | null;
   loading?: boolean;
 }) {
   const statsData: StatItem[] = [
     {
       title: "Total Revenue",
-      value: data?.totalRevenueThisYear?.current ?? 0,
-      percentage: data?.totalRevenueThisYear?.percentageChange,
+      value: formatCurrency(data?.total_revenue ?? 0),
+      percentage: "0%",
       icon: RedRevenueIcon,
     },
     {
       title: "Course Revenue",
-      value: data?.courseRevenue?.current ?? 0,
-      percentage: data?.courseRevenue?.percentageChange,
+      value: formatCurrency(data?.total_course_revenue ?? 0),
+      percentage: "0%",
       icon: RedCardIcon,
     },
     {
       title: "Events Revenue",
-      value: data?.eventsRevenue?.current ?? 0,
-      percentage: data?.eventsRevenue?.percentageChange,
+      value: formatCurrency(data?.total_event_revenue ?? 0),
+      percentage: "0%",
       icon: RedUsersIcon,
     },
     {
       title: "This Month",
-      value: data?.currentMonthRevenue?.current ?? 0,
-      percentage: data?.currentMonthRevenue?.percentageChange,
+      value: formatCurrency(data?.current_month_revenue ?? 0),
+      percentage: "0%",
       icon: RedRevenueIcon,
     },
   ];
@@ -87,14 +96,9 @@ export default function StatsCard({
             <p className=" mt-1.5 flex items-center gap-2">
               {" "}
               <span
-                className={` text-sm font-semibold py-1 px-2.5 bg-[#323541] rounded-full ${
-                  Number(item?.percentage) < 0
-                    ? "text-[#E9201D]"
-                    : "text-[#18CC3F]"
-                }`}
+                className={` text-sm font-semibold py-1 px-2.5 bg-[#323541] rounded-full text-[#18CC3F]`}
               >
-                {Number(item?.percentage) > 0 ? "+" : ""}
-                {item?.percentage}%
+                {item?.percentage}
               </span>{" "}
               <span className=" text-base text-[#8D9CDC]"> vs last month</span>
             </p>

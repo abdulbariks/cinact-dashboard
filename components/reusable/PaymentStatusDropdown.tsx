@@ -3,18 +3,16 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DropDownIcon from "../icons/others/DropDownIcon";
 
 type Props = {
-  paymentPlan: string;
-  setPaymentPlan: (value: "all" | "ONE_TIME" | "MONTHLY") => void;
+  status: string;
+  setStatus: (value: string) => void;
 };
 
-export function AllPaymentPlan({ paymentPlan, setPaymentPlan }: Props) {
-  const plan = paymentPlan.toUpperCase();
+export function PaymentStatusDropdown({ status, setStatus }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -25,26 +23,31 @@ export function AllPaymentPlan({ paymentPlan, setPaymentPlan }: Props) {
           variant="outline"
           className="flex items-center gap-5 bg-[#505B86] hover:bg-[#505B86]/90"
         >
-          {plan === "ALL" || plan === "all"
-            ? "All Payment Plan"
-            : plan === "ONE_TIME"
-              ? "One-Time"
-              : "Monthly Installment"}{" "}
-          <DropDownIcon />
+          {status === "SUCCESS"
+            ? "Success"
+            : status === "FAILED"
+            ? "Failed"
+            : status === "PENDING"
+            ? "Pending"
+            : "All Status"} <DropDownIcon />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => setPaymentPlan("all")}>
-          All Payment Plan
+        <DropdownMenuItem onClick={() => setStatus("all")}>
+          All Status
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => setPaymentPlan("ONE_TIME")}>
-          One-Time
+        <DropdownMenuItem onClick={() => setStatus("SUCCESS")}>
+          Success
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => setPaymentPlan("MONTHLY")}>
-          Monthly Installment
+        <DropdownMenuItem onClick={() => setStatus("FAILED")}>
+          Failed
+        </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={() => setStatus("PENDING")}>
+          Pending
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

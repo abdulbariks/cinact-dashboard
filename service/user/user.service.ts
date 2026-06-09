@@ -844,39 +844,42 @@ export const AdminPaymentsTransactionsService = {
   // get Finance Payments Stats
   getPaymentsStats: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(
-      `/finance/revenue/stats`,
+      `/admin/transactions/stats`,
       withAuthConfig({ token, context }),
     );
   },
 
-  // get Finance Payments Transactions
-  getAllPaymentsTransactions: async ({
-    token = "",
-    context = null,
-    search = "",
-    // date = "",
-    paymentPlan = "",
-    page = 1,
-    limit = 10,
-  }: {
-    token?: string;
-    context?: any;
-    search?: string;
-    // date?:string;
-    paymentPlan?: string | boolean;
-    page?: number;
-    limit?: number;
-  } = {}) => {
-    return await Fetch.get(`/finance/transactions`, {
-      ...withAuthConfig({ token, context }),
-      params: {
-        search,
-        // date,
-        paymentPlan,
-        page,
-        limit,
-      },
-    });
+// get Finance Payments Transactions
+    getAllPaymentsTransactions: async ({
+      token = "",
+      context = null,
+      search = "",
+      date,
+      payment_type = "",
+      status = "",
+      page = 1,
+      limit = 10,
+    }: {
+      token?: string;
+      context?: any;
+      search?: string;
+      date?: Date | string;
+      payment_type?: "ALL" | "ONE_TIME" | "MONTHLY" | "";
+      status?: string;
+      page?: number;
+      limit?: number;
+    } = {}) => {
+      return await Fetch.get(`/admin/transactions`, {
+        ...withAuthConfig({ token, context }),
+        params: {
+          ...(search ? { search } : {}),
+          ...(date ? { date: (() => { const d = date instanceof Date ? date : new Date(date); const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, "0"); const day = String(d.getDate()).padStart(2, "0"); return `${y}-${m}-${day}`; })() } : {}),
+          ...(payment_type ? { payment_type } : {}),
+          ...(status ? { status } : {}),
+          page,
+          limit,
+       },
+     });
   },
 };
 
