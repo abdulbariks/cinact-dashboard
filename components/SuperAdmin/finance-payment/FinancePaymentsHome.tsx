@@ -46,6 +46,7 @@ export default function FinancePaymentsHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+
   useEffect(() => {
     const loadStatsCardData = async () => {
       try {

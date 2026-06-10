@@ -165,7 +165,8 @@ export default function FinancePayments() {
       <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
         <div className=" flex flex-col lg:flex-row items-center justify-between mb-6">
           <h3 className=" text-white text-xl font-semibold">
-            Transactions (44)
+            {/* Transactions (44) */}
+            Transactions ({allPaymentsTransactions?.length})
           </h3>
 <div className=" flex flex-col md:flex-row items-center gap-2">
              <div className=" relative w-80">

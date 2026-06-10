@@ -78,7 +78,7 @@ export const FinanceService = {
       limit?: number;
     } = {}) => {
       return await Fetch.get(
-        `/admin/student-management`,{
+        `/admin/users`,{
           ...withAuthConfig({ token, context }), params: {
             search,
             studentType,
@@ -190,7 +190,7 @@ export const FinanceService = {
 
   // get Finance Payments Stats 
   getFinancePaymentsStats: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/finance/revenue/stats`, withAuthConfig({ token, context }));
+    return await Fetch.get(`/admin/transactions/stats`, withAuthConfig({ token, context }));
   }, 
 
 

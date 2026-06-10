@@ -308,7 +308,7 @@ export const UserService = {
     );
   },
 
-  // get all posts ====================================================================
+  // get all posts 
   getAllCommunityPosts: async ({
     token = "",
     context = null,
@@ -334,7 +334,7 @@ export const UserService = {
     });
   },
 
-  //  another get all posts for super admin home page ===================================
+  //  another get all posts for super admin home page
 
   register: async ({
     username,
