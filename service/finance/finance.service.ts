@@ -49,7 +49,7 @@ const buildQueryString = (params: Record<string, string | number | undefined>) =
 export const FinanceService = {
   // super admin overview
   getFinanceDashboardOverview: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/dashboard`, withAuthConfig({ token, context }));
+    return await Fetch.get(`/admin/overview`, withAuthConfig({ token, context }));
   },
 
   // get all courses

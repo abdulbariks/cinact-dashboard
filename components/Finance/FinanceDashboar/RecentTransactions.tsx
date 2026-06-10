@@ -2,11 +2,10 @@
 
 import { recentTransactionsColumns } from "@/components/columns/recentTransactionsColumns";
 import DynamicTable from "@/components/reusable/DynamicTable";
-import { recentTransactionsData } from "@/public/demoData/recentTransactionsData";
 import React from "react";
 import { FinanceDashboardOverviewResponse } from "./FinanceDashboard";
 type RecentTransactionsItem =
-  FinanceDashboardOverviewResponse["getRecentTransactions"][number];
+  FinanceDashboardOverviewResponse["recent_transactions"][number];
 export default function RecentTransactions({
   items,
   loading = false,
@@ -21,8 +20,8 @@ export default function RecentTransactions({
         <DynamicTable
           columns={recentTransactionsColumns}
           data={items}
-          noDataMessage="No students found"
-          loading={false}
+          noDataMessage="No transactions found"
+          loading={loading}
         />
       </div>
     </div>

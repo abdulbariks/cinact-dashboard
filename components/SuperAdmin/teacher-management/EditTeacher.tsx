@@ -18,7 +18,7 @@ import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { useParams, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const userTypeOptions = ["student", "teacher", "admin", "su_admin"];
+const userTypeOptions = ["student", "teacher","finance", "admin", "su_admin"];
 const teacherStatusOptions = ["ACTIVE", "DEACTIVATED", "BLOCKED","REJECTED"];
 
 const formatDateInput = (value?: string | null) => {

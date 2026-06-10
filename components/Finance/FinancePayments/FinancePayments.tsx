@@ -183,10 +183,10 @@ export default function FinancePayments() {
              </div>
              <DatePickerButton date={date} setDate={setDate} />
              <PaymentStatusDropdown status={status} setStatus={setStatus} />
-             <AllPaymentPlan
-               paymentPlan={paymentPlan}
-               setPaymentPlan={setPaymentStatus}
-             />
+<AllPaymentPlan
+                paymentPlan={paymentPlan}
+                setPaymentPlan={setPaymentPlan}
+              />
            </div>
         </div>
         <DynamicTable

@@ -95,7 +95,7 @@ export default function StatsCard({
             <item.icon />
           </div>
           <h2 className=" text-white text-[32px] font-semibold mt-6">
-            {item.value}
+            {item?.value}
           </h2>
           <div>
             <p className=" mt-1.5 flex items-center gap-2">

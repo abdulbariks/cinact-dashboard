@@ -18,7 +18,7 @@ export default function EnrolledStudents() {
               {/* Avatar with subtle border effect */}
               <div className="basis-[15%] flex justify-center">
                 <Image
-                  src={item.avatar}
+                  src={item.user_avatar}
                   alt="avatar"
                   width={64}
                   height={64}
@@ -28,7 +28,7 @@ export default function EnrolledStudents() {
 
               <div className="basis-[85%]">
                 <h3 className="text-white text-lg font-medium leading-tight">
-                  {item.name}
+                  {item.user_name}
                 </h3>
                 <p className="text-[#A1AAB3] text-sm mt-3">ID-SP1420</p>
                 <div className="flex gap-4 text-[#7B8AB8] text-sm mt-3 font-medium">
