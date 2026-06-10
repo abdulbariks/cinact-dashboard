@@ -91,7 +91,7 @@ export default function AttendenceHome() {
 
   return (
     <div>
-      <div className=" flex items-center justify-between">
+      {/* <div className=" flex items-center justify-between">
         <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
           Attendance Overview
         </h2>
@@ -115,7 +115,7 @@ export default function AttendenceHome() {
             </h3>
           </div>
         ))}
-      </div>
+      </div> */}
 
       <div className=" p-6 bg-[#0a1726] rounded-2xl mt-8">
         <div className=" flex items-center justify-between">

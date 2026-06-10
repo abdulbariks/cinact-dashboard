@@ -50,7 +50,7 @@ const buildQueryString = (params: Record<string, string | number | undefined>) =
 export const TutorService = {
   // Tutor overview
   getTutorDashboardOverview: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/dashboard`, withAuthConfig({ token, context }));
+    return await Fetch.get(`/admin/overview`, withAuthConfig({ token, context }));
   },
 
     // Get all courses for the tutor
@@ -345,7 +345,7 @@ export const TutorAttendanceService = {
   if (status) params.append("status", status);
   if (search) params.append("search", search);
   return await Fetch.get(
-    `/attendance?${params.toString()}`,
+    `/admin/courses/attendance?${params.toString()}`,
     withAuthConfig({ token, context })
   );
 },

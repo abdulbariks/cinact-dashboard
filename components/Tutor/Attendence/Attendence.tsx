@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import { AllStatus } from "@/components/reusable/AllStatus";
 import DynamicTable from "@/components/reusable/DynamicTable";
-import VerticalAttendenceCalendar from "@/components/SuperAdmin/attendence/VerticalAttendenceCalendar";
-import { parseCookies } from "nookies";
-import { TutorAttendanceService } from "@/service/tutor/tutor.service";
-import { showErrorToast } from "@/lib/hotToast";
 import { TAttendanceResponse } from "@/types/tutor.attendece";
 import { useParams } from "next/navigation";
-// 1. Import the factory function instead of the static array
+import { parseCookies } from "nookies";
+import { showErrorToast } from "@/lib/hotToast";
+import { AdminAttendanceService } from "@/service/user/user.service";
 import { getAttendenceListColumns } from "@/components/columns/getAttendenceListColumns";
+import VerticalAttendenceCalendar from "@/components/SuperAdmin/attendence/VerticalAttendenceCalendar";
 
 export default function Attendence() {
   const params = useParams<{ classId: string }>();
@@ -30,7 +29,7 @@ export default function Attendence() {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
 
-      const response = await TutorAttendanceService.getAttendance({
+      const response = await AdminAttendanceService.getAttendance({
         classId: params?.classId || "",
         page: currentPage,
         limit: itemsPerPage,
@@ -64,32 +63,35 @@ export default function Attendence() {
     setCurrentPage(1);
   };
 
+    // console.log("allAttendance==========", allAttendance);
+
+
   return (
     <div>
-      <div className="p-6 bg-[#0a1726] rounded-2xl">
-        <div className="flex items-center justify-between">
-          <h3 className="text-white text-xl font-semibold">Attendance List</h3>
-          <div className="flex items-center gap-2">
-            <div className="relative w-80">
+      <div className=" p-6 bg-[#0a1726] rounded-2xl mt-8">
+        <div className=" flex items-center justify-between">
+          <h3 className=" text-white text-xl font-semibold">Attendance List</h3>
+          <div className=" flex items-center gap-2">
+            <div className=" relative w-80">
               <input
                 type="text"
                 name="search"
                 value={search}
                 onChange={handleSearchChange}
-                className="w-full py-2 px-4 rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
-                placeholder="Search by student name..."
+                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
+                placeholder="Search Transaction ID"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
                 <SearchIcon />
               </button>
             </div>
+
             <AllStatus />
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
+        <div className=" mt-6 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
           <DynamicTable
-            //Pass the memoized columns factory result
             columns={columns}
             data={allAttendance?.data || []}
             currentPage={currentPage}
