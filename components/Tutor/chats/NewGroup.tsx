@@ -29,15 +29,12 @@ export default function NewGroup() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // --- FETCH USERS FROM API ---
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
       const response = await ChatsService.getAllUsers({ token });
-
-      console.log("response===========", response);
 
       if (response?.data?.success) {
         const allData: User[] = response.data.data;
@@ -66,19 +63,7 @@ export default function NewGroup() {
     );
   };
 
-  //   const handleCreateGroup = () => {
-  //     const payload = {
-  //       name: groupName,
-  //       participants: selectedUserIds,
-  //       count: selectedUserIds.length,
-  //     };
-
-  //     console.log(" Group Data Ready for API:", payload);
-  //     // Add logic: await ChatsService.createGroup(payload)
-  //   };
-
   const handleCreateGroup = async () => {
-    // Validation
     if (!groupName.trim() || selectedUserIds.length < 2) {
       showErrorToast(
         "Please provide a group name and select at least 2 members.",
@@ -86,29 +71,25 @@ export default function NewGroup() {
       return;
     }
 
-    //Prepare Payload for your specific API structure
     const payload = {
+      type: "GROUP",
       title: groupName,
-      memberIds: selectedUserIds,
+      participant_ids: selectedUserIds,
     };
 
     try {
       const cookies = parseCookies();
       const token = cookies.token || cookies.accessToken || "";
 
-      // const response = await ChatsService.createGroup({
-      //   data: payload,
-      //   token: token,
-      // });
-
-      // console.log("response===========", response);
+      const response = await ChatsService.createDM({
+        data: payload,
+        token,
+      });
 
       showSuccessToast("Group created successfully!");
-      // Redirect to the new conversation or back to chat list
-      // const newChatId = response?.data?.id;
-      // router.push(`/tutor-dashboard/chats/${newChatId}`);
+      const newChatId = response?.data?.data?.id;
+      router.push(`/tutor-dashboard/chats/${newChatId}`);
     } catch (error: any) {
-      //   console.error("Group Creation Error:", error);
       showErrorToast(
         error?.response?.data?.message ||
           "An error occurred while creating the group",
@@ -121,8 +102,6 @@ export default function NewGroup() {
       .toLowerCase()
       .includes(searchQuery.toLowerCase()),
   );
-
-  console.log("filteredUsers==========", filteredUsers);
 
   return (
     <div>
