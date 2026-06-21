@@ -63,8 +63,7 @@ export default function Attendence() {
     setCurrentPage(1);
   };
 
-    // console.log("allAttendance==========", allAttendance);
-
+  // console.log("allAttendance==========", allAttendance);
 
   return (
     <div>
@@ -78,7 +77,7 @@ export default function Attendence() {
                 name="search"
                 value={search}
                 onChange={handleSearchChange}
-                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
+                className="w-full py-2 px-4 rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search Transaction ID"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
