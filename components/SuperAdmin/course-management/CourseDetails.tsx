@@ -296,7 +296,7 @@ export default function CourseDetails() {
             </TabsContent>
 
             <TabsContent value="students" className="mt-4">
-              <Students />
+              <Students courseId={courseId} />
             </TabsContent>
           </Tabs>
         </div>

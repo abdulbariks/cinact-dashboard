@@ -168,6 +168,29 @@ export type TGetAssetsResponse={
 }
 
 
+export type TEnrolledUser = {
+  id: string;
+  name: string;
+  username: string | null;
+  student_id: string;
+  avatar_url: string | null;
+  attendance_percentage: number;
+  assignments_completed: number;
+  total_assignments: number;
+};
+
+export type TGetEnrolledUsersResponse = {
+  message: string;
+  success: boolean;
+  data: TEnrolledUser[];
+  meta_data: {
+    page: number;
+    limit: number;
+    total: number;
+    search: string;
+  };
+};
+
 //  Define the interface for the class payload
 export interface CreateTutorClassPayload {
   class_title: string;

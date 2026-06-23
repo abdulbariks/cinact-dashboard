@@ -99,8 +99,8 @@ const StudentManagementSkeleton = () => {
 export default function StudentManagementHome() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [paymentStatus, setPaymentStatus] = useState("all");
   const [allStudentManagementData, setAllStudentManagementData] = useState<
@@ -109,13 +109,13 @@ export default function StudentManagementHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        setDebouncedSearch(search)
-      }, 300)
-  
-      return () => clearTimeout(timeout)
-    }, [search])
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   useEffect(() => {
     setCurrentPage(1);

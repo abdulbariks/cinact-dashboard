@@ -92,7 +92,10 @@ export const UserService = {
 
   // super admin overview
   getDashboardOverview: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/admin/overview`, withAuthConfig({ token, context }));
+    return await Fetch.get(
+      `/admin/overview`,
+      withAuthConfig({ token, context }),
+    );
   },
 
   // get all courses
@@ -135,7 +138,15 @@ export const UserService = {
   },
 
   // Student Details (admin)
-  getStudentDetails: async ({ id, token = "", context = null }: { id: string; token?: string; context?: any }) => {
+  getStudentDetails: async ({
+    id,
+    token = "",
+    context = null,
+  }: {
+    id: string;
+    token?: string;
+    context?: any;
+  }) => {
     return await Fetch.get(
       `/admin/users/${id}`,
       withAuthConfig({ token, context }),
@@ -308,7 +319,7 @@ export const UserService = {
     );
   },
 
-  // get all posts 
+  // get all posts
   getAllCommunityPosts: async ({
     token = "",
     context = null,
@@ -501,40 +512,40 @@ export const UserService = {
 };
 
 export const AdminAttendanceService = {
-   getAttendance: async ({
-     page = 1,
-     limit = 10,
-     status,
-     search,
-     date,
-     classId,
-     courseId,
-     token = "",
-     context = null,
-   }: {
-     page?: number;
-     limit?: number;
-     status?: string;
-     search?: string;
-     date?: string;
-     classId: string;
-     courseId?: string;
-     token?: string;
-     context?: any;
-   }) => {
-     const params = new URLSearchParams();
-     params.append("page", page.toString());
-     params.append("limit", limit.toString());
-     if (status) params.append("status", status);
-     if (search) params.append("search", search);
-     if (date) params.append("date", date);
-     if(classId) params.append("class_id", classId);
-     if (courseId) params.append("course_id", courseId);
-     return await Fetch.get(
-       `/admin/courses/attendance?${params.toString()}`,
-       withAuthConfig({ token, context }),
-     );
-   },
+  getAttendance: async ({
+    page = 1,
+    limit = 10,
+    status,
+    search,
+    date,
+    classId,
+    courseId,
+    token = "",
+    context = null,
+  }: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    search?: string;
+    date?: string;
+    classId: string;
+    courseId?: string;
+    token?: string;
+    context?: any;
+  }) => {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+    if (status) params.append("status", status);
+    if (search) params.append("search", search);
+    if (date) params.append("date", date);
+    if (classId) params.append("class_id", classId);
+    if (courseId) params.append("course_id", courseId);
+    return await Fetch.get(
+      `/admin/courses/attendance?${params.toString()}`,
+      withAuthConfig({ token, context }),
+    );
+  },
   // Manual Attendance
   manualAttendance: async ({
     classId,
@@ -838,6 +849,27 @@ export const AdminCourseManagementService = {
       withAuthConfig({ token, context }),
     );
   },
+
+  getEnrolledUsers: async ({
+    courseId,
+    token = "",
+    context = null,
+    page = 1,
+    limit = 10,
+    search = "",
+  }: {
+    courseId: string;
+    token?: string;
+    context?: any;
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) => {
+    return await Fetch.get(`/admin/courses/${courseId}/enrolled_users`, {
+      ...withAuthConfig({ token, context }),
+      params: { page, limit, search },
+    });
+  },
 };
 
 export const AdminPaymentsTransactionsService = {
@@ -849,37 +881,47 @@ export const AdminPaymentsTransactionsService = {
     );
   },
 
-// get Finance Payments Transactions
-    getAllPaymentsTransactions: async ({
-      token = "",
-      context = null,
-      search = "",
-      date,
-      payment_type = "",
-      status = "",
-      page = 1,
-      limit = 10,
-    }: {
-      token?: string;
-      context?: any;
-      search?: string;
-      date?: Date | string;
-      payment_type?: "ALL" | "ONE_TIME" | "MONTHLY" | "";
-      status?: string;
-      page?: number;
-      limit?: number;
-    } = {}) => {
-      return await Fetch.get(`/admin/transactions`, {
-        ...withAuthConfig({ token, context }),
-        params: {
-          ...(search ? { search } : {}),
-          ...(date ? { date: (() => { const d = date instanceof Date ? date : new Date(date); const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, "0"); const day = String(d.getDate()).padStart(2, "0"); return `${y}-${m}-${day}`; })() } : {}),
-          ...(payment_type ? { payment_type } : {}),
-          ...(status ? { status } : {}),
-          page,
-          limit,
-       },
-     });
+  // get Finance Payments Transactions
+  getAllPaymentsTransactions: async ({
+    token = "",
+    context = null,
+    search = "",
+    date,
+    payment_type = "",
+    status = "",
+    page = 1,
+    limit = 10,
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    date?: Date | string;
+    payment_type?: "ALL" | "ONE_TIME" | "MONTHLY" | "";
+    status?: string;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    return await Fetch.get(`/admin/transactions`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        ...(search ? { search } : {}),
+        ...(date
+          ? {
+              date: (() => {
+                const d = date instanceof Date ? date : new Date(date);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, "0");
+                const day = String(d.getDate()).padStart(2, "0");
+                return `${y}-${m}-${day}`;
+              })(),
+            }
+          : {}),
+        ...(payment_type ? { payment_type } : {}),
+        ...(status ? { status } : {}),
+        page,
+        limit,
+      },
+    });
   },
 };
 
@@ -1016,12 +1058,9 @@ export const AdminCommunityService = {
     token: string = "",
     context: any = null,
   ) => {
-    return await Fetch.get(
-      `/admin/community/posts/${id}`,
-      {
-        ...withAuthConfig({ token, context }),
-      },
-    );
+    return await Fetch.get(`/admin/community/posts/${id}`, {
+      ...withAuthConfig({ token, context }),
+    });
   },
   statusUpdatePost: async (id: string, token: string, status: string) =>
     await Fetch.patch(
