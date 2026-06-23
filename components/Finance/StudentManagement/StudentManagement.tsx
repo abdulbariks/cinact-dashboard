@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { parseCookies } from "nookies";
 
-import { studentManagementColumns } from "@/components/columns/studentManagementColumns";
+import { getFinanceStudentManagementColumns } from "@/components/columns/getFinanceStudentManagementColumns";
 import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 import SearchIcon from "@/components/icons/SuperAdmindashboard/SearchIcon";
 import DynamicTable from "@/components/reusable/DynamicTable";
@@ -120,7 +120,7 @@ export default function StudentManagementHome() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [itemsPerPage, search, status, paymentStatus]);
+  }, [itemsPerPage, debouncedSearch, status, paymentStatus]);
 
   const fetchStudentManagement = React.useCallback(async () => {
     setLoading(true);
@@ -130,7 +130,7 @@ export default function StudentManagementHome() {
       const token = cookies.token || cookies.accessToken || "";
       const response = await UserService.getAllStudentManagement({
         token,
-        search,
+        search: debouncedSearch,
         status: status === "all" ? "" : status,
         paymentStatus: paymentStatus === "all" ? "" : paymentStatus,
         type: "Student",
@@ -150,7 +150,7 @@ export default function StudentManagementHome() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, itemsPerPage, search, status, paymentStatus]);
+  }, [currentPage, itemsPerPage, debouncedSearch, status, paymentStatus]);
 
   useEffect(() => {
     fetchStudentManagement();
@@ -201,19 +201,19 @@ export default function StudentManagementHome() {
             <StudentStatusFilter value={status} onValueChange={setStatus} />
           </div>
         </div>
-        <DynamicTable
-          columns={studentManagementColumns}
-          data={allStudentManagementData?.data || []}
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          totalpage={allStudentManagementData?.pagination?.totalPages || 1}
-          totalItems={allStudentManagementData?.pagination?.total || 0}
-          onPageChange={setCurrentPage}
-          setItemsPerPage={setItemsPerPage}
-          noDataMessage="No students found"
-          loading={loading}
-          error={error}
-        />
+<DynamicTable
+           columns={getFinanceStudentManagementColumns(fetchStudentManagement)}
+           data={allStudentManagementData?.data || []}
+           currentPage={currentPage}
+           itemsPerPage={itemsPerPage}
+           totalpage={allStudentManagementData?.pagination?.totalPages || 1}
+           totalItems={allStudentManagementData?.pagination?.total || 0}
+           onPageChange={setCurrentPage}
+           setItemsPerPage={setItemsPerPage}
+           noDataMessage="No students found"
+           loading={loading}
+           error={error}
+         />
       </div>
     </div>
   );

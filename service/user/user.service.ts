@@ -364,6 +364,28 @@ export const UserService = {
     return await Fetch.post("/auth/register", data, jsonConfig);
   },
 
+  updateUser: async ({
+    userId,
+    payload,
+    token = "",
+    context = null,
+  }: {
+    userId: string;
+    payload: {
+      full_name?: string;
+      phone_number?: string;
+      status?: string;
+    };
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.patch(
+      `/admin/users/${userId}`,
+      payload,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   logout: (context = null) => {
     CookieHelper.destroy({ key: "token", context });
     CookieHelper.destroy({ key: "accessToken", context });
