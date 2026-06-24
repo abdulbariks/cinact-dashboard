@@ -68,7 +68,7 @@ export default function AttendenceHome() {
     setCurrentPage(1);
   };
 
-    // console.log("allAttendance==========", allAttendance);
+  // console.log("allAttendance==========", allAttendance);
 
   const statsData = [
     {
@@ -116,11 +116,14 @@ export default function AttendenceHome() {
           </div>
         ))}
       </div> */}
+      <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
+        Attendance Management
+      </h2>
 
       <div className=" p-6 bg-[#0a1726] rounded-2xl mt-8">
-        <div className=" flex items-center justify-between">
+        <div className=" flex flex-col md:flex-row gap-3 items-center justify-between">
           <h3 className=" text-white text-xl font-semibold">Attendance List</h3>
-          <div className=" flex items-center gap-2">
+          <div className=" flex flex-col md:flex-row items-center gap-2">
             <div className=" relative w-80">
               <input
                 type="text"

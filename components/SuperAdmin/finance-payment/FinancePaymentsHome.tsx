@@ -33,7 +33,9 @@ type StatsCardData = {
 export default function FinancePaymentsHome() {
   const [paymentPlan, setPaymentPlan] = useState<string>("all");
   const [status, setStatus] = useState<string>("SUCCESS");
-  const [statsCardData, setStatsCardData] = useState<StatsCardData | null>(null);
+  const [statsCardData, setStatsCardData] = useState<StatsCardData | null>(
+    null,
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [search, setSearch] = useState("");
@@ -45,7 +47,6 @@ export default function FinancePaymentsHome() {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
 
   useEffect(() => {
     const loadStatsCardData = async () => {
@@ -116,8 +117,7 @@ export default function FinancePaymentsHome() {
         setTotalPages(
           meta.total_pages ??
             Math.ceil(
-              (meta.total ?? paymentsTransactionsData.length) /
-                itemsPerPage,
+              (meta.total ?? paymentsTransactionsData.length) / itemsPerPage,
             ),
         );
       } catch (err: any) {
@@ -157,32 +157,35 @@ export default function FinancePaymentsHome() {
       </div>
 
       <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
-        <div className=" flex flex-col lg:flex-row items-center justify-between mb-6">
+        <div className=" flex flex-col lg:flex-row gap-3 items-center justify-between mb-6">
           <h3 className=" text-white text-xl font-semibold">
             {/* Transactions (44) */}
             Transactions ({allPaymentsTransactions?.length})
           </h3>
-<div className=" flex flex-col md:flex-row items-center gap-2">
-             <div className=" relative w-80">
-               <input
-                 type="text"
-                 name="search"
-                 value={search}
-                 onChange={(e) => setSearch(e.target.value)}
-                 className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
-                  placeholder="Search Transaction"
-                />
-               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
-                 <SearchIcon />
-               </button>
-             </div>
-             <DatePickerButton date={date} setDate={setDate} />
-             <PaymentStatusDropdown status={status} setStatus={setStatus} />
-             <AllPaymentPlan
-               paymentPlan={paymentPlan}
-               setPaymentPlan={setPaymentPlan}
-             />
-           </div>
+          <div className=" flex flex-col lg:flex-row items-center gap-2">
+            <div className=" relative w-80">
+              <input
+                type="text"
+                name="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
+                placeholder="Search Transaction"
+              />
+              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
+                <SearchIcon />
+              </button>
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-2">
+              {" "}
+              <DatePickerButton date={date} setDate={setDate} />
+              <PaymentStatusDropdown status={status} setStatus={setStatus} />
+              <AllPaymentPlan
+                paymentPlan={paymentPlan}
+                setPaymentPlan={setPaymentPlan}
+              />
+            </div>
+          </div>
         </div>
         <DynamicTable
           columns={transactionsColumns}

@@ -136,11 +136,11 @@ export default function CourseManagementHome() {
   useEffect(() => {
     loadCourses();
   }, [search, status, currentPage, itemsPerPage]);
-  
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(e.target.value);
-      setCurrentPage(1);
-    };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
 
   const handleStatusChange = (value: string) => {
     setStatus(value);
@@ -166,9 +166,9 @@ export default function CourseManagementHome() {
         Course Management
       </h2>
       <div className=" bg-[#0a1726] p-6 rounded-2xl mt-5">
-        <div className=" flex items-center justify-between">
+        <div className=" flex flex-col md:flex-row items-center gap-4 justify-between">
           <h3 className=" text-white text-xl font-semibold">All Courses</h3>
-          <div className=" flex items-center gap-2">
+          <div className=" flex flex-col  md:flex-row items-center gap-2">
             <div className=" relative w-80">
               <input
                 type="text"
