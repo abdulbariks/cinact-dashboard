@@ -48,12 +48,12 @@ export default function StudentDetails() {
 
   const navItems = [
     {
-      value: "payment-history",
-      label: "Payment History",
-    },
-    {
       value: "all-courses",
       label: "All Courses",
+    },
+    {
+      value: "payment-history",
+      label: "Payment History",
     },
   ];
 
@@ -138,7 +138,9 @@ export default function StudentDetails() {
           <div className=" flex flex-col lg:flex-row items-center  justify-between">
             <div className=" flex items-center gap-3">
               <Image
-                src={student?.data?.avatar || "/admin-dashboard/avatar-1.png"}
+                src={
+                  student?.data?.avatarUrl || "/admin-dashboard/avatar-1.png"
+                }
                 alt="Student Profile"
                 height={40}
                 width={40}

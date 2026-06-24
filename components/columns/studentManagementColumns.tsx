@@ -219,7 +219,7 @@ export const getStudentManagementColumns = (onRefresh: () => void) => [
     width: "250px",
     formatter: (value: string, row: any) => {
       const getAvatarSrc = () => {
-        if (row.avatar) return row.avatar;
+        // if (row.avatar) return row.avatar;
         if (row.avatar_url) return row.avatar_url;
         return avatar1;
       };

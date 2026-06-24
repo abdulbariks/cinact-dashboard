@@ -58,22 +58,21 @@ const mapStudentRow = (student: StudentApiItem): StudentRow => ({
 const StudentManagementSkeleton = () => {
   return (
     <div>
-      <div className=" flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Skeleton className="h-8 w-56 bg-[#1d2a3e]" />
         <Skeleton className="h-12 w-36 rounded-xl bg-[#1d2a3e]" />
       </div>
 
-      <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
-        <div className=" flex items-center justify-between mb-6">
+      <div className="mt-5 p-4 sm:p-6 bg-[#0A1726] rounded-2xl">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
           <Skeleton className="h-6 w-40 bg-[#1d2a3e]" />
-          <div className=" flex items-center gap-2">
-            <Skeleton className="h-10 w-80 rounded-xl bg-[#1d2a3e]" />
-            <Skeleton className="h-10 w-48 rounded-xl bg-[#1d2a3e]" />
-            <Skeleton className="h-10 w-48 rounded-xl bg-[#1d2a3e]" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full lg:w-auto">
+            <Skeleton className="h-10 w-full sm:w-80 rounded-xl bg-[#1d2a3e]" />
+            <Skeleton className="h-10 w-full sm:w-48 rounded-xl bg-[#1d2a3e]" />
           </div>
         </div>
 
-        <div className=" mt-6 space-y-3">
+        <div className="mt-6 space-y-3">
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={index}
@@ -108,6 +107,7 @@ export default function StudentManagementHome() {
   >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  // console.log(allStudentManagementData);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -161,42 +161,38 @@ export default function StudentManagementHome() {
 
   return (
     <div>
-      <div className=" flex items-center justify-between">
-        <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h2 className="text-2xl text-[#E6E7E8] font-semibold">
           Student Management
         </h2>
         <Link
           href="/dashboard/student-management/add-student"
-          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
+          className="p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
         >
           <PlusIcon />
           Add Student
         </Link>
       </div>
 
-      <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
-        <div className=" flex items-center justify-between mb-6">
-          <h3 className=" text-white text-xl font-semibold">
-            All Students ({allStudentManagementData?.pagination?.total || 0})
+      <div className="mt-5 p-4 sm:p-6 bg-[#0A1726] rounded-2xl">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
+          <h3 className="text-white text-xl font-semibold">
+            All Students ({allStudentManagementData?.meta_data?.total || 0})
           </h3>
-          <div className=" flex items-center gap-2">
-            <div className=" relative w-80">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full lg:w-auto">
+            <div className="relative w-full sm:w-80">
               <input
                 type="text"
                 name="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
+                className="w-full py-2 px-4 rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search User"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
                 <SearchIcon />
               </button>
             </div>
-            {/* <PaymentTypeFilter
-              value={paymentStatus}
-              onValueChange={setPaymentStatus}
-            /> */}
             <StudentStatusFilter value={status} onValueChange={setStatus} />
           </div>
         </div>
