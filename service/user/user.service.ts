@@ -386,6 +386,22 @@ export const UserService = {
     );
   },
 
+  // Get payment history for a user
+  getPaymentHistory: async ({
+    userId,
+    token = "",
+    context = null,
+  }: {
+    userId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/admin/transactions?user_id=${userId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   logout: (context = null) => {
     CookieHelper.destroy({ key: "token", context });
     CookieHelper.destroy({ key: "accessToken", context });
@@ -620,6 +636,22 @@ export const AdminCourseManagementService = {
         limit,
       },
     });
+  },
+
+  // Fetch courses for a specific user
+  getCoursesByUserId: async ({
+    userId,
+    token = "",
+    context = null,
+  }: {
+    userId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/admin/courses?user_id=${userId}`,
+      withAuthConfig({ token, context }),
+    );
   },
 
   createCourse: async ({
