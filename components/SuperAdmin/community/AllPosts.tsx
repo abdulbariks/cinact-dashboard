@@ -95,7 +95,9 @@ export default function AllPosts({
     {},
   );
   const [isWarningOpen, setIsWarningOpen] = useState(false);
-  const [selectedPostToDelete, setSelectedPostToDelete] = useState<string | null>(null);
+  const [selectedPostToDelete, setSelectedPostToDelete] = useState<
+    string | null
+  >(null);
 
   // console.log("posts============", posts);
 
@@ -167,20 +169,23 @@ export default function AllPosts({
       setSelectedPostToDelete(null);
     }
   };
+
   return (
     <div className="space-y-3">
       {isLoading ? (
-        <div className="text-white p-10 text-center">Loading posts...</div>
+        <div className="text-white p-8 sm:p-10 text-center">
+          Loading posts...
+        </div>
       ) : posts.length > 0 ? (
         posts.map((post) => (
           <div
             key={post.id}
-            className="p-4 border border-[#383e57] rounded-xl bg-[#030C15] flex items-start justify-between"
+            className="p-3 sm:p-4 border border-[#383e57] rounded-xl bg-[#030C15] flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0"
           >
-            <div className="flex items-start gap-3.5">
+            <div className="flex items-start gap-2.5 sm:gap-3.5">
               <div>
                 {!post.avatar || failedAvatars[post.id] ? (
-                  <div className="size-10 rounded-full bg-[#1a2432] flex items-center justify-center text-xs text-[#E6E7E8] font-semibold">
+                  <div className="size-9 sm:size-10 rounded-full bg-[#1a2432] flex items-center justify-center text-xs text-[#E6E7E8] font-semibold">
                     {getNameInitials(post.user_name)}
                   </div>
                 ) : (
@@ -189,7 +194,7 @@ export default function AllPosts({
                     alt={post.user_name}
                     width={40}
                     height={40}
-                    className="rounded-full object-cover size-10"
+                    className="rounded-full object-cover size-9 sm:size-10"
                     unoptimized
                     onError={() =>
                       setFailedAvatars((prev) => ({ ...prev, [post.id]: true }))
@@ -198,27 +203,29 @@ export default function AllPosts({
                 )}
               </div>
 
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base text-[#A5A5AB] font-medium">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <h3 className="text-sm sm:text-base text-[#A5A5AB] font-medium">
                     {post.user_name}
                   </h3>
                   <p
-                    className={`text-sm py-0.5 px-1.5 rounded-lg inline-block ${getTypeBadgeColors(post.role).bg} ${getTypeBadgeColors(post.role).text}`}
+                    className={`text-xs sm:text-sm py-0.5 px-1 rounded-lg inline-block ${getTypeBadgeColors(post.role).bg} ${getTypeBadgeColors(post.role).text}`}
                   >
                     {post.role}
                   </p>
                   <p
-                    className={`text-sm py-0.5 px-1.5 rounded-lg inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}
+                    className={`text-xs sm:text-sm py-0.5 px-1 rounded-lg inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}
                   >
                     {post.status}
                   </p>
-                  <p className="text-sm text-[#777980] py-0.5 px-1.5 inline-block">
+                  <p className="text-xs sm:text-sm text-[#777980] py-0.5 px-1 inline-block">
                     {post.date}
                   </p>
                 </div>
-                <p className="text-[#A5A5AB] text-sm mt-3">{post.content}</p>
-                <div className="flex items-center gap-6 mt-3">
+                <p className="text-[#A5A5AB] text-xs sm:text-sm mt-2 sm:mt-3">
+                  {post.content}
+                </p>
+                <div className="flex items-center gap-4 sm:gap-6 mt-2 sm:mt-3">
                   <div className="flex items-center gap-1">
                     <LikeIcon />
                     <p className="text-xs text-[#B2B5B8] font-medium">
@@ -235,19 +242,19 @@ export default function AllPosts({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 self-end sm:self-auto">
               <Link
                 href={`/dashboard/community/${post.id}`}
-                className="p-1.5 bg-[#0e1825] rounded-lg"
+                className="p-1 sm:p-1.5 bg-[#0e1825] rounded-lg"
               >
                 <EyeIcon />
               </Link>
-              <button className="p-2.5 bg-[#0e1825] rounded-lg">
+              <button className="p-1.5 sm:p-2.5 bg-[#0e1825] rounded-lg">
                 <FlagIcon />
               </button>
               <button
                 onClick={() => handleDelete(post.id)}
-                className="p-1.5 bg-[#0e1825] rounded-lg cursor-pointer"
+                className="p-1 sm:p-1.5 bg-[#0e1825] rounded-lg cursor-pointer"
               >
                 <TrashIconRed />
               </button>
@@ -255,7 +262,7 @@ export default function AllPosts({
           </div>
         ))
       ) : (
-        <div className="p-10 border border-[#383e57] rounded-xl bg-[#030C15] text-[#A5A5AB] text-center">
+        <div className="p-8 sm:p-10 border border-[#383e57] rounded-xl bg-[#030C15] text-[#A5A5AB] text-center">
           No posts found
         </div>
       )}
@@ -269,24 +276,25 @@ export default function AllPosts({
         itemsPerPage={itemsPerPage}
         setItemsPerPage={setItemsPerPage}
       />
-      {/* Delete confirmation dialog (only for delete) */}
       <Dialog open={isWarningOpen} onOpenChange={setIsWarningOpen}>
         <DialogContent
           hideCloseButton
-          className="w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-8 text-white"
+          className="w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-6 sm:p-8 text-white"
         >
           <div className="flex flex-col items-center text-center">
             <Image src={warnigImg} alt="Warning" />
-            <h3 className="mt-4 text-xl font-semibold text-white">Delete Post?</h3>
-            <p className="mt-2 text-sm text-[#B2B5B8]">
+            <h3 className="mt-4 text-lg sm:text-xl font-semibold text-white">
+              Delete Post?
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-[#B2B5B8]">
               Are you sure you want to delete this post?
             </p>
 
-            <div className="mt-6 flex items-center gap-3">
+            <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setIsWarningOpen(false)}
-                className="flex items-center gap-2.5 rounded-2xl border border-[#3D4566] px-11 py-4 text-sm font-medium text-white hover:bg-[#5F6CA0]"
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 rounded-2xl border border-[#3D4566] px-8 sm:px-11 py-3 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#5F6CA0]"
               >
                 <CrossIcon />
                 Cancel
@@ -294,7 +302,7 @@ export default function AllPosts({
               <button
                 type="button"
                 onClick={performDelete}
-                className="flex items-center gap-2.5 rounded-2xl bg-[#E9201D] px-11 py-4 text-sm font-medium text-white hover:bg-[#ff3b1f]"
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 rounded-2xl bg-[#E9201D] px-8 sm:px-11 py-3 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#ff3b1f]"
               >
                 <TrashIcon />
                 Delete

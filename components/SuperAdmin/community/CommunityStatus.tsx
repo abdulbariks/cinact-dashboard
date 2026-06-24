@@ -21,7 +21,7 @@ export default function CommunityStatus({
 }: CommunityStatusProps) {
   return (
     <Select name="communityStatus" value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-48 py-5 cursor-pointer border-none text-white bg-[#505B86] hover:bg-[#5f6a96] data-[state=open]:bg-[#6c78a9] data-[placeholder]:text-white [&>svg]:hidden">
+      <SelectTrigger className="w-full sm:w-48 py-5 cursor-pointer border-none text-white bg-[#505B86] hover:bg-[#5f6a96] data-[state=open]:bg-[#6c78a9] data-[placeholder]:text-white [&>svg]:hidden">
         <div className="flex items-center justify-between w-full">
           <SelectValue placeholder="Select Status" />
           <DropDownIcon className="h-4 w-4" />

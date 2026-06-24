@@ -148,76 +148,84 @@ export default function ModaretionRequest({
     }
   };
 
-  return (
-    <div className=" space-y-3">
-      {requestPosts.map((post) => (
-        <div
-          key={post.id}
-          className="p-4 border border-[#383e57] rounded-xl bg-[#030C15] flex items-start justify-between"
-        >
-          <div className=" flex items-start gap-3.5">
-            <div>
-              {!post.avatar || failedAvatars[post.id] ? (
-                <div className="size-10 rounded-full bg-[#1a2432] flex items-center justify-center text-xs text-[#E6E7E8] font-semibold">
-                  {getNameInitials(post.user_name)}
-                </div>
-              ) : (
-                <Image
-                  src={post.avatar}
-                  alt={post.user_name}
-                  width={40}
-                  height={40}
-                  className="rounded-full object-cover size-10"
-                  unoptimized
-                  onError={() =>
-                    setFailedAvatars((prev) => ({ ...prev, [post.id]: true }))
-                  }
-                />
-              )}
-            </div>
-
-            <div>
-              <div className=" flex items-center gap-2">
-                <h3 className=" text-base text-[#A5A5AB] font-medium">
-                  {post.user_name}
-                </h3>
-                <p
-                  className={` text-sm py-0.5 px-1.5 rounded-lg inline-block ${getTypeBadgeColors(post.role).bg} ${getTypeBadgeColors(post.role).text}`}
-                >
-                  {post.role}
-                </p>
-                <p
-                  className={` text-sm py-0.5 px-1.5 rounded-lg inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}
-                >
-                  {post.status}
-                </p>
-                <p className=" text-sm text-[#777980] py-0.5 px-1.5   inline-block ">
-                  {post.date}
-                </p>
+return (
+    <div className="space-y-3">
+      {isLoading ? (
+        <div className="text-white p-8 sm:p-10 text-center">Loading posts...</div>
+      ) : requestPosts.length > 0 ? (
+        requestPosts.map((post) => (
+          <div
+            key={post.id}
+            className="p-3 sm:p-4 border border-[#383e57] rounded-xl bg-[#030C15] flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0"
+          >
+            <div className="flex items-start gap-2.5 sm:gap-3.5">
+              <div>
+                {!post.avatar || failedAvatars[post.id] ? (
+                  <div className="size-9 sm:size-10 rounded-full bg-[#1a2432] flex items-center justify-center text-xs text-[#E6E7E8] font-semibold">
+                    {getNameInitials(post.user_name)}
+                  </div>
+                ) : (
+                  <Image
+                    src={post.avatar}
+                    alt={post.user_name}
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover size-9 sm:size-10"
+                    unoptimized
+                    onError={() =>
+                      setFailedAvatars((prev) => ({ ...prev, [post.id]: true }))
+                    }
+                  />
+                )}
               </div>
-              <p className=" text-[#A5A5AB] text-sm mt-3">{post.content}</p>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <h3 className="text-sm sm:text-base text-[#A5A5AB] font-medium">
+                    {post.user_name}
+                  </h3>
+                  <p
+                    className={`text-xs sm:text-sm py-0.5 px-1 rounded-lg inline-block ${getTypeBadgeColors(post.role).bg} ${getTypeBadgeColors(post.role).text}`}
+                  >
+                    {post.role}
+                  </p>
+                  <p
+                    className={`text-xs sm:text-sm py-0.5 px-1 rounded-lg inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}
+                  >
+                    {post.status}
+                  </p>
+                  <p className="text-xs sm:text-sm text-[#777980] py-0.5 px-1 inline-block">
+                    {post.date}
+                  </p>
+                </div>
+                <p className="text-[#A5A5AB] text-xs sm:text-sm mt-2 sm:mt-3">{post.content}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 sm:gap-2 self-end sm:self-auto">
+              <Link
+                href={`/dashboard/community/${post.id}`}
+                className="p-1 sm:p-1.5 bg-[#0e1825] rounded-lg"
+              >
+                <EyeIcon />
+              </Link>
+              <button className="cursor-pointer p-1.5 sm:p-1.75 bg-[#0e1825] rounded-lg">
+                <GreenTikIcon />
+              </button>
+              <button
+                onClick={() => handleDelete(post.id)}
+                className="cursor-pointer p-1.5 sm:p-3 bg-[#0e1825] rounded-lg"
+              >
+                <RedCross />
+              </button>
             </div>
           </div>
-
-          <div className=" flex items-center gap-2">
-            <Link
-              href={`/dashboard/community/${post.id}`}
-              className="p-1.5 bg-[#0e1825] rounded-lg"
-            >
-              <EyeIcon />
-            </Link>
-            <button className=" cursor-pointer p-1.75 bg-[#0e1825] rounded-lg">
-              <GreenTikIcon />
-            </button>
-            <button
-              onClick={() => handleDelete(post.id)}
-              className=" cursor-pointer p-3 bg-[#0e1825] rounded-lg"
-            >
-              <RedCross />
-            </button>
-          </div>
+        ))
+      ) : (
+        <div className="p-8 sm:p-10 border border-[#383e57] rounded-xl bg-[#030C15] text-[#A5A5AB] text-center">
+          No posts found
         </div>
-      ))}
+      )}
 
       <PaginationPage
         totalPages={totalPages}
