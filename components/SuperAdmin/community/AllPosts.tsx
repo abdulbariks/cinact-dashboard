@@ -138,6 +138,19 @@ export default function AllPosts({
     fetchPosts();
   }, [currentPage, itemsPerPage, search, selectedRole, selectedStatus]);
 
+  useEffect(() => {
+    const handleAnnouncementCreated = () => {
+      fetchPosts();
+    };
+    window.addEventListener("announcement-created", handleAnnouncementCreated);
+    return () => {
+      window.removeEventListener(
+        "announcement-created",
+        handleAnnouncementCreated,
+      );
+    };
+  }, []);
+
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   const handleDelete = async (postId: string) => {
@@ -249,9 +262,9 @@ export default function AllPosts({
               >
                 <EyeIcon />
               </Link>
-              <button className="p-1.5 sm:p-2.5 bg-[#0e1825] rounded-lg">
+              {/* <button className="p-1.5 sm:p-2.5 bg-[#0e1825] rounded-lg">
                 <FlagIcon />
-              </button>
+              </button> */}
               <button
                 onClick={() => handleDelete(post.id)}
                 className="p-1 sm:p-1.5 bg-[#0e1825] rounded-lg cursor-pointer"

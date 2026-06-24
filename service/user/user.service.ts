@@ -1135,10 +1135,56 @@ export const AdminCommunityService = {
   //     withAuthConfig({ token }),
   //   ),
   deletePost: async (id: string, token: string = "") => {
-    // admin/community/post/cmm7df5lm0001kg90ajhm9olt
     return await Fetch.delete(`/admin/community/post/${id}`, {
       ...withAuthConfig({ token }),
     });
+  },
+
+  createAnnouncement: async ({
+    token = "",
+    context = null,
+    post_type,
+    content,
+    attachments,
+    poll_options,
+  }: {
+    token?: string;
+    context?: any;
+    post_type: "POST" | "POLL";
+    content: string;
+    attachments?: File[];
+    poll_options?: string[];
+  }) => {
+    // For POLL type, send as JSON body (no files)
+    if (post_type === "POLL") {
+      const payload = {
+        post_type,
+        content,
+        poll_options,
+      };
+
+      return await Fetch.post(
+        `/admin/community`,
+        payload,
+        withAuthConfig({ token, context }),
+      );
+    }
+
+    // For POST type with attachments, use FormData
+    const formData = new FormData();
+    formData.append("post_type", post_type);
+    formData.append("content", content);
+
+    if (attachments && attachments.length > 0) {
+      attachments.forEach((file) => {
+        formData.append("attachments", file);
+      });
+    }
+
+    const config = withAuthConfig({ token, context });
+    delete config.headers["Content-Type"];
+
+    return await Fetch.post(`/admin/community`, formData, config);
   },
 };
 

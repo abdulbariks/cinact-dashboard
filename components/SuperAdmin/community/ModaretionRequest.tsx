@@ -12,6 +12,11 @@ import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { AdminCommunityService } from "@/service/user/user.service";
 import moment from "moment";
 import PaginationPage from "@/components/reusable/PaginationPage";
+import TrashIconRed from "@/components/icons/course-management/TrashIconRed";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import TrashIcon from "@/components/icons/others/TrashIcon";
+import CrossIcon from "@/components/icons/others/CrossIcon";
+import warnigImg from "@/public/admin-dashboard/warning-img.png";
 
 type ModaretionRequestProps = {
   search?: string;
@@ -87,6 +92,36 @@ export default function ModaretionRequest({
   const [failedAvatars, setFailedAvatars] = useState<Record<string, boolean>>(
     {},
   );
+  const [isWarningOpen, setIsWarningOpen] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
+
+  const handleDelete = async (postId: string) => {
+    setPostIdToDelete(postId);
+    setIsWarningOpen(true);
+  };
+
+  const performDelete = async () => {
+    if (!postIdToDelete) return;
+    setIsWarningOpen(false);
+
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await AdminCommunityService.deletePost(
+        postIdToDelete,
+        token,
+      );
+
+      if (response?.data?.success) {
+        showSuccessToast(response.data.message || "Post deleted successfully");
+        fetchPosts();
+      }
+    } catch (error: any) {
+      showErrorToast(error?.data?.message || "Failed to delete post");
+    } finally {
+      setPostIdToDelete(null);
+    }
+  };
 
   // console.log("requestPosts============", requestPosts);
 
@@ -127,31 +162,27 @@ export default function ModaretionRequest({
     fetchPosts();
   }, [currentPage, itemsPerPage, search, selectedRole, selectedStatus]);
 
+  useEffect(() => {
+    const handleAnnouncementCreated = () => {
+      fetchPosts();
+    };
+    window.addEventListener("announcement-created", handleAnnouncementCreated);
+    return () => {
+      window.removeEventListener(
+        "announcement-created",
+        handleAnnouncementCreated,
+      );
+    };
+  }, []);
+
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
-  const handleDelete = async (postId: string) => {
-    // Optional: Add a confirmation dialog
-    if (!confirm("Are you sure you want to delete this post?")) return;
-
-    try {
-      const cookies = parseCookies();
-      const token = cookies.token || cookies.accessToken || "";
-      const response = await AdminCommunityService.deletePost(postId, token);
-
-      if (response?.data?.success) {
-        showSuccessToast(response.data.message || "Post deleted successfully");
-        // Refresh the list after deletion
-        fetchPosts();
-      }
-    } catch (error: any) {
-      showErrorToast(error?.data?.message || "Failed to delete post");
-    }
-  };
-
-return (
+  return (
     <div className="space-y-3">
       {isLoading ? (
-        <div className="text-white p-8 sm:p-10 text-center">Loading posts...</div>
+        <div className="text-white p-8 sm:p-10 text-center">
+          Loading posts...
+        </div>
       ) : requestPosts.length > 0 ? (
         requestPosts.map((post) => (
           <div
@@ -198,7 +229,9 @@ return (
                     {post.date}
                   </p>
                 </div>
-                <p className="text-[#A5A5AB] text-xs sm:text-sm mt-2 sm:mt-3">{post.content}</p>
+                <p className="text-[#A5A5AB] text-xs sm:text-sm mt-2 sm:mt-3">
+                  {post.content}
+                </p>
               </div>
             </div>
 
@@ -209,14 +242,14 @@ return (
               >
                 <EyeIcon />
               </Link>
-              <button className="cursor-pointer p-1.5 sm:p-1.75 bg-[#0e1825] rounded-lg">
+              {/* <button className="cursor-pointer p-1.5 sm:p-1.75 bg-[#0e1825] rounded-lg">
                 <GreenTikIcon />
-              </button>
+              </button> */}
               <button
                 onClick={() => handleDelete(post.id)}
                 className="cursor-pointer p-1.5 sm:p-3 bg-[#0e1825] rounded-lg"
               >
-                <RedCross />
+                <TrashIconRed />
               </button>
             </div>
           </div>
@@ -236,6 +269,42 @@ return (
         itemsPerPage={itemsPerPage}
         setItemsPerPage={setItemsPerPage}
       />
+
+      <Dialog open={isWarningOpen} onOpenChange={setIsWarningOpen}>
+        <DialogContent
+          hideCloseButton
+          className="w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-6 sm:p-8 text-white"
+        >
+          <div className="flex flex-col items-center text-center">
+            <Image src={warnigImg} alt="Warning" />
+            <h3 className="mt-4 text-lg sm:text-xl font-semibold text-white">
+              Delete Post?
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-[#B2B5B8]">
+              Are you sure you want to delete this post?
+            </p>
+
+            <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setIsWarningOpen(false)}
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 rounded-2xl border border-[#3D4566] px-8 sm:px-11 py-3 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#5F6CA0]"
+              >
+                <CrossIcon />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={performDelete}
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 rounded-2xl bg-[#E9201D] px-8 sm:px-11 py-3 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#ff3b1f]"
+              >
+                <TrashIcon />
+                Delete
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

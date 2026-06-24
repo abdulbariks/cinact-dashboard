@@ -9,12 +9,14 @@ import CommunityStatus from "./CommunityStatus";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import AllPosts from "./AllPosts";
 import ModaretionRequest from "./ModaretionRequest";
+import CreateAnnouncementModal from "./CreateAnnouncementModal";
 
 export default function ComunityHome() {
   const [activeTab, setActiveTab] = useState("all-posts");
   const [search, setSearch] = useState("");
   const [communityRole, setCommunityRole] = useState("all-role");
   const [communityStatus, setCommunityStatus] = useState("all-status");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
     <div>
@@ -23,19 +25,13 @@ export default function ComunityHome() {
           Community Management
         </h2>
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 w-full sm:w-auto">
-          {/* <Link
-            href="/dashboard/community/view-announcements"
-            className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-[#3d4566] hover:bg-[#3d4566]/90 flex text-white items-center justify-center sm:justify-start gap-2 sm:gap-3 rounded-xl cursor-pointer text-sm sm:text-base"
-          >
-            View Announcements
-          </Link> */}
-          <Link
-            href="#"
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
             className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center justify-center sm:justify-start gap-2 sm:gap-3 rounded-xl cursor-pointer text-sm sm:text-base"
           >
             <PlusIcon />
             Create Announcement
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -62,7 +58,7 @@ export default function ComunityHome() {
               </TabsTrigger>
             </TabsList>
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-              <div className="relative w-full sm:w-64 md:w-72 lg:w-80">
+              <div className="relative w-full sm:w-64 md:w-72 lg:w-58">
                 <input
                   type="text"
                   name="search"
@@ -108,6 +104,15 @@ export default function ComunityHome() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <CreateAnnouncementModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onSuccess={() => {
+          const event = new CustomEvent("announcement-created");
+          window.dispatchEvent(event);
+        }}
+      />
     </div>
   );
 }

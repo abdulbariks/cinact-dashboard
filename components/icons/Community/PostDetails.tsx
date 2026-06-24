@@ -32,7 +32,7 @@ type PostData = {
   likes: number;
   comments: number;
   content: string;
-  poll_options?: { id: string; title: string }[];
+  poll_options?: { id: string; title: string; votes: string }[];
   attachments?: {
     id: string;
     file_name: string;
@@ -334,12 +334,15 @@ export default function PostDetails({ postId }: postIdProps) {
             {post.poll_options.map((option) => (
               <div
                 key={option.id}
-                className="flex items-center justify-between p-2.5 sm:p-3 bg-[#0a1726] border border-[#383e57] rounded-xl group hover:border-[#5F6CA0] transition-colors"
+                className="flex items-center justify-between rounded-xl border border-[#383e57] bg-[#0a1726] p-2.5 transition-colors hover:border-[#5F6CA0] sm:p-3 group"
               >
-                <span className="text-xs sm:text-sm text-[#A5A5AB] group-hover:text-white">
+                <span className="text-xs text-[#A5A5AB] group-hover:text-white sm:text-sm">
                   {option.title}
                 </span>
-                <div className="size-3 sm:size-4 rounded-full border border-[#383e57] group-hover:border-[#5F6CA0]" />
+
+                <div className="flex h-5 w-5 items-center justify-center rounded-full border border-[#383e57] text-[10px] font-medium text-[#18CC3F]  group-hover:border-[#5F6CA0] sm:h-6 sm:w-6 sm:text-xs">
+                  {option?.votes}
+                </div>
               </div>
             ))}
           </div>
