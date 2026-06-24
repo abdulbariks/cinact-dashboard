@@ -23,12 +23,12 @@ export default function ComunityHome() {
           Community Management
         </h2>
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 w-full sm:w-auto">
-          <Link
+          {/* <Link
             href="/dashboard/community/view-announcements"
             className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-[#3d4566] hover:bg-[#3d4566]/90 flex text-white items-center justify-center sm:justify-start gap-2 sm:gap-3 rounded-xl cursor-pointer text-sm sm:text-base"
           >
             View Announcements
-          </Link>
+          </Link> */}
           <Link
             href="#"
             className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center justify-center sm:justify-start gap-2 sm:gap-3 rounded-xl cursor-pointer text-sm sm:text-base"

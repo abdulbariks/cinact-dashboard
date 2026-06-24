@@ -33,6 +33,13 @@ type PostData = {
   comments: number;
   content: string;
   poll_options?: { id: string; title: string }[];
+  attachments?: {
+    id: string;
+    file_name: string;
+    file_path: string;
+    type: string;
+    mime_type?: string;
+  }[];
 };
 
 const getNameInitials = (name: string) => {
@@ -102,6 +109,7 @@ export default function PostDetails({ postId }: postIdProps) {
           comments: data.comments || 0,
           content: data.content,
           poll_options: data.poll_options || [],
+          attachments: data.attachments || [],
         });
       }
     } catch (error: any) {
@@ -178,31 +186,37 @@ export default function PostDetails({ postId }: postIdProps) {
   };
   if (isLoading) {
     return (
-      <div className="p-10 text-white text-center">Loading post details...</div>
+      <div className="p-6 sm:p-10 text-white text-center">
+        Loading post details...
+      </div>
     );
   }
 
   if (!post) {
-    return <div className="p-10 text-white text-center">Post not found.</div>;
+    return (
+      <div className="p-6 sm:p-10 text-white text-center">Post not found.</div>
+    );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center gap-2">
         <Link
           href="/dashboard/community"
-          className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
+          className="text-sm sm:text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
           Community Management
         </Link>
         <BreadCrumpRightArrow />
-        <p className="text-base font-medium text-[#8D9CDC]">Post Details</p>
+        <p className="text-sm sm:text-base font-medium text-[#8D9CDC]">
+          Post Details
+        </p>
       </div>
 
-      <div className="p-4 border border-[#383e57] rounded-xl bg-[#030C15]">
-        <div className="flex items-start gap-3.5">
+      <div className="p-3 sm:p-4 border border-[#383e57] rounded-xl bg-[#030C15]">
+        <div className="flex items-start gap-2.5 sm:gap-3.5">
           {!post.avatar || avatarError ? (
-            <div className="size-10 rounded-full bg-[#1a2432] flex items-center justify-center text-xs text-[#E6E7E8] font-semibold">
+            <div className="size-9 sm:size-10 rounded-full bg-[#1a2432] flex items-center justify-center text-xs text-[#E6E7E8] font-semibold">
               {getNameInitials(post.user_name)}
             </div>
           ) : (
@@ -211,30 +225,30 @@ export default function PostDetails({ postId }: postIdProps) {
               alt={post.user_name}
               width={40}
               height={40}
-              className="rounded-full object-cover size-10"
+              className="rounded-full object-cover size-9 sm:size-10"
               unoptimized
               onError={() => setAvatarError(true)}
             />
           )}
 
-          <div className="flex-1">
-            <h3 className="text-base text-[#A5A5AB] font-medium">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm sm:text-base text-[#A5A5AB] font-medium">
               {post.user_name}
             </h3>
 
-            <div className="flex justify-between items-center gap-5">
-              <div className="flex items-center gap-2 flex-wrap mt-2">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-5">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mt-2">
                 <p
-                  className={`text-sm py-0.5 px-1.5 rounded-lg inline-block ${getTypeBadgeColors(post.type).bg} ${getTypeBadgeColors(post.type).text}`}
+                  className={`text-xs sm:text-sm py-0.5 px-1 rounded-lg inline-block ${getTypeBadgeColors(post.type).bg} ${getTypeBadgeColors(post.type).text}`}
                 >
                   {post.type}
                 </p>
                 <p
-                  className={`text-sm py-0.5 px-1.5 rounded-lg inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}
+                  className={`text-xs sm:text-sm py-0.5 px-1 rounded-lg inline-block ${getStatusBadgeColors(post.status).bg} ${getStatusBadgeColors(post.status).text}`}
                 >
                   {post.status}
                 </p>
-                <p className="text-sm text-[#777980] py-0.5 px-1.5 inline-block">
+                <p className="text-xs sm:text-sm text-[#777980] py-0.5 px-1 inline-block">
                   {post.date}
                 </p>
               </div>
@@ -242,15 +256,16 @@ export default function PostDetails({ postId }: postIdProps) {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onActionClick("flag")}
-                    className="p-1.5 bg-[#0e1825] rounded-lg flex items-center gap-2 text-[#18CC3F]"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#0e1825] rounded-lg flex items-center gap-1.5 sm:gap-2 text-[#18CC3F] text-xs sm:text-sm"
                   >
-                    <FlagIcon /> Flag
+                    <FlagIcon /> <span className="hidden sm:inline">Flag</span>
                   </button>
                   <button
                     onClick={() => onActionClick("delete")}
-                    className="p-1.5 bg-[#0e1825] rounded-lg cursor-pointer flex items-center gap-2 text-red-600"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#0e1825] rounded-lg cursor-pointer flex items-center gap-1.5 sm:gap-2 text-red-600 text-xs sm:text-sm"
                   >
-                    <TrashIconRed /> Delete
+                    <TrashIconRed />{" "}
+                    <span className="hidden sm:inline">Delete</span>
                   </button>
                 </div>
               )}
@@ -258,15 +273,17 @@ export default function PostDetails({ postId }: postIdProps) {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onActionClick("flag")}
-                    className="p-1.5 bg-[#0e1825] rounded-lg flex items-center gap-2 text-[#18CC3F]"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#0e1825] rounded-lg flex items-center gap-1.5 sm:gap-2 text-[#18CC3F] text-xs sm:text-sm"
                   >
-                    <FlagIcon /> Unflag
+                    <FlagIcon />{" "}
+                    <span className="hidden sm:inline">Unflag</span>
                   </button>
                   <button
                     onClick={() => onActionClick("delete")}
-                    className="p-1.5 bg-[#0e1825] rounded-lg cursor-pointer flex items-center gap-2 text-red-600"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#0e1825] rounded-lg cursor-pointer flex items-center gap-1.5 sm:gap-2 text-red-600 text-xs sm:text-sm"
                   >
-                    <TrashIconRed /> Delete
+                    <TrashIconRed />{" "}
+                    <span className="hidden sm:inline">Delete</span>
                   </button>
                 </div>
               )}
@@ -274,23 +291,27 @@ export default function PostDetails({ postId }: postIdProps) {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onActionClick("approve")}
-                    className="p-1.5 bg-[#0e1825] rounded-lg flex items-center gap-2 text-[#18CC3F] cursor-pointer"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#0e1825] rounded-lg flex items-center gap-1.5 sm:gap-2 text-[#18CC3F] cursor-pointer text-xs sm:text-sm"
                   >
-                    <GreenTikIcon /> Approve
+                    <GreenTikIcon />{" "}
+                    <span className="hidden sm:inline">Approve</span>
                   </button>
                   <button
                     onClick={() => onActionClick("reject")}
-                    className="p-1.5 bg-[#0e1825] rounded-lg cursor-pointer flex items-center gap-2 text-red-600"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#0e1825] rounded-lg cursor-pointer flex items-center gap-1.5 sm:gap-2 text-red-600 text-xs sm:text-sm"
                   >
-                    <RedCross /> Reject
+                    <RedCross />{" "}
+                    <span className="hidden sm:inline">Reject</span>
                   </button>
                 </div>
               )}
             </div>
 
-            <p className="text-[#A5A5AB] text-sm mt-3">{post.content}</p>
+            <p className="text-[#A5A5AB] text-xs sm:text-sm mt-2 sm:mt-3">
+              {post.content}
+            </p>
 
-            <div className="flex items-center gap-6 mt-6">
+            <div className="flex items-center gap-4 sm:gap-6 mt-3 sm:mt-4">
               <div className="flex items-center gap-1">
                 <LikeIcon />
                 <p className="text-xs text-[#B2B5B8] font-medium">
@@ -309,17 +330,46 @@ export default function PostDetails({ postId }: postIdProps) {
 
         {/* Poll Options Section */}
         {post.poll_options && post.poll_options.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-6">
             {post.poll_options.map((option) => (
               <div
                 key={option.id}
-                className="flex items-center justify-between p-3 bg-[#0a1726] border border-[#383e57] rounded-xl group hover:border-[#5F6CA0] transition-colors"
+                className="flex items-center justify-between p-2.5 sm:p-3 bg-[#0a1726] border border-[#383e57] rounded-xl group hover:border-[#5F6CA0] transition-colors"
               >
-                <span className="text-sm text-[#A5A5AB] group-hover:text-white">
+                <span className="text-xs sm:text-sm text-[#A5A5AB] group-hover:text-white">
                   {option.title}
                 </span>
-                {/* Optional: Add a circle indicator or vote count if available in API */}
-                <div className="size-4 rounded-full border border-[#383e57] group-hover:border-[#5F6CA0]" />
+                <div className="size-3 sm:size-4 rounded-full border border-[#383e57] group-hover:border-[#5F6CA0]" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Attachments Section */}
+        {post.attachments && post.attachments.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-6">
+            {post.attachments.map((attachment) => (
+              <div key={attachment.id}>
+                {attachment.type === "IMAGE" && (
+                  <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-[#0a1726] border border-[#383e57]">
+                    <Image
+                      src={attachment.file_path}
+                      alt="Attachment"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                )}
+                {attachment.type === "VIDEO" && (
+                  <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-[#0a1726] border border-[#383e57]">
+                    <video
+                      src={attachment.file_path}
+                      controls
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -328,20 +378,26 @@ export default function PostDetails({ postId }: postIdProps) {
         <Dialog open={isWarningOpen} onOpenChange={setIsWarningOpen}>
           <DialogContent
             hideCloseButton
-            className="w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-8 text-white"
+            className="w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-6 sm:p-8 text-white"
           >
-            <div className="flex flex-col items-center text-center">
-              <Image src={warnigImg} alt="Warning" />
-              <h3 className="mt-4 text-xl font-semibold text-white">Delete Post?</h3>
-              <p className="mt-2 text-sm text-[#B2B5B8]">
+            <div className="flex flex-col items-center text-center px-4 sm:px-0">
+              <Image
+                src={warnigImg}
+                alt="Warning"
+                className="w-16 h-16 sm:w-auto sm:h-auto"
+              />
+              <h3 className="mt-3 sm:mt-4 text-lg sm:text-xl font-semibold text-white">
+                Delete Post?
+              </h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-[#B2B5B8] px-2 sm:px-0">
                 Are you sure you want to delete this post?
               </p>
 
-              <div className="mt-6 flex items-center gap-3">
+              <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <button
                   type="button"
                   onClick={() => setIsWarningOpen(false)}
-                  className="flex items-center gap-2.5 rounded-2xl border border-[#3D4566] px-11 py-4 text-sm font-medium text-white hover:bg-[#5F6CA0]"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl border border-[#3D4566] px-8 sm:px-11 py-2.5 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#5F6CA0]"
                 >
                   <CrossIcon />
                   Cancel
@@ -352,7 +408,7 @@ export default function PostDetails({ postId }: postIdProps) {
                     setIsWarningOpen(false);
                     await handleAction("delete");
                   }}
-                  className="flex items-center gap-2.5 rounded-2xl bg-[#E9201D] px-11 py-4 text-sm font-medium text-white hover:bg-[#ff3b1f]"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-[#E9201D] px-8 sm:px-11 py-2.5 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#ff3b1f]"
                 >
                   <TrashIcon />
                   Delete
