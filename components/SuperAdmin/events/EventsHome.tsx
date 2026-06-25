@@ -73,7 +73,6 @@ export default function EventsHome() {
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   const eventList = useMemo(() => events?.data || [], [events?.data]);
-  
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -113,9 +112,9 @@ export default function EventsHome() {
 
   return (
     <div>
-      <div className=" flex items-center justify-between">
+      <div className=" flex flex-col md:flex-row gap-3 items-center justify-between">
         <h3 className=" text-white text-xl font-semibold">Events</h3>
-        <div className=" flex items-center gap-2">
+        <div className=" flex flex-col md:flex-row items-center gap-2">
           <div className=" relative w-80">
             <input
               type="text"
@@ -182,9 +181,7 @@ export default function EventsHome() {
                   </div>
                 </div>
 
-                <p className=" text-xs text-[#D2D2D5] ">
-                  {event.description}
-                </p>
+                <p className=" text-xs text-[#D2D2D5] ">{event.description}</p>
 
                 <Link
                   href={`/dashboard/events/event-details/${event.id}`}
