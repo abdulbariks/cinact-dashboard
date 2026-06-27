@@ -68,10 +68,10 @@ export default function Attendence() {
   return (
     <div>
       <div className=" p-6 bg-[#0a1726] rounded-2xl mt-8">
-        <div className=" flex items-center justify-between">
+        <div className=" flex flex-col md:flex-row gap-3 items-center justify-between">
           <h3 className=" text-white text-xl font-semibold">Attendance List</h3>
-          <div className=" flex items-center gap-2">
-            <div className=" relative w-80">
+          <div className=" flex flex-col md:flex-row gap-3 items-center">
+            <div className=" relative w-80 md:w-68 lg:w-80">
               <input
                 type="text"
                 name="search"
