@@ -18,8 +18,8 @@ import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { useParams, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const userTypeOptions = ["student", "teacher","finance", "admin", "su_admin"];
-const teacherStatusOptions = ["ACTIVE", "DEACTIVATED", "BLOCKED","REJECTED"];
+const userTypeOptions = ["student", "teacher", "finance", "admin", "su_admin"];
+const teacherStatusOptions = ["ACTIVE", "DEACTIVATED", "BLOCKED", "REJECTED"];
 
 const formatDateInput = (value?: string | null) => {
   if (!value) return "";
@@ -147,7 +147,8 @@ export default function EditTeacher() {
       showSuccessToast(
         response?.data?.message || "Teacher updated successfully",
       );
-      router.push("/dashboard/teacher-management");
+      // router.push("/dashboard/teacher-management");
+      router.push("/dashboard/user-management");
     } catch (error: any) {
       showErrorToast(
         error?.response?.data?.message || "Failed to update teacher",
@@ -165,17 +166,21 @@ export default function EditTeacher() {
     <div>
       <div className="flex items-center gap-2">
         <Link
-          href="/dashboard/teacher-management"
+          // href="/dashboard/teacher-management"
+          href="/dashboard/user-management"
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
-          Teacher Management
+          {/* Teacher Management */}
+          User Management
         </Link>
         <BreadCrumpRightArrow />
-        <p className="text-base font-medium text-[#8D9CDC]">Edit Teacher</p>
+        {/* <p className="text-base font-medium text-[#8D9CDC]">Edit Teacher</p> */}
+        <p className="text-base font-medium text-[#8D9CDC]">Edit User</p>
       </div>
 
       <div className="mx-auto mt-25 max-w-175 rounded-2xl bg-[#0a1726] p-8">
-        <h2 className="text-2xl font-semibold text-white">Edit Teacher</h2>
+        {/* <h2 className="text-2xl font-semibold text-white">Edit Teacher</h2> */}
+        <h2 className="text-2xl font-semibold text-white">Edit User</h2>
 
         <form onSubmit={handleSubmit} className="mt-8">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -304,7 +309,8 @@ export default function EditTeacher() {
 
           <div className="mt-10 flex items-center justify-end gap-3">
             <Link
-              href="/dashboard/teacher-management"
+              // href="/dashboard/teacher-management"
+              href="/dashboard/user-management"
               className="rounded-2xl bg-[#3D4566] px-8 py-3.5 text-white transition-colors hover:bg-[#111f31]"
             >
               Cancel

@@ -74,8 +74,8 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
     },
     {
       id: "teacher-management",
-      name: "Teacher Management",
-      href: "/dashboard/teacher-management",
+      name: "User Management",
+      href: "/dashboard/user-management",
       icon: TeacherIcon,
       supportsActiveState: true,
       description: "Manage teachers",

@@ -175,7 +175,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
           }
           flex flex-col border-r border-[#343745]
           min-h-[calc(100vh-100px)] 
-          ${effectiveCollapsed ? "w-20" : "w-[300px]"}
+          ${effectiveCollapsed ? "w-20" : "w-75"}
           shadow-[0px_-0.3px_5.5px_0px_rgba(0,0,0,0.02)]
            p-6 overflow-y-auto    transition-all duration-300
           bg-[#0a1929] sidebar-scroll background-color
@@ -203,7 +203,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                 transition-all duration-200
                 focus:outline-none
                 cursor-pointer
-                flex-shrink-0
+                shrink-0
               `}
               title={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               type="button"
@@ -241,7 +241,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                           effectiveCollapsed ? "justify-center" : ""
                         }`}
                       >
-                        <Skeleton className="w-[30px] h-[30px] rounded-md bg-[#1d2a3e]" />
+                        <Skeleton className="w-7.5 h-7.5 rounded-md bg-[#1d2a3e]" />
                         {(isMobile || !effectiveCollapsed) && (
                           <Skeleton className="h-4 w-28 bg-[#1d2a3e]" />
                         )}
@@ -294,7 +294,7 @@ const Sidebar = ({ isOpen, onClose, onCollapseChange }: SidebarProps) => {
                         <div
                           className={`flex ${effectiveCollapsed ? "" : "gap-3"} items-center`}
                         >
-                          <div className="w-[30px] h-[30px] flex justify-center items-center flex-shrink-0">
+                          <div className="w-7.5 h-7.5 flex justify-center items-center shrink-0">
                             {item.supportsActiveState ? (
                               <Icon
                                 className={iconClassName}

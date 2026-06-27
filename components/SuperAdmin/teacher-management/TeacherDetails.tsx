@@ -126,17 +126,21 @@ export default function TeacherDetails() {
     <div>
       <div className="flex items-center gap-2">
         <Link
-          href="/dashboard/teacher-management"
+          // href="/dashboard/teacher-management"
+          href="/dashboard/user-management"
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
-          Teacher Management
+          {/* Teacher Management */}
+          User Management
         </Link>
         <BreadCrumpRightArrow />
-        <p className="text-base font-medium text-[#8D9CDC]">Teacher Details</p>
+        {/* <p className="text-base font-medium text-[#8D9CDC]">Teacher Details</p> */}
+        <p className="text-base font-medium text-[#8D9CDC]">User Details</p>
       </div>
 
       <h2 className="mt-7.5 mb-5 text-2xl font-semibold text-[#E6E7E8]">
-        Teacher Details
+        {/* Teacher Details */}
+        User Details
       </h2>
 
       <div className="rounded-2xl bg-[#0a1929] p-4">
@@ -202,19 +206,25 @@ export default function TeacherDetails() {
 
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <p className="mb-1.5 text-xs font-medium text-[#585E66]">Approved At</p>
+              <p className="mb-1.5 text-xs font-medium text-[#585E66]">
+                Approved At
+              </p>
               <h3 className="text-sm text-[#DFE1E7]">
                 {formatDate(teacher?.approved_at)}
               </h3>
             </div>
             <div>
-              <p className="mb-1.5 text-xs font-medium text-[#585E66]">Created At</p>
+              <p className="mb-1.5 text-xs font-medium text-[#585E66]">
+                Created At
+              </p>
               <h3 className="text-sm text-[#DFE1E7]">
                 {formatDate(teacher?.created_at)}
               </h3>
             </div>
             <div>
-              <p className="mb-1.5 text-xs font-medium text-[#585E66]">User Type</p>
+              <p className="mb-1.5 text-xs font-medium text-[#585E66]">
+                User Type
+              </p>
               <h3 className="text-sm capitalize text-[#DFE1E7]">
                 {formatType(teacher?.type)}
               </h3>

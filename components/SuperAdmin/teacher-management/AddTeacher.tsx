@@ -67,7 +67,8 @@ export default function AddTeacher() {
       });
 
       showSuccessToast(response?.data?.message || "Teacher added successfully");
-      router.push("/dashboard/teacher-management");
+      // router.push("/dashboard/teacher-management");
+      router.push("/dashboard/user-management");
     } catch (error: any) {
       showErrorToast(error?.response?.data?.message || "Failed to add teacher");
     } finally {
@@ -79,18 +80,22 @@ export default function AddTeacher() {
     <div>
       <div className="flex items-center gap-2">
         <Link
-          href="/dashboard/teacher-management"
+          // href="/dashboard/teacher-management"
+          href="/dashboard/user-management"
           className="text-base text-[#5F6CA0] hover:text-[#8D9CDC]"
         >
-          Teacher Management
+          {/* Teacher Management */}
+          User Management
         </Link>
         <BreadCrumpRightArrow />
-        <p className="text-base font-medium text-[#8D9CDC]">Add Teacher</p>
+        {/* <p className="text-base font-medium text-[#8D9CDC]">Add Teacher</p> */}
+        <p className="text-base font-medium text-[#8D9CDC]">Add User</p>
       </div>
 
-      <div className=" bg-[#0a1726] p-8 rounded-2xl max-w-[700px] mx-auto mt-25">
+      <div className=" bg-[#0a1726] p-8 rounded-2xl max-w-175 mx-auto mt-25">
         <h2 className=" text-white text-2xl font-semibold  ">
-          Add New Teacher
+          {/* Add New Teacher */}
+          Add New User
         </h2>
 
         <form onSubmit={handleSubmit} className="mt-8">
@@ -215,7 +220,8 @@ export default function AddTeacher() {
 
           <div className="mt-10 flex items-center justify-end gap-3">
             <Link
-              href="/dashboard/teacher-management"
+              // href="/dashboard/teacher-management"
+              href="/dashboard/user-management"
               className="rounded-2xl   px-8 py-3.5 text-white transition-colors hover:bg-[#111f31] bg-[#3D4566]"
             >
               Cancel
