@@ -96,8 +96,15 @@ function ImageFileItem({ item }: { item: MessageAttachment }) {
     (item.mime_type.startsWith("image/") ||
       item.mime_type.startsWith("video/"));
 
+  const handleClick = () => {
+    window.open(item.url, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <div className="group relative aspect-square rounded-lg overflow-hidden bg-[#17212c] flex items-center justify-center">
+    <div
+      className="group relative aspect-square rounded-lg overflow-hidden bg-[#17212c] flex items-center justify-center cursor-pointer"
+      onClick={handleClick}
+    >
       {isMediaItem ? (
         <Image
           src={item.url}

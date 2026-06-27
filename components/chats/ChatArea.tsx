@@ -79,6 +79,32 @@ const getMessageImageUrls = (message: any) => {
   return attachmentUrls.length > 0 || !singleUrl ? attachmentUrls : [singleUrl];
 };
 
+const isImageUrl = (url: string) => {
+  if (!url) return false;
+  const imageExtensions = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".webp",
+    ".svg",
+    ".bmp",
+    ".ico",
+  ];
+  return imageExtensions.some((ext) => url.toLowerCase().includes(ext));
+};
+
+const getFileIcon = (fileName: string) => {
+  const ext = fileName.split(".").pop()?.toLowerCase() || "";
+  if (["pdf"].includes(ext)) return "📄";
+  if (["doc", "docx"].includes(ext)) return "📝";
+  if (["xls", "xlsx"].includes(ext)) return "📊";
+  if (["zip", "rar"].includes(ext)) return "📦";
+  if (["txt", "json", "js", "xml"].includes(ext)) return "📋";
+  if (["mp4", "webm", "ogg"].includes(ext)) return "🎥";
+  return "📎";
+};
+
 const getMessageId = (message: any) =>
   message?.id || message?._id || message?.clientId;
 
@@ -522,9 +548,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     const input = e.target;
     if (!input.files) return;
 
-    const files = Array.from(input.files).filter((file) =>
-      file.type.startsWith("image/"),
-    ) as File[];
+    const files = Array.from(input.files);
 
     if (!files.length) {
       e.target.value = "";
@@ -533,6 +557,18 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
     setAttachments((prev) => [...prev, ...files]);
     e.target.value = "";
+  };
+
+  const removeAttachment = (fileToRemove: File) => {
+    setAttachments((prev) =>
+      prev.filter(
+        (file) =>
+          !(
+            file.name === fileToRemove.name &&
+            file.lastModified === fileToRemove.lastModified
+          ),
+      ),
+    );
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -547,6 +583,8 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       (message) => message.sender?.id && message.sender.id !== currentUserId,
     )?.sender || messages[0]?.sender;
 
+  // console.log("chatPartner", chatPartner);
+
   return (
     <section className="flex h-full w-full flex-col overflow-hidden bg-[#07121d]">
       {/* Header */}
@@ -555,8 +593,24 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
           <Link href="/dashboard/chats" className="lg:hidden text-white">
             ←
           </Link>
-          <div className="size-10 rounded-full bg-[#5f6ca0] flex items-center justify-center text-white font-bold">
-            {chatPartner?.name?.slice(0, 1) || "C"}
+          {/* <div className="size-10 rounded-full bg-[#5f6ca0] flex items-center justify-center text-white font-bold">
+            {chatPartner?.name?.slice(0, 2) || "C"}
+          </div> */}
+          <div className="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1a2336] border border-[#1F283D] overflow-hidden">
+            {chatPartner?.avatar ? (
+              <Image
+                src={chatPartner?.avatar}
+                alt={chatPartner?.name || "User Avatar"}
+                fill
+                className="object-cover"
+                sizes="44px"
+                unoptimized
+              />
+            ) : (
+              <span className="text-sm font-semibold text-white">
+                {chatPartner?.name?.slice(0, 2) || "C"}
+              </span>
+            )}
           </div>
           <div>
             <p className="text-white font-medium text-sm leading-tight">
@@ -600,6 +654,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
             const messageText = getMessageContent(msg);
             const callContent = getCallContent(msg);
             const imageUrls = getMessageImageUrls(msg);
+            const messageAttachments = msg?.attachments || [];
             const createdAt = getMessageCreatedAt(msg);
 
             if (callContent) {
@@ -675,20 +730,65 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
                       : "bg-[#17212c] text-[#B2B5B8] rounded-tl-none",
                   )}
                 >
-                  {imageUrls.map((imageUrl: string) => (
-                    <div
-                      key={imageUrl}
-                      className="relative size-52 rounded-lg overflow-hidden my-1"
-                    >
-                      <Image
-                        src={imageUrl}
-                        alt="chat-media"
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  ))}
+                  {messageAttachments.map((attachment: any, idx: number) => {
+                    const fileUrl =
+                      attachment?.url ||
+                      attachment?.file_path ||
+                      attachment?.filePath ||
+                      "";
+
+                    const fileType = attachment?.type || "";
+                    const isImage =
+                      fileType.startsWith("image/") || isImageUrl(fileUrl);
+
+                    if (isImage && fileUrl) {
+                      return (
+                        <div
+                          key={fileUrl || idx}
+                          className="relative size-52 rounded-lg overflow-hidden my-1"
+                        >
+                          <Image
+                            src={fileUrl}
+                            alt="chat-media"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      );
+                    }
+
+                    if (!isImage && fileUrl) {
+                      const fileName =
+                        attachment?.name ||
+                        (typeof fileUrl === "string"
+                          ? fileUrl.split("/").pop()?.split("?")[0] ||
+                            `file-${idx}`
+                          : `file-${idx}`);
+
+                      return (
+                        <a
+                          key={`${fileUrl}-${idx}`}
+                          href={fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(
+                            "flex items-center gap-2 my-1 p-2 rounded-lg",
+                            isMe ? "bg-white/10" : "bg-black/20",
+                          )}
+                        >
+                          <span className="text-lg">
+                            {getFileIcon(fileName)}
+                          </span>
+                          <span className="truncate flex-1 text-xs">
+                            {fileName}
+                          </span>
+                        </a>
+                      );
+                    }
+
+                    return null;
+                  })}
                   {messageText ? (
                     <p className="whitespace-pre-wrap">{messageText}</p>
                   ) : null}
@@ -715,9 +815,17 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
             {attachments.map((file) => (
               <div
                 key={`${file.name}-${file.lastModified}`}
-                className="rounded-full bg-[#17212c] px-3 py-1 text-xs text-white"
+                className="flex items-center gap-1.5 rounded-full bg-[#17212c] pl-2 pr-1 py-1 text-xs text-white"
               >
-                {file.name}
+                <span>{getFileIcon(file.name)}</span>
+                <span className="max-w-30 truncate">{file.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeAttachment(file)}
+                  className="ml-1 rounded-full p-0.5 hover:bg-[#0a1929] text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
               </div>
             ))}
           </div>
@@ -729,7 +837,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/zip,text/plain,application/json,application/javascript,application/xml"
             multiple
             className="hidden"
             onChange={handleAttachmentChange}
@@ -738,6 +846,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             className="text-gray-400 hover:text-white"
+            title="Attach file"
           >
             <ImageIcon />
           </button>
