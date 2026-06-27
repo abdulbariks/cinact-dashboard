@@ -207,22 +207,21 @@ export default function ChatSidebar() {
                     : "bg-transparent hover:bg-[#5f6ca0]/20",
                 )}
               >
-                <div className="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1a2336] border border-[#1F283D] overflow-hidden">
-                  {avatar ? (
-                    <Image
-                      src={avatar}
-                      alt={displayTitle || "User Avatar"}
-                      fill
-                      className="object-cover"
-                      sizes="44px"
-                      unoptimized
-                    />
-                  ) : (
-                    <span className="text-sm font-semibold text-white">
-                      {initials}
-                    </span>
-                  )}
-                </div>
+<div className="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1a2336] border border-[#1F283D] overflow-hidden">
+                   {avatar ? (
+                     <Image
+                       src={avatar}
+                       alt={displayTitle || "User Avatar"}
+                       fill
+                       className="object-cover"
+                       sizes="44px"
+                     />
+                   ) : (
+                     <span className="text-sm font-semibold text-white">
+                       {initials}
+                     </span>
+                   )}
+                 </div>
 
                 <div
                   className={cn(

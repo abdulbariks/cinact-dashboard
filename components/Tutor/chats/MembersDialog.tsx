@@ -116,7 +116,7 @@ export default function MembersDialog({ chatId, trigger }: MembersDialogProps) {
                   key={member.member_id}
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#17212c]"
                 >
-                  <div className="size-10 rounded-full overflow-hidden bg-[#5f6ca0] flex items-center justify-center text-white font-semibold">
+                  <div className="relative size-10 rounded-full overflow-hidden bg-[#5f6ca0] flex items-center justify-center text-white font-semibold">
                     {member.avatar ? (
                       <Image
                         src={member.avatar}
@@ -124,7 +124,6 @@ export default function MembersDialog({ chatId, trigger }: MembersDialogProps) {
                         fill
                         className="object-cover"
                         sizes="40px"
-                        unoptimized
                       />
                     ) : (
                       <span className="text-sm">{initials(member.name)}</span>

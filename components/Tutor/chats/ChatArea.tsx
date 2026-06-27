@@ -547,7 +547,6 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
                         alt="chat-media"
                         fill
                         className="object-cover"
-                        unoptimized
                       />
                     </div>
                   ))}

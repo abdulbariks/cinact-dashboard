@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +18,7 @@ import { parseCookies } from "nookies";
 import { ChatsService } from "@/service/chats/chats.service";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
+import { connectSocket } from "@/lib/Socket";
 
 export default function ChatSidebar() {
   const pathname = usePathname();
@@ -19,6 +26,7 @@ export default function ChatSidebar() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "DM" | "GROUP">("all");
   const [isLoading, setIsLoading] = useState(false);
+  const socketRef = useRef<any>(null);
 
   // Fetch real data
   useEffect(() => {
@@ -37,7 +45,9 @@ export default function ChatSidebar() {
         });
 
         if (isMounted) {
-          setConversations(Array.isArray(res?.data?.data) ? res?.data?.data : []);
+          setConversations(
+            Array.isArray(res?.data?.data) ? res?.data?.data : [],
+          );
         }
       } catch (error) {
         if (isMounted) setConversations([]);
@@ -64,7 +74,8 @@ export default function ChatSidebar() {
     });
   }, [activeTab, search, conversations]);
 
-  const getLastMessageItem = (item: any) => item.last_message || item.messages?.[0];
+  const getLastMessageItem = (item: any) =>
+    item.last_message || item.messages?.[0];
 
   const getMessageId = (message: any) =>
     message?.id || message?._id || message?.message_id || message?.messageId;
@@ -114,6 +125,114 @@ export default function ChatSidebar() {
       handleMarkConversationRead(activeConversation);
     }
   }, [conversations, handleMarkConversationRead, pathname]);
+
+  // Real-time socket connection for conversation updates
+  useEffect(() => {
+    const cookies = parseCookies();
+    const token = cookies.token || cookies.accessToken || "";
+    if (!token) return;
+
+    const socket = connectSocket(token);
+    socketRef.current = socket;
+
+    // Handle new message to update conversation preview
+    const handleNewMessage = (message: any) => {
+      const conversationId =
+        message?.conversation_id || message?.conversationId;
+      if (!conversationId) return;
+
+      setConversations((prev) => {
+        const existingIndex = prev.findIndex((c) => c.id === conversationId);
+
+        if (existingIndex >= 0) {
+          const next = [...prev];
+          const existing = next[existingIndex];
+
+          // Check if this is a message from current user
+          const senderId =
+            message?.sender?.id || message?.senderId || message?.sender_id;
+          const isFromCurrentUser =
+            senderId === existing.participant?.id ||
+            senderId === (cookies?.userId || null);
+
+          next[existingIndex] = {
+            ...existing,
+            last_message: {
+              ...message,
+              id: message?.id || message?._id,
+            },
+            // Only increment unread if not from current user and not currently viewing
+            unread_messages: pathname?.includes(conversationId)
+              ? existing.unread_messages
+              : isFromCurrentUser
+                ? existing.unread_messages
+                : (existing.unread_messages || 0) + 1,
+            updatedAt:
+              message?.created_at ||
+              message?.createdAt ||
+              new Date().toISOString(),
+          };
+          return next;
+        }
+
+        // If conversation doesn't exist, we might need to refresh the list
+        return prev;
+      });
+    };
+
+    const handleMessageSent = (message: any) => {
+      const conversationId =
+        message?.conversation_id || message?.conversationId;
+      if (!conversationId) return;
+
+      setConversations((prev) => {
+        const existingIndex = prev.findIndex((c) => c.id === conversationId);
+        if (existingIndex >= 0) {
+          const next = [...prev];
+          next[existingIndex] = {
+            ...next[existingIndex],
+            last_message: {
+              ...message,
+              id: message?.id || message?._id,
+            },
+          };
+          return next;
+        }
+        return prev;
+      });
+    };
+
+    const handleMessageRead = (data: any) => {
+      const conversationId = data?.conversation_id || data?.conversationId;
+      if (!conversationId) return;
+
+      setConversations((prev) => {
+        const existingIndex = prev.findIndex((c) => c.id === conversationId);
+        if (existingIndex >= 0) {
+          const next = [...prev];
+          next[existingIndex] = {
+            ...next[existingIndex],
+            unread_messages: 0,
+          };
+          return next;
+        }
+        return prev;
+      });
+    };
+
+    socket.off("message:new", handleNewMessage);
+    socket.on("message:new", handleNewMessage);
+    socket.off("message:sent", handleMessageSent);
+    socket.on("message:sent", handleMessageSent);
+    socket.off("message:read", handleMessageRead);
+    socket.on("message:read", handleMessageRead);
+
+    return () => {
+      socket.off("message:new", handleNewMessage);
+      socket.off("message:sent", handleMessageSent);
+      socket.off("message:read", handleMessageRead);
+    };
+  }, [pathname]);
 
   // Helper to get last message preview
   const getLastMessage = (item: any) => {

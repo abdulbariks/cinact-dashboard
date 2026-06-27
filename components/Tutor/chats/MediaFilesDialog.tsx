@@ -69,7 +69,6 @@ function ImageFileItem({ item }: { item: MessageAttachment }) {
           alt={item.name}
           fill
           className="object-cover"
-          unoptimized
         />
       ) : (
         <FileIcon />

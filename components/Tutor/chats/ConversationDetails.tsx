@@ -215,7 +215,7 @@ export default function ConversationDetails({ chatId, participantUserId }: Conve
       <div className="flex items-start justify-center min-h-full p-6">
         <div className="w-full max-w-sm bg-[#0a1929] rounded-2xl p-6 mt-6">
           <div className="flex flex-col items-center mb-5">
-            <div className="size-20 rounded-full overflow-hidden mb-3 ring-2 ring-[#1a2336] bg-[#5f6ca0] flex items-center justify-center text-white text-2xl font-bold">
+            <div className="relative size-20 rounded-full overflow-hidden mb-3 ring-2 ring-[#1a2336] bg-[#5f6ca0] flex items-center justify-center text-white text-2xl font-bold">
               {displayAvatar ? (
                 <Image
                   src={displayAvatar}
@@ -223,7 +223,6 @@ export default function ConversationDetails({ chatId, participantUserId }: Conve
                   fill
                   className="object-cover"
                   sizes="80px"
-                  unoptimized
                 />
               ) : (
                 <span>{initials}</span>
