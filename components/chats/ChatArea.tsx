@@ -317,6 +317,9 @@ const normalizeMessage = (message: any, fallback: any = {}) => {
 
 export default function ChatArea({ chatId }: ChatAreaProps) {
   const [messages, setMessages] = useState<any[]>([]);
+  const [conversation, setConversation] = useState<any>(null);
+  // console.log("messages", messages);
+
   const [draftMessage, setDraftMessage] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -362,16 +365,21 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       const profile = await ChatsService.getMe({ token });
       setCurrentUserId(profile?.data?.data?.id);
 
-      const res = await ChatsService.getConversationById({
-        id: chatId,
-        token,
-        limit: 20,
-      });
+      const [convRes, msgRes] = await Promise.all([
+        ChatsService.getSingleConversation({ conversationId: chatId, token }),
+        ChatsService.getConversationById({
+          id: chatId,
+          token,
+          limit: 20,
+        }),
+      ]);
 
-      const messageData = Array.isArray(res?.data?.data)
-        ? res.data.data
-        : Array.isArray(res?.data?.items)
-          ? res.data.items
+      setConversation(convRes?.data?.data || null);
+
+      const messageData = Array.isArray(msgRes?.data?.data)
+        ? msgRes.data.data
+        : Array.isArray(msgRes?.data?.items)
+          ? msgRes.data.items
           : [];
 
       setMessages(
@@ -850,10 +858,19 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     }
   };
 
-  const chatPartner =
-    uniqueMessages.find(
-      (message) => message.sender?.id && message.sender.id !== currentUserId,
-    )?.sender || uniqueMessages[0]?.sender;
+  const chatPartner = React.useMemo(() => {
+    if (!conversation) return null;
+    if (conversation.type === "GROUP") {
+      return {
+        name: conversation.title,
+        avatar: conversation.avatar || null,
+      };
+    }
+    return {
+      name: conversation.participant?.name,
+      avatar: conversation.avatar || conversation.participant?.avatar || null,
+    };
+  }, [conversation]);
 
   // console.log("chatPartner", chatPartner);
 

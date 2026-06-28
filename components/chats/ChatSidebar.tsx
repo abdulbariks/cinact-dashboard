@@ -28,6 +28,8 @@ export default function ChatSidebar() {
   const [isLoading, setIsLoading] = useState(false);
   const socketRef = useRef<any>(null);
 
+  // console.log("conversations", conversations);
+
   // Fetch real data
   useEffect(() => {
     let isMounted = true;
@@ -64,7 +66,8 @@ export default function ChatSidebar() {
 
   const filteredConversations = useMemo(() => {
     return conversations?.filter((item) => {
-      const displayTitle = item.title || item.participant?.name;
+      const displayTitle =
+        item.type === "GROUP" ? item.title : item.participant?.name;
       const matchTab = activeTab === "all" ? true : item.type === activeTab;
       const matchSearch = (displayTitle || "")
         .toLowerCase()
@@ -302,7 +305,8 @@ export default function ChatSidebar() {
           </div>
         ) : filteredConversations?.length > 0 ? (
           filteredConversations?.map((item) => {
-            const displayTitle = item.title || item.participant?.name;
+            const displayTitle =
+              item.type === "GROUP" ? item.title : item.participant?.name;
             const initials = (displayTitle || "??")
               .split(" ")
               .map((n: string) => n[0])

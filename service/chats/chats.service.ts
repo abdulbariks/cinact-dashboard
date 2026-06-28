@@ -143,6 +143,20 @@ export const ChatsService = {
       withAuthConfig({ token, context }),
     );
   },
+  getSingleConversation: async ({
+    conversationId = "",
+    token = "",
+    context = null,
+  }: {
+    conversationId?: string;
+    token?: string;
+    context?: any;
+  } = {}) => {
+    return await Fetch.get(
+      `/conversations/${conversationId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
 
   //  create DM
   createDM: async ({
