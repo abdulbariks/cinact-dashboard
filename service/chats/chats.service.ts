@@ -7,11 +7,17 @@ const jsonConfig = {
   },
 };
 
-const resolveToken = ({ token = "", context = null }: { token?: string; context?: any } = {}) => {
+const resolveToken = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => {
   return token || CookieHelper.get({ key: "token", context }) || "";
 };
 
-const withAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     "Content-Type": "application/json",
     Authorization: "Bearer " + resolveToken({ token, context }),
@@ -32,13 +38,18 @@ const withMultipartAuthConfig = ({ token = "", context = null } = {}) => ({
   },
 });
 
-const withFormDataAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withFormDataAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     Authorization: "Bearer " + resolveToken({ token, context }),
   },
 });
 
-const buildQueryString = (params: Record<string, string | number | undefined>) => {
+const buildQueryString = (
+  params: Record<string, string | number | undefined>,
+) => {
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {
@@ -53,7 +64,6 @@ const buildQueryString = (params: Record<string, string | number | undefined>) =
 };
 
 export const ChatsService = {
-   
   // All Users
   getMe: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(`/auth/me`, withAuthConfig({ token, context }));
@@ -74,44 +84,44 @@ export const ChatsService = {
     limit?: number;
     cursor?: string;
   } = {}) => {
-    const queryString = buildQueryString({ search, type, limit,cursor });
+    const queryString = buildQueryString({ search, type, limit, cursor });
 
     return await Fetch.get(
       `/users/discover${queryString}`,
       withAuthConfig({ token, context }),
     );
   },
-// Get Conversations
-   getConversations: async ({
-     token = "",
-     context = null,
-     search = "",
-     type = "",
-     limit = 10,
-     cursor = "",
-     userId = "",
-   }: {
-     token?: string;
-     context?: any;
-     search?: string;
-     type?: "DM" | "GROUP" | string;
-     limit?: number;
-     cursor?: string;
-     userId?: string;
-   } = {}) => {
-     const searchParams = new URLSearchParams();
+  // Get Conversations
+  getConversations: async ({
+    token = "",
+    context = null,
+    search = "",
+    type = "",
+    limit = 10,
+    cursor = "",
+    userId = "",
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    type?: "DM" | "GROUP" | string;
+    limit?: number;
+    cursor?: string;
+    userId?: string;
+  } = {}) => {
+    const searchParams = new URLSearchParams();
 
-     if (type) searchParams.set("type", type);
-     searchParams.set("limit", String(limit));
-     if (cursor) searchParams.set("cursor", cursor);
-     searchParams.set("search", search);
-     if (userId) searchParams.set("userId", userId);
+    if (type) searchParams.set("type", type);
+    searchParams.set("limit", String(limit));
+    if (cursor) searchParams.set("cursor", cursor);
+    searchParams.set("search", search);
+    if (userId) searchParams.set("userId", userId);
 
-     return await Fetch.get(
-       `/conversations?${searchParams.toString()}`,
-       withAuthConfig({ token, context })
-     );
-   },
+    return await Fetch.get(
+      `/conversations?${searchParams.toString()}`,
+      withAuthConfig({ token, context }),
+    );
+  },
   // get Conversation By Id
   getConversationById: async ({
     id = "",
@@ -130,55 +140,59 @@ export const ChatsService = {
 
     return await Fetch.get(
       `/conversations/${id}/messages${queryString}`,
-      withAuthConfig({ token, context })
+      withAuthConfig({ token, context }),
     );
   },
 
   //  create DM
-  createDM: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
+  createDM: async ({
+    data,
+    token = "",
+    context = null,
+  }: { data?: any; token?: string; context?: any } = {}) => {
     return await Fetch.post(
-      `/conversations`, 
-      data, 
-      withAuthConfig({ token, context })
+      `/conversations`,
+      data,
+      withAuthConfig({ token, context }),
     );
   },
   // create Group
   // createGroup: async ({ data, token = "", context = null }: { data?: any; token?: string; context?: any } = {}) => {
   //   return await Fetch.post(
-  //     `/conversations/group`, 
+  //     `/conversations/group`,
   //     data,
   //     withAuthConfig({ token, context })
   //   );
   // },
   // send Message
-sendMessage: async ({ conversationId, data, token = "" }) => {
-  return await Fetch.post(
-    `/conversations/${conversationId}/messages`,
-    data,
-    withAuthConfig({ token })
-  );
-},
-// upload Message
-uploadMessage: async ({ conversationId, formData, token = "" }) => {
-  return await Fetch.post(
-    `/conversations/${conversationId}/messages`,
-    formData,
-    withMultipartAuthConfig({ token })
-  );
-},
-// mark Conversation Read
- markConversationRead: async ({ conversationId, data, token = "" }) => {
-   return await Fetch.patch(
-     `/conversations/${conversationId}/read`,
-     data,
-     withAuthConfig({ token })
-   );
- },
-// delete Conversation
+  sendMessage: async ({ conversationId, data, token = "" }) => {
+    return await Fetch.post(
+      `/conversations/${conversationId}/messages`,
+      data,
+      withAuthConfig({ token }),
+    );
+  },
+  // upload Message
+  uploadMessage: async ({ conversationId, formData, token = "" }) => {
+    return await Fetch.post(
+      `/conversations/${conversationId}/messages`,
+      formData,
+      withMultipartAuthConfig({ token }),
+    );
+  },
+  // mark Conversation Read
+  markConversationRead: async ({ conversationId, data, token = "" }) => {
+    return await Fetch.patch(
+      `/conversations/${conversationId}/read`,
+      data,
+      withAuthConfig({ token }),
+    );
+  },
+  // delete Conversation
   deleteConversation: async ({ conversationId, token = "" }) => {
     return await Fetch.delete(
       `/conversations/${conversationId}`,
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
   // get Conversation Members
@@ -196,7 +210,7 @@ uploadMessage: async ({ conversationId, formData, token = "" }) => {
 
     return await Fetch.get(
       `/conversations/${conversationId}/members${searchParams.toString() ? `?${searchParams.toString()}` : ""}`,
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
   // start Call
@@ -205,76 +219,76 @@ uploadMessage: async ({ conversationId, formData, token = "" }) => {
     return await Fetch.post(
       `/rtc/conversations/${conversationId}/start`,
       data,
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
-  
+
   // join Call
   joinCall: async ({ conversationId, token = "" }) => {
     // rtc/conversations/:conversation_id/join
     return await Fetch.post(
       `/rtc/conversations/${conversationId}/join`,
       {},
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
-  
+
   // get Call token (refresh)
   getCallToken: async ({ conversationId, token = "" }) => {
     // rtc/conversations/:conversation_id/token
     return await Fetch.post(
       `/rtc/conversations/${conversationId}/token`,
       {},
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
-  
+
   // decline Call
   declineCall: async ({ conversationId, token = "" }) => {
     // rtc/conversations/:conversation_id/decline
     return await Fetch.post(
       `/rtc/conversations/${conversationId}/decline`,
       {},
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
-  
+
   // leave Call
   leaveCall: async ({ conversationId, token = "" }) => {
     // rtc/conversations/:conversation_id/leave
     return await Fetch.post(
       `/rtc/conversations/${conversationId}/leave`,
       {},
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
-  
+
   // end Call
   endCall: async ({ conversationId, token = "" }) => {
     // rtc/conversations/:conversation_id/end
     return await Fetch.post(
       `/rtc/conversations/${conversationId}/end`,
       {},
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
-  
+
   // update media state (camera/mic/screen share)
   updateMediaState: async ({ conversationId, data, token = "" }) => {
     // rtc/conversations/:conversation_id/participants/me
     return await Fetch.patch(
       `/rtc/conversations/${conversationId}/participants/me`,
       data,
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
-  
+
   // get call state
   getCallState: async ({ conversationId, token = "" }) => {
     // rtc/conversations/:conversation_id/state
     return await Fetch.get(
       `/rtc/conversations/${conversationId}/state`,
-      withAuthConfig({ token })
+      withAuthConfig({ token }),
     );
   },
 };

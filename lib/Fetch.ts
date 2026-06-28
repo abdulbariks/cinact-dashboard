@@ -49,7 +49,11 @@ export class Fetch {
    */
   static async post(url: string, data: any, header?: any) {
     if (this._adapter == "axios") {
-      return await axios.post(`${this._baseUrl}${url}`, data, header);
+      const config = { ...(header || {}) };
+      if (data instanceof FormData && config.headers) {
+        delete config.headers['Content-Type'];
+      }
+      return await axios.post(`${this._baseUrl}${url}`, data, config);
     } else {
       const res = await fetch(`${this._baseUrl}${url}`, {
         ...header,

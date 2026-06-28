@@ -105,6 +105,143 @@ const getFileIcon = (fileName: string) => {
   return "📎";
 };
 
+const AudioPlayButton = ({
+  src,
+  duration,
+  className,
+}: {
+  src: string;
+  duration?: number;
+  className?: string;
+}) => {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [currentTime, setCurrentTime] = React.useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio(src);
+    audio.preload = "none";
+    audioRef.current = audio;
+
+    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("ended", handleEnded);
+      audio.pause();
+      audio.src = "";
+      audioRef.current = null;
+    };
+  }, [src]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.play().catch(() => setIsPlaying(false));
+    } else {
+      audio.pause();
+    }
+  }, [isPlaying]);
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${s}`;
+  };
+
+  const totalDuration = typeof duration === "number" ? duration : 0;
+  const progress = totalDuration > 0 ? (currentTime / totalDuration) * 100 : 0;
+
+  return (
+    <div
+      className={cn(
+        "my-1 flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2",
+        className,
+      )}
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          togglePlay();
+        }}
+        className={cn(
+          "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
+          isPlaying
+            ? "bg-[#E9201D]/20 text-[#ff706e]"
+            : "bg-white/10 text-white",
+        )}
+      >
+        {isPlaying ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <rect x="6" y="5" width="4" height="14" rx="1" />
+            <rect x="14" y="5" width="4" height="14" rx="1" />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M8 5.14v14l11-7-11-7z" />
+          </svg>
+        )}
+      </button>
+      <div className="flex-1">
+        <div className="h-1 w-full rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-[#E9201D] transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+      <span className="text-[10px] text-gray-300 tabular-nums">
+        {formatTime(currentTime)}
+      </span>
+      {typeof duration === "number" && (
+        <span className="text-[10px] text-gray-500 tabular-nums">
+          {formatTime(duration)}
+        </span>
+      )}
+    </div>
+  );
+};
+
 const getMessageId = (message: any) =>
   message?.id || message?._id || message?.clientId;
 
@@ -197,12 +334,20 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       avatar: string | null;
     };
   } | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [voiceBlob, setVoiceBlob] = useState<Blob | null>(null);
 
   const socketRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isSendingRef = useRef(false);
   const lastReadMessageIdRef = useRef<string | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
+  const recordingDurationRef = useRef(0);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -445,27 +590,73 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     scrollToBottom();
   }, [messages]);
 
+  const uniqueMessages = React.useMemo(() => {
+    const seen = new Set<string>();
+    return messages.filter((msg) => {
+      const id = getMessageId(msg);
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }, [messages]);
+
   //  SEND MESSAGE
   const handleSendMessage = async () => {
     if (isSendingRef.current) return;
 
     const text = draftMessage.trim();
-    if (!text && attachments.length === 0) return;
+    if (!text && attachments.length === 0 && !voiceBlob) return;
 
     const cookies = parseCookies();
     const token = cookies.token || cookies.accessToken || "";
     const selectedAttachments = attachments;
     const clientId = `client-${Date.now()}`;
 
+    const hasVoice = !!voiceBlob;
+    const durationSeconds = recordingDurationRef.current || recordingTime || 0;
+    const voiceFile = hasVoice
+      ? new File(
+          [voiceBlob],
+          `voice-${formatRecordingTime(durationSeconds)}-${Date.now()}.mp3`,
+          { type: "audio/mpeg" },
+        )
+      : null;
+
     setDraftMessage("");
     setAttachments([]);
+    setVoiceBlob(null);
+    setRecordingTime(0);
     isSendingRef.current = true;
     setIsSending(true);
 
     const payload = {
-      kind: selectedAttachments.length > 0 ? "FILE" : "TEXT",
+      kind: hasVoice
+        ? "AUDIO"
+        : selectedAttachments.length > 0
+          ? "FILE"
+          : "TEXT",
       content: text,
     };
+
+    const optimisticAttachments = hasVoice
+      ? [
+          {
+            url: URL.createObjectURL(voiceBlob),
+            name: voiceFile!.name,
+            type: voiceFile!.type,
+            duration: durationSeconds,
+          },
+          ...selectedAttachments.map((file) => ({
+            url: URL.createObjectURL(file),
+            name: file.name,
+            type: file.type,
+          })),
+        ]
+      : selectedAttachments.map((file) => ({
+          url: URL.createObjectURL(file),
+          name: file.name,
+          type: file.type,
+        }));
 
     const optimisticMessage = normalizeMessage(
       {
@@ -475,11 +666,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
         conversationId: chatId,
         senderId: currentUserId,
         is_me: true,
-        attachments: selectedAttachments.map((file) => ({
-          url: URL.createObjectURL(file),
-          name: file.name,
-          type: file.type,
-        })),
+        attachments: optimisticAttachments,
       },
       { createdAt: new Date().toISOString() },
     );
@@ -491,11 +678,14 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     try {
       let response;
 
-      if (selectedAttachments.length > 0) {
+      if (hasVoice || selectedAttachments.length > 0) {
         const formData = new FormData();
-        formData.append("kind", "FILE");
+        formData.append("kind", hasVoice ? "AUDIO" : "FILE");
         if (text) {
           formData.append("content", text);
+        }
+        if (hasVoice && voiceFile) {
+          formData.append("attachments", voiceFile);
         }
         selectedAttachments.forEach((file) => {
           formData.append("attachments", file);
@@ -535,6 +725,10 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
       showErrorToast("Message failed to send");
       setDraftMessage(text);
       setAttachments(selectedAttachments);
+      if (hasVoice && voiceFile) {
+        setAttachments((prev) => [...prev, voiceFile]);
+      }
+      setVoiceBlob(null);
       setMessages((prev) =>
         prev.filter((message) => getMessageId(message) !== clientId),
       );
@@ -571,6 +765,84 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
     );
   };
 
+  const formatRecordingTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
+
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType =
+        MediaRecorder.isTypeSupported("audio/mpeg") && "audio/mpeg";
+      const mediaRecorderOptions = mimeType ? { mimeType } : {};
+      const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+      recordingDurationRef.current = 0;
+
+      mediaRecorder.ondataavailable = (event: BlobEvent) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunksRef.current, {
+          type: mimeType || "audio/webm",
+        });
+        setVoiceBlob(blob);
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      setVoiceBlob(null);
+
+      recordingTimerRef.current = setInterval(() => {
+        recordingDurationRef.current += 1;
+        setRecordingTime(recordingDurationRef.current);
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to start recording:", error);
+      showErrorToast("Microphone access denied");
+    }
+  }, []);
+
+  const stopRecording = useCallback(() => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+    }
+  }, []);
+
+  const discardVoice = useCallback(() => {
+    setVoiceBlob(null);
+    setRecordingTime(0);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (isRecording) {
+        stopRecording();
+      }
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+      }
+    };
+  }, [isRecording, stopRecording]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -579,9 +851,9 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
   };
 
   const chatPartner =
-    messages.find(
+    uniqueMessages.find(
       (message) => message.sender?.id && message.sender.id !== currentUserId,
-    )?.sender || messages[0]?.sender;
+    )?.sender || uniqueMessages[0]?.sender;
 
   // console.log("chatPartner", chatPartner);
 
@@ -649,7 +921,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
             <p className="text-white text-xs">Loading...</p>
           </div>
         ) : (
-          messages.map((msg) => {
+          uniqueMessages.map((msg) => {
             const isMe = getMessageSenderId(msg) === currentUserId || msg.is_me;
             const messageText = getMessageContent(msg);
             const callContent = getCallContent(msg);
@@ -740,11 +1012,15 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
                     const fileType = attachment?.type || "";
                     const isImage =
                       fileType.startsWith("image/") || isImageUrl(fileUrl);
+                    const isAudio =
+                      fileType.startsWith("audio/") ||
+                      /\.(mp3|wav|ogg|m4a|aac|flac|webm|opus)$/i.test(fileUrl);
+                    const isVideo = fileType.startsWith("video/");
 
                     if (isImage && fileUrl) {
                       return (
                         <div
-                          key={fileUrl || idx}
+                          key={`image-${fileUrl || idx}`}
                           className="relative size-52 rounded-lg overflow-hidden my-1"
                         >
                           <Image
@@ -758,7 +1034,30 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
                       );
                     }
 
-                    if (!isImage && fileUrl) {
+                    if (isVideo && fileUrl) {
+                      return (
+                        <video
+                          key={`video-${fileUrl}-${idx}`}
+                          controls
+                          src={fileUrl}
+                          className="my-1 w-full max-w-64 rounded-lg"
+                          preload="none"
+                        />
+                      );
+                    }
+
+                    if (isAudio && fileUrl) {
+                      const attachmentDuration = attachment?.duration;
+                      return (
+                        <AudioPlayButton
+                          key={`audio-${fileUrl}-${idx}`}
+                          src={fileUrl}
+                          duration={attachmentDuration}
+                        />
+                      );
+                    }
+
+                    if (!isImage && !isVideo && !isAudio && fileUrl) {
                       const fileName =
                         attachment?.name ||
                         (typeof fileUrl === "string"
@@ -770,10 +1069,8 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
                         <a
                           key={`${fileUrl}-${idx}`}
                           href={fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           className={cn(
-                            "flex items-center gap-2 my-1 p-2 rounded-lg",
+                            "flex items-center gap-2 my-1 p-2 rounded-lg pointer-events-auto",
                             isMe ? "bg-white/10" : "bg-black/20",
                           )}
                         >
@@ -810,7 +1107,7 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
 
       {/* Input Area */}
       <div className="p-4 bg-[#0a1929] border-t border-[#1a2336]">
-        {attachments.length > 0 ? (
+        {attachments.length > 0 || voiceBlob ? (
           <div className="mb-3 flex flex-wrap gap-2">
             {attachments.map((file) => (
               <div
@@ -828,8 +1125,33 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
                 </button>
               </div>
             ))}
+            {voiceBlob && (
+              <div className="flex items-center gap-1.5 rounded-full bg-[#17212c] pl-2 pr-1 py-1 text-xs text-white">
+                <span>🎤</span>
+                <span className="max-w-30 truncate">Voice message</span>
+                <button
+                  type="button"
+                  onClick={discardVoice}
+                  className="ml-1 rounded-full p-0.5 hover:bg-[#0a1929] text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
         ) : null}
+        {isRecording && (
+          <div className="mb-3 flex items-center gap-2 rounded-full bg-[#17212c] px-4 py-2">
+            <span className="relative flex size-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex size-3 rounded-full bg-red-500"></span>
+            </span>
+            <span className="text-xs text-white font-medium">
+              Recording
+              {/* {formatRecordingTime(recordingTime)} */}
+            </span>
+          </div>
+        )}
         <div className="flex items-center gap-2 bg-[#17212c] rounded-full px-4 border border-transparent focus-within:border-[#5f6ca0] transition-all">
           <button className="text-gray-400 hover:text-white">
             <PlusChatIcon />
@@ -855,24 +1177,48 @@ export default function ChatArea({ chatId }: ChatAreaProps) {
             value={draftMessage}
             onChange={(e) => setDraftMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Write your message..."
+            placeholder={
+              voiceBlob || isRecording
+                ? "Voice message ready..."
+                : "Write your message..."
+            }
             className="flex-1 py-3 bg-transparent text-white outline-none text-sm"
           />
           <button className="text-gray-400 hover:text-white">
             <EmojiIcon />
           </button>
           <button
-            onClick={handleSendMessage}
-            disabled={isSending}
+            onClick={
+              isRecording
+                ? stopRecording
+                : voiceBlob
+                  ? handleSendMessage
+                  : draftMessage.trim() || attachments.length > 0
+                    ? handleSendMessage
+                    : startRecording
+            }
+            disabled={isSending && !isRecording}
             className={cn(
               "p-2 rounded-full transition-transform active:scale-90",
-              draftMessage.trim() || attachments.length > 0
-                ? "text-[#E9201D]"
-                : "text-gray-400",
+              isRecording
+                ? "text-red-500"
+                : voiceBlob || draftMessage.trim() || attachments.length > 0
+                  ? "text-[#E9201D]"
+                  : "text-gray-400",
               isSending && "opacity-50",
             )}
           >
-            {draftMessage.trim() || attachments.length > 0 ? (
+            {isRecording ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <rect x="6" y="6" width="12" height="12" rx="2" />
+              </svg>
+            ) : voiceBlob || draftMessage.trim() || attachments.length > 0 ? (
               <PlusChatIcon className="rotate-45" />
             ) : (
               <MicIcon />
