@@ -62,7 +62,9 @@ const formatPeriod = (startAt?: string | null, endAt?: string | null) => {
   const start = startAt ? new Date(startAt) : null;
   const end = endAt ? new Date(endAt) : null;
   const format = (date: Date | null) =>
-    date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString("en-US") : "-";
+    date && !Number.isNaN(date.getTime())
+      ? date.toLocaleDateString("en-US")
+      : "-";
 
   return `${format(start)} - ${format(end)}`;
 };
@@ -143,7 +145,9 @@ export default function ClassDetails() {
       setIsEditClassOpen(false);
       await loadClass();
     } catch (error: any) {
-      showErrorToast(error?.response?.data?.message || "Failed to update class");
+      showErrorToast(
+        error?.response?.data?.message || "Failed to update class",
+      );
     }
   };
 
@@ -207,7 +211,7 @@ export default function ClassDetails() {
             <PlusIcon /> Edit Class
           </button>
           <button className="flex cursor-pointer items-center gap-3 rounded-2xl bg-[#e9201d] p-3 font-medium text-white">
-            <PlusIcon /> Reschedule
+            <PlusIcon /> Generate QR Code
           </button>
         </div>
       </div>
