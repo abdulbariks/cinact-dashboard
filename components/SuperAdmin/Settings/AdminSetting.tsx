@@ -14,10 +14,10 @@ function getActiveSectionContent(activeSection: string) {
   switch (activeSection) {
     case "profile-account":
       return <ProfileAccount />;
-    case "roles":
-      return <RolesPermissions />;
-    case "payment":
-      return <PaymentMethods />;
+    // case "roles":
+    //   return <RolesPermissions />;
+    // case "payment":
+    //   return <PaymentMethods />;
     case "notifications":
       return <NotificationSettings />;
     case "general-settings":

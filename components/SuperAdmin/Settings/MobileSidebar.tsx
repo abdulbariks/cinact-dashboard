@@ -58,7 +58,7 @@ export default function MobileSidebar({
           </li>
 
           {/*  Roles & Permissions */}
-          <li
+          {/* <li
             onClick={() => {
               setActiveSection("roles");
               setIsOpen(false);
@@ -72,9 +72,9 @@ export default function MobileSidebar({
           >
             <Shield size={18} />
             Roles & Permissions
-          </li>
+          </li> */}
           {/* Payment Settings */}
-          <li
+          {/* <li
             onClick={() => {
               setActiveSection("payment");
               setIsOpen(false);
@@ -88,7 +88,7 @@ export default function MobileSidebar({
           >
             <CreditCard size={18} />
             Payment Settings
-          </li>
+          </li> */}
 
           {/* Notifications */}
           <li

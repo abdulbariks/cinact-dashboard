@@ -40,7 +40,7 @@ export default function Sidebar({
             Profile & Account
           </li>
           {/* Roles & Permissions */}
-          <li
+          {/* <li
             onClick={() => setActiveSection("roles")}
             className={cn(
               "flex items-center gap-3 py-3 px-4 rounded-xl cursor-pointer text-sm font-medium transition",
@@ -51,10 +51,10 @@ export default function Sidebar({
           >
             <Shield size={18} />
             Roles & Permissions
-          </li>
+          </li> */}
 
           {/* Payment Settings */}
-          <li
+          {/* <li
             onClick={() => setActiveSection("payment")}
             className={cn(
               "flex items-center gap-3 py-3 px-4 rounded-xl cursor-pointer text-sm font-medium transition",
@@ -65,7 +65,7 @@ export default function Sidebar({
           >
             <CreditCard size={18} />
             Payment Settings
-          </li>
+          </li> */}
 
           {/* Notifications */}
           <li
