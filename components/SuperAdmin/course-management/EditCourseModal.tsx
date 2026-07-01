@@ -89,6 +89,7 @@ export default function EditCourseModal({
           token,
           page: 1,
           limit: 100,
+          type: "teacher",
         });
 
         const teachersData = response?.data?.data || [];
@@ -157,7 +158,7 @@ export default function EditCourseModal({
           title: editCourseData.courseTitle,
           start_date: startDate,
           class_time: editCourseData.classTime,
-          instructorId: editCourseData.instructor,
+          instructor_id: editCourseData.instructor,
           status: editCourseData.status,
           seat_capacity: editCourseData.students,
         },

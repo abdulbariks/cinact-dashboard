@@ -31,6 +31,8 @@ export default function MyCourses() {
         const response = await TutorService.getAllCourses({
           token,
         });
+        console.log("response========", response);
+
         setAllCourses(response?.data || null);
       } catch (error: any) {
         showErrorToast(
@@ -46,7 +48,7 @@ export default function MyCourses() {
     loadAllCourses();
   }, []);
 
-  // console.log(allCourses?.data);
+  console.log(allCourses?.data);
   return (
     <div>
       <h2 className=" text-2xl text-[#E6E7E8] font-semibold">My Courses</h2>
@@ -78,9 +80,9 @@ export default function MyCourses() {
             >
               <h2 className=" text-white text-lg font-medium">
                 {course.title}
-                <span className=" py-1 px-2.5 rounded-full text-sm text-[#18CC3F] bg-[#2a3d2e]  ml-2">
+                {/* <span className=" py-1 px-2.5 rounded-full text-sm text-[#18CC3F] bg-[#2a3d2e]  ml-2">
                   {course.status}
-                </span>
+                </span> */}
               </h2>
               <div className=" mt-3 flex items-center gap-3">
                 <div className=" border border-[#434656] bg-[#0A1A29] inline-block p-2 rounded-full">
