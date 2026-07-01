@@ -21,6 +21,7 @@ export type TCourse = {
   total_modules: number;
   total_enrollments: number;
   course_overview:string;
+  course_progress?: number;
 };
 
 export type TGetCoursesResponse = {

@@ -37,6 +37,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "walls-kissing-finish-bracelets.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "robots-floyd-houses-positive.trycloudflare.com",
+      },
     ],
   },
 };

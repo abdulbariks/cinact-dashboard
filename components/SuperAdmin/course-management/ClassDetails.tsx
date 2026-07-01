@@ -298,9 +298,9 @@ export default function ClassDetails() {
             <Assets />
           </TabsContent>
 
-          <TabsContent value="attendence" className="mt-4">
-            <ClassAttendence />
-          </TabsContent>
+<TabsContent value="attendence" className="mt-4">
+             <ClassAttendence classId={classId} />
+           </TabsContent>
         </Tabs>
       </div>
 

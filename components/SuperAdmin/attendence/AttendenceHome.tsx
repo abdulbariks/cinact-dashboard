@@ -27,6 +27,8 @@ export default function AttendenceHome() {
     useState<TAttendanceResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // console.log("allAttendance========", allAttendance);
+
   //Wrap loadAttendance in useCallback to use it as a stable dependency
   const loadAttendance = useCallback(async () => {
     setLoading(true);

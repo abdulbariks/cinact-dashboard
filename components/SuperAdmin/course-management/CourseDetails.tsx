@@ -68,6 +68,8 @@ export default function CourseDetails() {
   const [course, setCourse] = useState<TGetCourseByIdResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // console.log("course=========", course);
+
   const loadCourse = useCallback(async () => {
     if (!courseId) return;
 
@@ -241,13 +243,24 @@ export default function CourseDetails() {
                 <h4 className="text-base text-white font-medium">
                   Course Progress
                 </h4>
-                <p className="text-sm text-white ">65%</p>
+                <p className="text-sm text-white ">
+                  {course?.data?.course_progress !== undefined &&
+                  course?.data?.course_progress !== null
+                    ? `${Math.round(course.data.course_progress)}%`
+                    : "0%"}
+                </p>
               </div>
 
               <div className="mt-3 h-2 w-full rounded-full bg-[#202a3f] overflow-hidden">
                 <div
                   className="h-2 rounded-full bg-[#ffc943]"
-                  style={{ width: "65%" }}
+                  style={{
+                    width:
+                      course?.data?.course_progress !== undefined &&
+                      course?.data?.course_progress !== null
+                        ? `${Math.round(course.data.course_progress)}%`
+                        : "0%",
+                  }}
                 />
               </div>
             </div>
