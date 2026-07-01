@@ -33,6 +33,7 @@ interface AssetsProps {
 export default function Assets({ classTitle, subjectName }: AssetsProps) {
   const [openItem, setOpenItem] = useState<string>("asset-1");
   const [isWarningOpen, setIsWarningOpen] = useState(false);
+  const [selectedAssetId, setSelectedAssetId] = useState("");
   const [selectedAssetName, setSelectedAssetName] = useState("");
   const params = useParams<{ id: string; classId: string }>();
   const courseId = params?.id;
@@ -48,6 +49,8 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
 
   const [assets, setAssets] = useState<TGetAssetsResponse | null>(null);
   const [loading, setLoading] = useState(true);
+
+  console.log("assets===========", assets);
 
   // Memoized fetch function so it can be reused anywhere
   const fetchAssets = useCallback(async () => {
@@ -76,7 +79,7 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
   const handleAddAssets = async () => {
     if (!assetsData.file) return;
     const formData = new FormData();
-    formData.append("media", assetsData.file);
+    formData.append("attachments", assetsData.file);
     try {
       const response = await TutorService.uploadAssents({
         classId: classId as string,
@@ -94,17 +97,31 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
     }
   };
 
-  const openWarningModal = (assetName: string) => {
+  const openWarningModal = (assetId: string, assetName: string) => {
+    setSelectedAssetId(assetId);
     setSelectedAssetName(assetName);
     setIsWarningOpen(true);
   };
 
-  // implement delete
-  // const handleDelete = async () => {
-  //   await TutorService.deleteAsset(...)
-  //   await fetchAssets();
-  //   setIsWarningOpen(false);
-  // }
+  const handleDelete = async () => {
+    if (!selectedAssetId) return;
+    try {
+      await TutorService.deleteAsset({
+        assetId: selectedAssetId,
+        token: parseCookies().token || parseCookies().accessToken || "",
+      });
+      showSuccessToast("Asset deleted successfully!");
+      await fetchAssets();
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message || "Failed to delete asset",
+      );
+    } finally {
+      setIsWarningOpen(false);
+      setSelectedAssetId("");
+      setSelectedAssetName("");
+    }
+  };
 
   if (loading && !assets) {
     return <div>Loading............</div>;
@@ -147,9 +164,9 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
                   </div>
                 </div>
                 <div className=" mt-4 space-y-4">
-                  {assets?.data?.videos?.map((video, index) => (
+                  {assets?.data?.videos?.map((video) => (
                     <div
-                      key={index}
+                      key={video?.id}
                       className=" flex justify-between items-center border border-[#303650] rounded-[10px] bg-[#0a1d2e]"
                     >
                       <div className=" flex items-center gap-2.5">
@@ -162,7 +179,9 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
                       </div>
                       <button
                         type="button"
-                        onClick={() => openWarningModal(video?.file_name)}
+                        onClick={() =>
+                          openWarningModal(video?.id, video?.file_name)
+                        }
                         className=" pr-3 cursor-pointer"
                       >
                         <TrashIconRed />
@@ -190,9 +209,9 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
                 </div>
 
                 <div className=" mt-4 space-y-4">
-                  {assets?.data?.files?.map((file, index) => (
+                  {assets?.data?.files?.map((file) => (
                     <div
-                      key={index}
+                      key={file?.id}
                       className=" flex justify-between items-center border border-[#303650] rounded-[10px] bg-[#0a1d2e]"
                     >
                       <div className=" flex items-center gap-2.5">
@@ -205,7 +224,9 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
                       </div>
                       <button
                         type="button"
-                        onClick={() => openWarningModal(file?.file_name)}
+                        onClick={() =>
+                          openWarningModal(file?.id, file?.file_name)
+                        }
                         className=" pr-3 cursor-pointer"
                       >
                         <TrashIconRed />
@@ -251,7 +272,7 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
               </button>
               <button
                 type="button"
-                onClick={() => setIsWarningOpen(false)}
+                onClick={handleDelete}
                 className="rounded-2xl bg-[#E9201D] px-11 py-4 text-sm font-medium text-white hover:bg-[#ff3b1f] flex items-center gap-2.5"
               >
                 <TrashIcon />

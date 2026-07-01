@@ -153,7 +153,7 @@ export const TutorService = {
   }) => {
     // /courses/classes/:classId/media
     return await Fetch.get(
-      `/admin/courses/classes/${classId}/media`,
+      `/admin/courses/modules/classes/${classId}/assets`,
       withAuthConfig({ token, context }),
     );
   },
@@ -250,9 +250,25 @@ export const TutorService = {
 
     //Perform the request
     return await Fetch.post(
-      `/admin/courses/classes/${classId}/media`,
+      `/admin/courses/modules/classes/${classId}/assets`,
       payload,
       config,
+    );
+  },
+
+  // Delete Asset
+  deleteAsset: async ({
+    assetId,
+    token = "",
+    context = null,
+  }: {
+    assetId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.delete(
+      `/admin/courses/modules/classes/assets/${assetId}`,
+      withAuthConfig({ token, context }),
     );
   },
 
