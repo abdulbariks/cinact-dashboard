@@ -9,98 +9,12 @@ import { TModule } from "@/types/tutor.mycourse";
 import { TutorService } from "@/service/tutor/tutor.service";
 import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 
-// export const classes = [
-//   {
-//     id: "2200",
-//     classNo: "1",
-//     className: "Voice & Breath Control",
-//     status: "complete",
-//   },
-//   {
-//     id: "2201",
-//     classNo: "2",
-//     className: "Physical Awareness",
-//     status: "complete",
-//   },
-//   {
-//     id: "2202",
-//     classNo: "3",
-//     className: "Breathing Techniques",
-//     status: "complete",
-//   },
-//   {
-//     id: "2203",
-//     classNo: "4",
-//     className: "Posture and Presence",
-//     status: "complete",
-//   },
-//   {
-//     id: "2204",
-//     classNo: "5",
-//     className: "Vocal Projection",
-//     status: "complete",
-//   },
-//   {
-//     id: "2205",
-//     classNo: "6",
-//     className: "Articulation Practice",
-//     status: "complete",
-//   },
-//   {
-//     id: "2206",
-//     classNo: "7",
-//     className: "Movement Flow",
-//     status: "next class",
-//   },
-//   {
-//     id: "2207",
-//     classNo: "8",
-//     className: "Listening Skills",
-//     status: null,
-//   },
-//   {
-//     id: "2208",
-//     classNo: "9",
-//     className: "Partner Work",
-//     status: null,
-//   },
-//   {
-//     id: "2209",
-//     classNo: "10",
-//     className: "Emotional Recall",
-//     status: null,
-//   },
-//   {
-//     id: "2210",
-//     classNo: "11",
-//     className: "Scene Objectives",
-//     status: null,
-//   },
-//   {
-//     id: "2211",
-//     classNo: "12",
-//     className: "Improvisation Basics",
-//     status: null,
-//   },
-//   {
-//     id: "2212",
-//     classNo: "13",
-//     className: "Character Exploration",
-//     status: null,
-//   },
-//   {
-//     id: "2213",
-//     classNo: "14",
-//     className: "Performance Review",
-//     status: null,
-//   },
-// ];
-
 // Define the Props interface
 interface ModuleDetailsProps {
   module: TModule;
+  onClassAdded?: () => void;
 }
-export default function ModuleDetails({ module }: ModuleDetailsProps) {
+export default function ModuleDetails({ module, onClassAdded }: ModuleDetailsProps) {
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [classData, setClassData] = useState({
     classTitle: "",
@@ -131,7 +45,7 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
         class_name: classData.className,
         class_overview: classData.classOverview,
         duration: classData.duration,
-        start_date: combinedDateTime,
+        class_date: combinedDateTime,
         class_time: classData.time,
       };
 
@@ -143,8 +57,18 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
       // console.log("response===============", response);
       // Close modal and handle success
       setIsAddClassOpen(false);
-      // alert("Class added successfully!");
+      setClassData({
+        classTitle: "",
+        className: "",
+        classOverview: "",
+        duration: "",
+        date: "",
+        time: "",
+      });
       showSuccessToast(response?.data?.message || "Class added successfully!");
+      if (onClassAdded) {
+        onClassAdded();
+      }
     } catch (error) {
       // console.error("Error creating class:", error);
       // alert("Failed to create class.");
@@ -154,11 +78,9 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
 
   return (
     <div className="mt-3">
-      <div className=" px-4 pt-4 pb-8 border  border-[#3D4566] rounded-[12px] bg-[#07121d]">
+      {/* <div className=" px-4 pt-4 pb-8 border  border-[#3D4566] rounded-[12px] bg-[#07121d]">
         <h3 className=" text-base text-white font-medium ">Module Overview</h3>
         <p className=" text-sm text-[#D2D2D5] my-2.5">
-          {/* This module develops the actor’s self-awareness, confidence, and
-          creativity as a foundation for authentic performance. */}
           {module?.module_overview}
         </p>
         <h3 className=" text-sm text-white   mt-4">Key Learning Outcomes</h3>
@@ -179,7 +101,7 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
             skills
           </li>
         </ul>
-      </div>
+      </div> */}
 
       <div>
         <h3 className=" text-base text-white font-medium my-3">All classes</h3>
@@ -236,7 +158,19 @@ export default function ModuleDetails({ module }: ModuleDetailsProps) {
 
       <AddClassModal
         open={isAddClassOpen}
-        onOpenChange={setIsAddClassOpen}
+        onOpenChange={(open) => {
+          setIsAddClassOpen(open);
+          if (!open) {
+            setClassData({
+              classTitle: "",
+              className: "",
+              classOverview: "",
+              duration: "",
+              date: "",
+              time: "",
+            });
+          }
+        }}
         classData={classData}
         setClassData={setClassData}
         onAddClass={handleAddClass}

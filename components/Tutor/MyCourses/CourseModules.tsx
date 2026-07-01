@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -14,45 +14,48 @@ import { TGetCourseModulesResponse } from "@/types/tutor.mycourse";
 
 interface CourseModulesProps {
   courseId: string | undefined;
+  onClassAdded?: () => void;
 }
 
-export default function CourseModules({ courseId }: CourseModulesProps) {
+export default function CourseModules({
+  courseId,
+  onClassAdded,
+}: CourseModulesProps) {
   const [openItem, setOpenItem] = useState<string>("");
-
-  // console.log("courseId===========", courseId);
 
   const [modules, setModules] = useState<TGetCourseModulesResponse | null>(
     null,
   );
   const [loading, setLoading] = useState(true);
 
+  const loadModules = useCallback(async () => {
+    setLoading(true);
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+
+      const response = await TutorService.getAllCourseModules({
+        courseId: courseId as string,
+        token,
+      });
+
+      setModules(response?.data || null);
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to load modules details",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [courseId]);
+
   useEffect(() => {
-    const loadModules = async () => {
-      try {
-        const cookies = parseCookies();
-        const token = cookies.token || cookies.accessToken || "";
-
-        const response = await TutorService.getAllCourseModules({
-          courseId: courseId as string,
-          token,
-        });
-
-        setModules(response?.data || null);
-      } catch (error: any) {
-        showErrorToast(
-          error?.response?.data?.message ||
-            error?.message ||
-            "Failed to load modules details",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (courseId) {
       loadModules();
     }
-  }, [courseId]);
+  }, [courseId, loadModules]);
 
   // console.log("modules===============", modules);
 
@@ -85,7 +88,10 @@ export default function CourseModules({ courseId }: CourseModulesProps) {
               </div>
             </AccordionTrigger>
             <AccordionContent className="text-[#A5A5AB] px-4">
-              <ModuleDetails module={module} />
+              <ModuleDetails
+                module={module}
+                onClassAdded={onClassAdded || loadModules}
+              />
             </AccordionContent>
           </AccordionItem>
         ))}

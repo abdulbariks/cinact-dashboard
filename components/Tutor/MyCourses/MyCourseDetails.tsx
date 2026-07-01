@@ -72,7 +72,7 @@ export default function CourseDetails() {
       activeIcon: <StudentSecondaryIcon />,
     },
   ];
-  // console.log("course=====", course?.data);
+  console.log("course=====", course?.data);
 
   return (
     <div>
@@ -139,10 +139,19 @@ export default function CourseDetails() {
               <div>
                 <div className=" flex items-center gap-1">
                   <ClockIcon />
-                  <p className=" text-xs text-[#A5A5AB] ">Period</p>
+                  <p className=" text-xs text-[#A5A5AB] ">Start Date</p>
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
-                  2024-08-01 - 2024-10-24
+                  {course?.data?.start_date
+                    ? new Date(course.data.start_date).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        },
+                      )
+                    : "N/A"}
                 </h3>
               </div>
             </div>
@@ -152,9 +161,7 @@ export default function CourseDetails() {
                 Course Overview
               </h3>
               <p className=" mt-2.5 text-sm text-[#D2D2D5]">
-                {/* This course consists of a 2-year period trajectory that runs 1
-                day a week on Sunday takes place. */}
-                {course?.data?.course_overview}
+                {course?.data?.course_overview?.replace(/<[^>]*>/g, "")}
               </p>
             </div>
             {/* item-4 */}
@@ -163,13 +170,17 @@ export default function CourseDetails() {
                 <h4 className=" text-base text-white font-medium">
                   Course Progress
                 </h4>
-                <p className=" text-sm text-white ">65%</p>
+                <p className=" text-sm text-white ">
+                  {Math.round(course?.data?.course_progress || 0)}%
+                </p>
               </div>
 
               <div className="mt-3 h-2 w-full rounded-full bg-[#202a3f] overflow-hidden">
                 <div
                   className="h-2 rounded-full bg-[#ffc943]"
-                  style={{ width: "65%" }}
+                  style={{
+                    width: `${Math.round(course?.data?.course_progress || 0)}%`,
+                  }}
                 />
               </div>
             </div>
