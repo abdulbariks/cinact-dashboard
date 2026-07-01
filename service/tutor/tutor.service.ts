@@ -186,7 +186,7 @@ export const TutorService = {
   }) => {
     return await Fetch.get(
       // courses/assignments/:assignmentId/submissions
-      `/admin/courses/assignments/${assignmentId}/submissions`,
+      `/admin/courses/modules/classes/assignments/${assignmentId}/submissions`,
       withAuthConfig({ token, context }),
     );
   },
@@ -285,7 +285,7 @@ export const TutorService = {
   }) => {
     return await Fetch.patch(
       // /courses/submissions/:submissionId/grade
-      `/admin/courses/submissions/${submissionId}/grade`,
+      `/admin/courses/modules/classes/assignments/submissions/${submissionId}/grade`,
       payload,
       withAuthConfig({ token, context }),
     );

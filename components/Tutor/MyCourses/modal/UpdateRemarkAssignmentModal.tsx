@@ -4,20 +4,17 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { X, ChevronDown } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { ChevronDown } from "lucide-react";
 import { TutorService } from "@/service/tutor/tutor.service";
 import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 
 // Form Validation Schema
 const remarkSchema = z.object({
   grade_number: z.string().min(1, "Required"),
-  grade: z.string().min(1, "Required"),
+  grade: z.enum(["A+", "A", "B", "C", "D", "F"], {
+    required_error: "Required",
+  }),
   feedback: z.string().min(5, "Feedback must be at least 5 characters"),
 });
 
@@ -27,7 +24,7 @@ type UpdateRemarkAssignmentModalProps = {
   submissionId: string;
   studentName: string;
   grade_number?: number | string;
-  grade?: string;
+  grade?: "A+" | "A" | "B" | "C" | "D" | "F";
   feedback?: string;
 };
 
@@ -51,20 +48,20 @@ export function UpdateRemarkAssignmentModal({
     resolver: zodResolver(remarkSchema),
     defaultValues: {
       grade_number: "",
-      grade: "A Grade",
+      grade: "A",
       feedback: "",
     },
   });
 
-  console.log("gradegrade", grade_number, grade);
+  // console.log("gradegrade", grade_number, grade);
 
   useEffect(() => {
-    reset({
-      grade_number: grade_number ? String(grade_number) : "",
-      grade: grade || "A Grade",
-      feedback: feedback || "",
-    });
-  }, [grade_number, grade, feedback, reset]);
+    if (grade_number !== undefined) {
+      setValue("grade_number", String(grade_number));
+    }
+    setValue("grade", grade || "A");
+    setValue("feedback", feedback || "");
+  }, [grade_number, grade, feedback, setValue]);
 
   // const onSubmit = (data) => {
   //   console.log("Remark Data Submitted:", data);
@@ -109,13 +106,6 @@ export function UpdateRemarkAssignmentModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Trigger: Connect this to your 'Remark Assignment' button */}
-      <DialogTrigger asChild>
-        <button className="bg-[#414B6F] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#505B86] transition-colors cursor-pointer">
-          Update Remark
-        </button>
-      </DialogTrigger>
-
       <DialogContent className="sm:max-w-125 bg-[#0A1726] border-none text-white p-8 rounded-[20px] shadow-2xl">
         <div className="flex items-center justify-between border-b border-[#1C2632] pb-6 mb-6">
           <DialogTitle className="text-2xl font-semibold">
@@ -134,9 +124,9 @@ export function UpdateRemarkAssignmentModal({
                 placeholder="Enter Number"
                 className={inputStyles}
               />
-              <span className="absolute right-4 top-6 text-[#505B86] font-medium">
+              {/* <span className="absolute right-4 top-6 text-[#505B86] font-medium">
                 /50
-              </span>
+              </span> */}
             </div>
             {errors.grade_number && (
               <p className="text-red-500 text-xs mt-1">
@@ -151,15 +141,26 @@ export function UpdateRemarkAssignmentModal({
             <div className="relative">
               <select
                 {...register("grade")}
-                className={`${inputStyles} appearance-none cursor-pointer`}
+                className={`${inputStyles} appearance-none cursor-pointer bg-[#505B86] border-b border-t-0 border-l-0 border-r-0 rounded-none focus:border-b-[#505B86] focus:border-t-0 focus:border-l-0 focus:border-r-0`}
               >
-                <option value="" disabled>
-                  Select a grade
+                <option className="bg-[#505B86]" value="A+">
+                  A+
                 </option>
-                <option value="A Grade">A Grade</option>
-                <option value="B Grade">B Grade</option>
-                <option value="C Grade">C Grade</option>
-                <option value="F Grade">F Grade</option>
+                <option className="bg-[#505B86]" value="A">
+                  A
+                </option>
+                <option className="bg-[#505B86]" value="B">
+                  B
+                </option>
+                <option className="bg-[#505B86]" value="C">
+                  C
+                </option>
+                <option className="bg-[#505B86]" value="D">
+                  D
+                </option>
+                <option className="bg-[#505B86]" value="F">
+                  F
+                </option>
               </select>
               <ChevronDown className="absolute right-4 top-6 h-5 w-5 text-[#505B86] pointer-events-none" />
             </div>

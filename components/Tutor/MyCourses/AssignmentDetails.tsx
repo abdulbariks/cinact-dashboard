@@ -21,36 +21,6 @@ import {
   TGetAssignmentDetailsByIdResponse,
 } from "@/types/tutor.mycourse";
 
-// const submissions = [
-//   { id: 1, type: "video", status: "pending" },
-//   { id: 2, type: "pdf", status: "pending" },
-//   { id: 3, type: "video", status: "pending" },
-//   {
-//     id: 4,
-//     type: "video",
-//     status: "graded",
-//     grade: "A Grade",
-//     score: "48/50",
-//     gradeColor: "#109334",
-//   },
-//   {
-//     id: 5,
-//     type: "pdf",
-//     status: "graded",
-//     grade: "B Grade",
-//     score: "38/50",
-//     gradeColor: "#007AFF",
-//   },
-//   {
-//     id: 6,
-//     type: "pdf",
-//     status: "graded",
-//     grade: "F Grade",
-//     score: "18/50",
-//     gradeColor: "#F23030",
-//   },
-// ];
-
 export default function AssignmentDetails() {
   const [isRemarkAssignmentModalOpen, setIsRemarkAssignmentModalOpen] =
     useState(false);
@@ -58,6 +28,12 @@ export default function AssignmentDetails() {
     isUpdateRemarkAssignmentModalOpen,
     setIsUpdateRemarkAssignmentModalOpen,
   ] = useState(false);
+  const [remarkSubmissionId, setRemarkSubmissionId] = useState<string | null>(
+    null,
+  );
+  const [updateSubmissionId, setUpdateSubmissionId] = useState<string | null>(
+    null,
+  );
   const params = useParams<{
     id: string;
     classId: string;
@@ -131,7 +107,14 @@ export default function AssignmentDetails() {
     }
   }, [assignmentId]);
 
-  console.log("allSubmittedAssignment=========", allSubmittedAssignment?.data);
+  // console.log("allSubmittedAssignment=========", allSubmittedAssignment?.data);
+
+  const remarkSubmission = allSubmittedAssignment?.data?.find(
+    (s) => s.id === remarkSubmissionId,
+  );
+  const updateSubmission = allSubmittedAssignment?.data?.find(
+    (s) => s.id === updateSubmissionId,
+  );
 
   // const classNo =
   //   classes.find((cls) => cls.id === classId)?.classNo || "Class Details";
@@ -201,6 +184,15 @@ export default function AssignmentDetails() {
               </div>
               <div>
                 <div className=" flex items-center gap-1">
+                  <SubmissionIcon />
+                  <p className=" text-xs text-[#A5A5AB] ">Total Marks</p>
+                </div>
+                <h3 className=" text-sm text-white font-medium mt-1.5">
+                  {assignmentDetails?.data?.total_marks}
+                </h3>
+              </div>
+              <div>
+                <div className=" flex items-center gap-1">
                   <StarIcon />
                   <p className=" text-xs text-[#A5A5AB] ">Average Score</p>
                 </div>
@@ -217,9 +209,9 @@ export default function AssignmentDetails() {
                 </div>
                 <h3 className=" text-sm text-white font-medium mt-1.5">
                   {/* 2024-08-01 */}
-                  {assignmentDetails?.data?.submission_Date
+                  {assignmentDetails?.data?.submission_date
                     ? new Date(
-                        assignmentDetails.data.submission_Date,
+                        assignmentDetails.data.submission_date,
                       ).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
@@ -263,94 +255,6 @@ export default function AssignmentDetails() {
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* {submissions.map((sub) => (
-                <div
-                  key={sub.id}
-                  className="bg-[#0A1D2E] p-5 rounded-[15px] border border-[#1C2632]"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-700">
-                        <Image
-                          src="/profile.png"
-                          alt="avatar"
-                          width={40}
-                          height={40}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-white font-medium text-sm">
-                          Sophie Lambert
-                        </h3>
-                        <p className="text-[#8D9CDC] text-xs">ID-SP1420</p>
-                      </div>
-                    </div>
-
-                    {sub.status === "pending" ? (
-                      <RemarkAssignmentModal
-                        open={isRemarkAssignmentModalOpen}
-                        onOpenChange={setIsRemarkAssignmentModalOpen}
-                      />
-                    ) : (
-                      <UpdateRemarkAssignmentModal
-                        open={isUpdateRemarkAssignmentModalOpen}
-                        onOpenChange={setIsUpdateRemarkAssignmentModalOpen}
-                      />
-                    )}
-                  </div>
-                  <div className="flex justify-between items-center mb-4">
-                    <p className="text-[#8D9CDC] font-medium">
-                      Submitted:{" "}
-                      <span className="text-white">20-8-25 | 09 : 30 AM</span>
-                    </p>
-                    {sub.status === "graded" && (
-                      <div className="flex gap-2">
-                        <span
-                          className="text-[10px] px-2 py-1 rounded bg-opacity-10 font-bold"
-                          style={{
-                            color: sub.gradeColor,
-                            backgroundColor: sub.gradeColor + "22",
-                          }}
-                        >
-                          {sub.grade}
-                        </span>
-                        <span className="text-[10px] px-2 py-1 rounded bg-[#1C2632] text-[#8D9CDC] font-bold">
-                          {sub.score}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="bg-[#0A1D2E] border border-[#1C2632] rounded-lg overflow-hidden mb-4 flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="bg-[#1C2632] p-4 text-[#8D9CDC]">
-                        {sub.type === "video" ? (
-                          <Video size={18} />
-                        ) : (
-                          <FileText size={18} />
-                        )}
-                      </div>
-                      <span className="ml-4 text-[#A1AAB3] text-xs">
-                        {sub.type === "video"
-                          ? "Attachment-006.mp4"
-                          : "Attachment-006.pdf"}
-                      </span>
-                    </div>
-                    <Download
-                      size={16}
-                      className="mr-4 text-[#F23030] cursor-pointer"
-                    />
-                  </div>
-                  <div className="border border-dashed bg-[#0A1A29] border-[#1C2632] rounded-lg p-3">
-                    <h4 className="text-white text-xs font-medium mb-1">
-                      Description
-                    </h4>
-                    <p className="text-[#A1AAB3] text-xs">
-                      This is assignment.
-                    </p>
-                  </div>
-                </div>
-              ))} */}
-
               {allSubmittedAssignment?.data?.map((sub) => {
                 // Determine if the assignment is graded
                 const isGraded = sub.grade && Object.keys(sub.grade).length > 0;
@@ -396,22 +300,25 @@ export default function AssignmentDetails() {
 
                       {/* Modal Logic */}
                       {!isGraded ? (
-                        <RemarkAssignmentModal
-                          open={isRemarkAssignmentModalOpen}
-                          onOpenChange={setIsRemarkAssignmentModalOpen}
-                          submissionId={sub.id}
-                          studentName={sub.student?.name}
-                        />
+                        <button
+                          type="button"
+                          onClick={() => setRemarkSubmissionId(sub.id)}
+                          className="cursor-pointer"
+                        >
+                          <span className="bg-[#F23030] text-white text-xs px-6 py-2.5 rounded-lg hover:bg-red-700 transition-colors">
+                            Remark Assignment
+                          </span>
+                        </button>
                       ) : (
-                        <UpdateRemarkAssignmentModal
-                          open={isUpdateRemarkAssignmentModalOpen}
-                          onOpenChange={setIsUpdateRemarkAssignmentModalOpen}
-                          submissionId={sub?.id}
-                          studentName={sub?.student?.name}
-                          grade_number={sub?.grade?.grade_number}
-                          grade={sub?.grade?.grade}
-                          feedback={sub?.grade?.feedback}
-                        />
+                        <button
+                          type="button"
+                          onClick={() => setUpdateSubmissionId(sub.id)}
+                          className="cursor-pointer"
+                        >
+                          <span className="bg-[#414B6F] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#505B86] transition-colors">
+                            Update Remark
+                          </span>
+                        </button>
                       )}
                     </div>
 
@@ -426,10 +333,6 @@ export default function AssignmentDetails() {
                         <div className="flex gap-2">
                           <span
                             className="text-[10px] px-2 py-1 rounded bg-opacity-10 font-bold"
-                            // style={{
-                            //   color:
-                            //     sub?.grade?.score === "A+" ? "#10B981" : "",
-                            // }}
                             style={{
                               color: "#10B981", // You can map colors dynamically based on grade
                               backgroundColor: "#10B98122",
@@ -486,6 +389,42 @@ export default function AssignmentDetails() {
           </div>
         </div>
       </div>
+
+      {remarkSubmission && (
+        <RemarkAssignmentModal
+          open={!!remarkSubmissionId}
+          onOpenChange={(open) => {
+            setIsRemarkAssignmentModalOpen(open);
+            if (!open) setRemarkSubmissionId(null);
+          }}
+          submissionId={remarkSubmission.id}
+          studentName={remarkSubmission.student?.name}
+        />
+      )}
+
+      {updateSubmission && (
+        <UpdateRemarkAssignmentModal
+          open={!!updateSubmissionId}
+          onOpenChange={(open) => {
+            setIsUpdateRemarkAssignmentModalOpen(open);
+            if (!open) setUpdateSubmissionId(null);
+          }}
+          submissionId={updateSubmission.id}
+          studentName={updateSubmission.student?.name}
+          grade_number={updateSubmission?.grade?.grade_number}
+          grade={
+            updateSubmission?.grade?.grade as
+              | "A+"
+              | "A"
+              | "B"
+              | "C"
+              | "D"
+              | "F"
+              | undefined
+          }
+          feedback={updateSubmission?.grade?.feedback}
+        />
+      )}
     </div>
   );
 }

@@ -50,7 +50,7 @@ export default function Assets({ classTitle, subjectName }: AssetsProps) {
   const [assets, setAssets] = useState<TGetAssetsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.log("assets===========", assets);
+  // console.log("assets===========", assets);
 
   // Memoized fetch function so it can be reused anywhere
   const fetchAssets = useCallback(async () => {
