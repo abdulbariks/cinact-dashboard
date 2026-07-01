@@ -72,7 +72,7 @@ export default function CourseDetails() {
       activeIcon: <StudentSecondaryIcon />,
     },
   ];
-  console.log("course=====", course?.data);
+  // console.log("course=====", course?.data);
 
   return (
     <div>

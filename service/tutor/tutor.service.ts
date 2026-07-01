@@ -89,7 +89,7 @@ export const TutorService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/${courseId}`,
+      `/admin/courses/${courseId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -105,7 +105,7 @@ export const TutorService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/${courseId}/modules`,
+      `/admin/courses/${courseId}/modules`,
       withAuthConfig({ token, context }),
     );
   },
@@ -121,7 +121,7 @@ export const TutorService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/classes/${classId}`,
+      `/admin/courses/modules/classes/${classId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -137,7 +137,7 @@ export const TutorService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/classes/${classId}/assignments`,
+      `/admin/courses/modules/classes/${classId}/assignments`,
       withAuthConfig({ token, context }),
     );
   },
@@ -153,7 +153,7 @@ export const TutorService = {
   }) => {
     // /courses/classes/:classId/media
     return await Fetch.get(
-      `/courses/classes/${classId}/media`,
+      `/admin/courses/classes/${classId}/media`,
       withAuthConfig({ token, context }),
     );
   },
@@ -169,7 +169,7 @@ export const TutorService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/assignments/${assignmentId}`,
+      `/admin/courses/modules/classes/assignments/${assignmentId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -186,7 +186,7 @@ export const TutorService = {
   }) => {
     return await Fetch.get(
       // courses/assignments/:assignmentId/submissions
-      `/courses/assignments/${assignmentId}/submissions`,
+      `/admin/courses/assignments/${assignmentId}/submissions`,
       withAuthConfig({ token, context }),
     );
   },
@@ -204,7 +204,7 @@ export const TutorService = {
     context?: any;
   }) => {
     return await Fetch.post(
-      `/courses/modules/${moduleId}/classes`,
+      `/admin/courses/modules/${moduleId}/classes`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -224,7 +224,7 @@ export const TutorService = {
   }) => {
     // courses/classes/:classId/assignments
     return await Fetch.post(
-      `/courses/classes/${classId}/assignments`,
+      `/admin/courses/modules/classes/${classId}/assignments`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -250,7 +250,7 @@ export const TutorService = {
 
     //Perform the request
     return await Fetch.post(
-      `/courses/classes/${classId}/media`,
+      `/admin/courses/classes/${classId}/media`,
       payload,
       config,
     );
@@ -269,7 +269,7 @@ export const TutorService = {
   }) => {
     return await Fetch.patch(
       // /courses/submissions/:submissionId/grade
-      `/courses/submissions/${submissionId}/grade`,
+      `/admin/courses/submissions/${submissionId}/grade`,
       payload,
       withAuthConfig({ token, context }),
     );
@@ -397,7 +397,7 @@ export const TutorSystemSettingService = {
   // Tutor Personal Info
   getPersonalInfo: async ({ token = "", context = null } = {}) => {
     return await Fetch.get(
-      `/profile/personal-info`,
+      `/admin/profile/personal-info`,
       withAuthConfig({ token, context }),
     );
   },
@@ -413,7 +413,7 @@ export const TutorSystemSettingService = {
     context?: any;
   }) => {
     return await Fetch.post(
-      `/auth/change-password`,
+      `/admin/auth/change-password`,
       payload,
       withAuthConfig({ token, context }),
     );

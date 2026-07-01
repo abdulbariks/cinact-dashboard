@@ -28,6 +28,7 @@ export default function Assignments({
 }: AssignmentsProps) {
   const [isAddAssignmentOpen, setIsAddAssignmentOpen] = useState(false);
   const [assignmentData, setAssignmentData] = useState({
+    title: "",
     description: "",
     date: "",
     totalMarks: "",
@@ -78,13 +79,13 @@ export default function Assignments({
     const formData = new FormData();
 
     // Append your form fields
-    formData.append("title", classTitle);
+    formData.append("title", assignmentData.title);
     formData.append("description", assignmentData.description);
     formData.append("submission_date", assignmentData.date);
     formData.append("total_marks", assignmentData.totalMarks);
     // Append the file if it exists
     if (assignmentData.file) {
-      formData.append("media", assignmentData.file);
+      formData.append("attachments", assignmentData.file);
     }
 
     try {

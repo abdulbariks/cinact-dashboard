@@ -31,7 +31,7 @@ export default function MyCourses() {
         const response = await TutorService.getAllCourses({
           token,
         });
-        console.log("response========", response);
+        // console.log("response========", response);
 
         setAllCourses(response?.data || null);
       } catch (error: any) {

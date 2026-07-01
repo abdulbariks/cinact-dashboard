@@ -2,10 +2,11 @@
 
 import React, { useRef } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, ChevronDown, Plus } from "lucide-react";
+import { Calendar, Plus } from "lucide-react";
 import UploadIcon from "@/components/icons/SuperAdmindashboard/UploadIcon";
 
 type AddAssignmentData = {
+  title: string;
   description: string;
   date: string;
   totalMarks: string;
@@ -48,6 +49,23 @@ export default function AddAssignmentModal({
         </div>
 
         <div className="space-y-6">
+          {/* Assignment Title */}
+          <div>
+            <label className={labelStyles}>Assignment Title</label>
+            <input
+              type="text"
+              placeholder="Enter assignment title..."
+              value={assignmentData.title}
+              onChange={(e) =>
+                setAssignmentData((prev) => ({
+                  ...prev,
+                  title: e.target.value,
+                }))
+              }
+              className={inputStyles}
+            />
+          </div>
+
           {/* Assignment Description */}
           <div>
             <label className={labelStyles}>Assignment Description</label>
@@ -84,11 +102,13 @@ export default function AddAssignmentModal({
             </div>
           </div>
 
-          {/* Remark Total Number */}
+          {/* Total Marks */}
           <div>
-            <label className={labelStyles}>Remark Total Number</label>
+            <label className={labelStyles}>Total Marks</label>
             <div className="relative">
-              <select
+              <input
+                type="number"
+                placeholder="Enter total marks"
                 value={assignmentData.totalMarks}
                 onChange={(e) =>
                   setAssignmentData((prev) => ({
@@ -96,12 +116,8 @@ export default function AddAssignmentModal({
                     totalMarks: e.target.value,
                   }))
                 }
-                className={`${inputStyles} appearance-none cursor-pointer`}
-              >
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-              <ChevronDown className="absolute right-4 top-6 h-5 w-5 text-[#505B86] pointer-events-none" />
+                className={`${inputStyles}`}
+              />
             </div>
           </div>
 
