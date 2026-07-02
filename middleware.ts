@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { AppConfig } from "./config/app.config";
+// import { AppConfig } from "../config/app.config";
 
 type UserRole = "su_admin" | "tutor" | "finance" | "viewer";
 
@@ -57,7 +59,33 @@ const requiredRoleForPath = (pathname: string): UserRole | null => {
   return null;
 };
 
-export function middleware(req: NextRequest) {
+const AUTH_COOKIES = [
+  "token",
+  "accessToken",
+  "refreshToken",
+  "user",
+  "userRole",
+];
+
+const clearAuthCookies = (response: NextResponse) => {
+  for (const name of AUTH_COOKIES) {
+    response.cookies.set({ name, value: "", expires: new Date(0), path: "/" });
+  }
+};
+
+const validateToken = async (token: string): Promise<boolean> => {
+  try {
+    const apiUrl = AppConfig().app.apiUrl;
+    const response = await fetch(`${apiUrl}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const token =
@@ -90,6 +118,15 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (token) {
+    const isValid = await validateToken(token);
+    if (!isValid) {
+      const response = NextResponse.redirect(new URL("/", req.url));
+      clearAuthCookies(response);
+      return response;
+    }
+  }
+
   if (role !== requiredRole) {
     const url = req.nextUrl.clone();
     url.pathname = getHomeByRole(role);
@@ -100,5 +137,10 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*", "/tutor-dashboard/:path*", "/finance-dashboard/:path*"],
+  matcher: [
+    "/",
+    "/dashboard/:path*",
+    "/tutor-dashboard/:path*",
+    "/finance-dashboard/:path*",
+  ],
 };
