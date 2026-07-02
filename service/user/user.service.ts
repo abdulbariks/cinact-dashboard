@@ -218,7 +218,7 @@ export const UserService = {
       name: string;
       email: string;
       password: string;
-      phone: string;
+      phone_number: string;
       type: string;
       join_date: string;
       experience: string;

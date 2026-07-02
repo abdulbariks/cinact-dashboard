@@ -151,7 +151,7 @@ export default function StudentDetails() {
                 <h3 className=" text-white text-lg font-medium">
                   {student?.data?.name}
                   <span className=" text-sm text-[#A5A5AB]">
-                    ( {student?.data?.experience_level})
+                    ( {student?.data?.status})
                   </span>
                 </h3>
                 <div className=" flex items-center gap-1.5 mt-1">
@@ -172,8 +172,8 @@ export default function StudentDetails() {
               <div className="  flex items-center gap-1.5">
                 <ClockCalender />
                 <p className=" text-sm text-[#A5A5AB]">
-                  {student?.data?.date_of_birth
-                    ? new Date(student?.data?.date_of_birth).toLocaleDateString(
+                  {student?.data?.joined_at
+                    ? new Date(student?.data?.joined_at).toLocaleDateString(
                         "en-US",
                         { year: "numeric", month: "long", day: "numeric" },
                       )

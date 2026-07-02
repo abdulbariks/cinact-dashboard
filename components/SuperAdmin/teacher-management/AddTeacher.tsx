@@ -17,7 +17,7 @@ import { UserService } from "@/service/user/user.service";
 import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { useRouter } from "next/navigation";
 
-const userTypeOptions = ["student", "teacher", "admin", "su_admin"];
+const userTypeOptions = ["student", "teacher", "admin"];
 
 export default function AddTeacher() {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function AddTeacher() {
         payload: {
           name: formData.name,
           email: formData.email,
-          phone: formData.phone,
+          phone_number: formData.phone,
           password: formData.password,
           type: formData.type,
           join_date: formData.joinDate,
