@@ -26,6 +26,7 @@ type UpdateRemarkAssignmentModalProps = {
   grade_number?: number | string;
   grade?: "A+" | "A" | "B" | "C" | "D" | "F";
   feedback?: string;
+  onSuccess?: () => void;
 };
 
 export function UpdateRemarkAssignmentModal({
@@ -36,6 +37,7 @@ export function UpdateRemarkAssignmentModal({
   grade_number,
   grade,
   feedback,
+  onSuccess,
 }: UpdateRemarkAssignmentModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -91,6 +93,7 @@ export function UpdateRemarkAssignmentModal({
         response?.data?.message || "Updated Remark Submitted Successfully",
       );
       reset();
+      onSuccess?.();
       onOpenChange(false); // Close modal
     } catch (error) {
       // console.error("Failed to submit remark:", error);

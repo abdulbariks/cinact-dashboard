@@ -48,6 +48,7 @@ export default function AssignmentDetails() {
   const [allSubmittedAssignment, setAllSubmittedAssignment] =
     useState<TGetAllSubmittedAssignmentsResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const loadAssignmentDetails = async () => {
@@ -75,7 +76,7 @@ export default function AssignmentDetails() {
     if (assignmentId) {
       loadAssignmentDetails();
     }
-  }, [assignmentId]);
+  }, [assignmentId, refreshKey]);
 
   // console.log("assignmentDetails==========", assignmentDetails);
 
@@ -105,9 +106,9 @@ export default function AssignmentDetails() {
     if (assignmentId) {
       loadAllSubmittedAssignments();
     }
-  }, [assignmentId]);
+  }, [assignmentId, refreshKey]);
 
-  console.log("allSubmittedAssignment=========", allSubmittedAssignment?.data);
+  // console.log("allSubmittedAssignment=========", allSubmittedAssignment?.data);
 
   const remarkSubmission = allSubmittedAssignment?.data?.find(
     (s) => s.id === remarkSubmissionId,
@@ -419,6 +420,7 @@ export default function AssignmentDetails() {
           }}
           submissionId={remarkSubmission.id}
           studentName={remarkSubmission.student?.name}
+          onSuccess={() => setRefreshKey((k) => k + 1)}
         />
       )}
 
@@ -443,6 +445,7 @@ export default function AssignmentDetails() {
               | undefined
           }
           feedback={updateSubmission?.grade?.feedback}
+          onSuccess={() => setRefreshKey((k) => k + 1)}
         />
       )}
     </div>

@@ -23,6 +23,7 @@ type RemarkAssignmentModalProps = {
   onOpenChange: (open: boolean) => void;
   submissionId: string;
   studentName: string;
+  onSuccess?: () => void;
 };
 
 export function RemarkAssignmentModal({
@@ -30,6 +31,7 @@ export function RemarkAssignmentModal({
   onOpenChange,
   submissionId,
   studentName,
+  onSuccess,
 }: RemarkAssignmentModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -78,6 +80,7 @@ export function RemarkAssignmentModal({
         response?.data?.message || "Remark Submitted Successfully",
       );
       reset();
+      onSuccess?.();
       onOpenChange(false); // Close modal
     } catch (error) {
       // console.error("Failed to submit remark:", error);

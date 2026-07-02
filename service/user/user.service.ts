@@ -833,7 +833,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/assignments/${assignmentId}`,
+      `/admin/courses/modules/classes/assignments/${assignmentId}`,
       withAuthConfig({ token, context }),
     );
   },
@@ -848,7 +848,7 @@ export const AdminCourseManagementService = {
     context?: any;
   }) => {
     return await Fetch.get(
-      `/courses/assignments/${assignmentId}/submissions`,
+      `/admin/courses/modules/classes/assignments/${assignmentId}/submissions`,
       withAuthConfig({ token, context }),
     );
   },
