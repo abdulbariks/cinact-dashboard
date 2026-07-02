@@ -126,6 +126,11 @@ export type TSubmittedAssignment ={
   file_url:string
   assignment_id:string
   student:TStudent
+  attachments?: {
+    file_name: string
+    file_path: string
+    mime_type: string
+  }[]
   grade:{
     status:string
     grade:string

@@ -19,7 +19,7 @@ export default function Students({ courseId }: StudentsProps) {
   const [enrolledUsers, setEnrolledUsers] = useState<TEnrolledUser[]>([]);
   const [loading, setLoading] = useState(true);
 
-  console.log("enrolledUsers====", enrolledUsers);
+  // console.log("enrolledUsers====", enrolledUsers);
 
   const loadEnrolledUsers = useCallback(async () => {
     if (!courseId) {

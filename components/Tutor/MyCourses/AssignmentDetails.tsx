@@ -107,7 +107,7 @@ export default function AssignmentDetails() {
     }
   }, [assignmentId]);
 
-  // console.log("allSubmittedAssignment=========", allSubmittedAssignment?.data);
+  console.log("allSubmittedAssignment=========", allSubmittedAssignment?.data);
 
   const remarkSubmission = allSubmittedAssignment?.data?.find(
     (s) => s.id === remarkSubmissionId,
@@ -119,6 +119,26 @@ export default function AssignmentDetails() {
   // const classNo =
   //   classes.find((cls) => cls.id === classId)?.classNo || "Class Details";
   // const assignmentNo = assignments.find((assignment) => assignment.id === assignmentId)?.assignmentNo || 'Assignment Details'
+
+  const handleDownload = async (url: string, fileName: string) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch file");
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      showErrorToast("Failed to download file. Please try again.");
+    }
+  };
 
   return (
     <div>
@@ -264,10 +284,10 @@ export default function AssignmentDetails() {
                 const formattedDate = `${dateObj.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" })} | ${dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
 
                 // Extract filename
-                const fileName = sub.file_url
-                  ? sub.file_url.split("/").pop()
-                  : "Attachment";
+                const attachment = sub.attachments?.[0];
+                const fileName = attachment?.file_name || "Attachment";
                 const isVideo =
+                  attachment?.mime_type?.startsWith("video/") ||
                   fileName.toLowerCase().endsWith(".mp4") ||
                   fileName.toLowerCase().endsWith(".mov");
 
@@ -286,6 +306,7 @@ export default function AssignmentDetails() {
                             width={40}
                             height={40}
                             className="object-cover"
+                            unoptimized
                           />
                         </div>
                         <div>
@@ -361,16 +382,15 @@ export default function AssignmentDetails() {
                           {decodeURIComponent(fileName)}
                         </span>
                       </div>
-                      <a
-                        href={sub.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleDownload(attachment?.file_path, fileName)
+                        }
+                        className="text-[#F23030] cursor-pointer flex items-center"
                       >
-                        <Download
-                          size={16}
-                          className="mr-4 text-[#F23030] cursor-pointer"
-                        />
-                      </a>
+                        <Download size={16} className="mr-4" />
+                      </button>
                     </div>
 
                     {/* Description Area */}
