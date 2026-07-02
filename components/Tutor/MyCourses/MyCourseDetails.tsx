@@ -72,7 +72,7 @@ export default function CourseDetails() {
       activeIcon: <StudentSecondaryIcon />,
     },
   ];
-  console.log("course=====", course?.data);
+  // console.log("course=====", course?.data);
 
   return (
     <div>
@@ -212,7 +212,7 @@ export default function CourseDetails() {
               <CourseModules courseId={course?.data?.id} />
             </TabsContent>
             <TabsContent value="students" className="mt-4">
-              <Students />
+              <Students courseId={course?.data?.id} />
             </TabsContent>
           </Tabs>
         </div>

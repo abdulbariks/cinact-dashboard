@@ -71,13 +71,15 @@ export default function Students({ courseId }: StudentsProps) {
           >
             <div className="flex items-center gap-4 mb-4">
               <div className="basis-[15%] flex justify-center">
-                <Image
-                  src={item.avatar_url || "/admin-dashboard/avatar-1.png"}
-                  alt="avatar"
-                  width={64}
-                  height={64}
-                  className="object-cover rounded-full"
-                />
+                <div className="relative w-12 h-12 overflow-hidden rounded-full">
+                  <Image
+                    src={item.avatar_url || "/admin-dashboard/avatar-1.png"}
+                    alt="avatar"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
               </div>
 
               <div className="basis-[85%]">
