@@ -82,32 +82,37 @@ export default function UpcomingClasses({
             <p className=" text-sm text-[#D2D2D5]">No upcoming classes.</p>
           </div>
         )}
-{items?.map((item, index) => (
-            <div key={index} className=" bg-[#07121d] p-4 rounded-[10px]">
-              <h2 className=" text-white text-base font-medium">
-                {item.class_title || item.classTitle || item.title || "-"}
-              </h2>
-              <p className=" text-sm text-[#D2D2D5] mt-1">
-                {item.course_title || item.course || "-"}
-              </p>
-              <p className=" text-sm text-[#8D9CDC] mt-1">
-                {item.instructor_name || item.instructorName || "-"}
-              </p>
+        {items?.map((item, index) => (
+          <div key={index} className=" bg-[#07121d] p-4 rounded-[10px]">
+            <h2 className=" text-white text-base font-medium">
+              {item.class_title || item.classTitle || item.title || "-"}
+            </h2>
+            <p className=" text-sm text-[#D2D2D5] mt-1">
+              {item.course_title || item.course || "-"}
+            </p>
+            <p className=" text-sm text-[#8D9CDC] mt-1">
+              {item.instructor_name || item.instructorName || "-"}
+            </p>
 
-              <div className=" flex items-center gap-3 mt-3">
-                <div className=" flex items-center gap-1">
-                  <CalenderIcon />
-                  <p className=" text-white text-sm">{formatDate(item.class_at || item.date)}</p>
-                </div>
-                <div className=" flex items-center gap-1">
-                  <ClockIcon />
-                  <p className=" text-white text-sm">
-                    {formatTime(item.startTime || item.time, item.class_at || item.date)}
-                  </p>
-                </div>
+            <div className=" flex items-center gap-3 mt-3">
+              <div className=" flex items-center gap-1">
+                <CalenderIcon />
+                <p className=" text-white text-sm">
+                  {formatDate(item.class_at || item.date)}
+                </p>
+              </div>
+              <div className=" flex items-center gap-1">
+                <ClockIcon />
+                <p className=" text-white text-sm">
+                  {formatTime(
+                    item.startTime || item.time,
+                    item.class_at || item.date,
+                  )}
+                </p>
               </div>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
     </div>
   );

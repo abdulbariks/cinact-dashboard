@@ -40,8 +40,8 @@ export default function StatsCard({
       icon: RedTeacherIcon,
     },
     {
-      title: "Completion Rate",
-      value: data?.totalAssignments ?? 0,
+      title: "Total Classes",
+      value: data?.totalClasses ?? 0,
       icon: RedTeacherIcon,
     },
   ];
