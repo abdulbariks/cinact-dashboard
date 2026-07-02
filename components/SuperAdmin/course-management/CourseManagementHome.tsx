@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import RightArrowIcon from "@/components/icons/others/RightArrowIcon";
 import {
   PaymentIcon,
@@ -88,12 +88,14 @@ export default function CourseManagementHome() {
   const [isAddCourseModalOpen, setIsAddCourseModalOpen] = useState(false);
   const [courses, setCourses] = useState<TCourse[]>([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const loadCourses = async () => {
     setLoading(true);
@@ -104,7 +106,7 @@ export default function CourseManagementHome() {
       const token = cookies.token || cookies.accessToken || "";
       const response = await AdminCourseManagementService.getAllCourses({
         token,
-        search,
+        search: debouncedSearch || "",
         status: status === "all" ? "" : status,
         page: currentPage,
         limit: itemsPerPage,
@@ -135,7 +137,23 @@ export default function CourseManagementHome() {
 
   useEffect(() => {
     loadCourses();
-  }, [search, status, currentPage, itemsPerPage]);
+  }, [debouncedSearch, status, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [search]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

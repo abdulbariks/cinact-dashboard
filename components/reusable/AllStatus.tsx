@@ -24,11 +24,12 @@ export function AllStatus({ value, onValueChange }: AllStatusProps) {
       </SelectTrigger>
       <SelectContent className="border-none bg-[#0a1929] text-[#777980] [&_[data-slot=select-item]]:text-[#777980] [&_[data-slot=select-item][data-highlighted]]:bg-[#5f6ca0] [&_[data-slot=select-item][data-highlighted]]:text-white [&_[data-slot=select-item][data-state=checked]]:text-white">
         <SelectGroup>
-          <SelectItem value="all">All Status</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="inactive">Inactive</SelectItem>
-          <SelectItem value="alumni">Alumni</SelectItem>
-          <SelectItem value="pending">Pending</SelectItem>
+          <SelectItem value="all">All Courses</SelectItem>
+          <SelectItem value="DRAFT">Draft</SelectItem>
+          <SelectItem value="UPCOMING">Upcoming</SelectItem>
+          <SelectItem value="ACTIVE">Active</SelectItem>
+          <SelectItem value="INACTIVE">Inactive</SelectItem>
+          <SelectItem value="COMPLETED">Completed</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

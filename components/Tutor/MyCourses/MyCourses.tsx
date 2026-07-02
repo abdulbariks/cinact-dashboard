@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import RightArrowIcon from "@/components/icons/others/RightArrowIcon";
 import {
   PaymentIcon,
@@ -22,17 +22,38 @@ export default function MyCourses() {
     null,
   );
   const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [status, setStatus] = useState<string | undefined>(undefined);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 500);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchText]);
 
   useEffect(() => {
     const loadAllCourses = async () => {
+      setLoading(true);
       try {
         const cookies = parseCookies();
         const token = cookies.token || cookies.accessToken || "";
         const response = await TutorService.getAllCourses({
           token,
+          search: debouncedSearch || undefined,
+          status: status && status !== "all" ? status : undefined,
         });
-        // console.log("response========", response);
-
         setAllCourses(response?.data || null);
       } catch (error: any) {
         showErrorToast(
@@ -46,8 +67,7 @@ export default function MyCourses() {
     };
 
     loadAllCourses();
-  }, []);
-
+  }, [debouncedSearch, status]);
 
   return (
     <div>
@@ -60,8 +80,8 @@ export default function MyCourses() {
               <input
                 type="text"
                 name="search"
-                // value={search}
-                // onChange={handleChange}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
                 className=" w-full  py-2 px-4 rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
                 placeholder="Search Course`"
               />
@@ -69,7 +89,7 @@ export default function MyCourses() {
                 <SearchIcon />
               </button>
             </div>
-            <AllStatus />
+            <AllStatus value={status} onValueChange={setStatus} />
           </div>
         </div>
         <div className="flex flex-col gap-6 mt-8">
@@ -80,9 +100,9 @@ export default function MyCourses() {
             >
               <h2 className=" text-white text-lg font-medium">
                 {course.title}
-                {/* <span className=" py-1 px-2.5 rounded-full text-sm text-[#18CC3F] bg-[#2a3d2e]  ml-2">
+                <span className=" py-1 px-2.5 rounded-full text-sm text-[#18CC3F] bg-[#2a3d2e]  ml-2">
                   {course.status}
-                </span> */}
+                </span>
               </h2>
               <div className=" mt-3 flex items-center gap-3">
                 <div className=" border border-[#434656] bg-[#0A1A29] inline-block p-2 rounded-full">

@@ -71,9 +71,23 @@ export const TutorService = {
   },
 
   // Get all courses for the tutor
-  getAllCourses: async ({ token = "", context = null } = {}) => {
+  getAllCourses: async ({
+    token = "",
+    context = null,
+    search,
+    status,
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    status?: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (status) params.append("status", status);
+    const queryString = params.toString();
     return await Fetch.get(
-      `/admin/courses`,
+      `/admin/courses${queryString ? `?${queryString}` : ""}`,
       withAuthConfig({ token, context }),
     );
   },
