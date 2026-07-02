@@ -178,7 +178,7 @@ export default function StudentManagementHome() {
       <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
         <div className=" flex items-center justify-between mb-6">
           <h3 className=" text-white text-xl font-semibold">
-            All Students ({allStudentManagementData?.pagination?.total || 0})
+            All Students ({allStudentManagementData?.meta_data?.total || 0})
           </h3>
           <div className=" flex items-center gap-2">
             <div className=" relative w-80">

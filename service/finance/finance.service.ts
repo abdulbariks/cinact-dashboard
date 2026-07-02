@@ -7,18 +7,27 @@ const jsonConfig = {
   },
 };
 
-const resolveToken = ({ token = "", context = null }: { token?: string; context?: any } = {}) => {
+const resolveToken = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => {
   return token || CookieHelper.get({ key: "token", context }) || "";
 };
 
-const withAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     "Content-Type": "application/json",
     Authorization: "Bearer " + resolveToken({ token, context }),
   },
 });
 
-const withMultipartAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withMultipartAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     "Content-Type": "application/json",
     Authorization: "Bearer " + resolveToken({ token, context }),
@@ -26,13 +35,18 @@ const withMultipartAuthConfig = ({ token = "", context = null }: { token?: strin
   },
 });
 
-const withFormDataAuthConfig = ({ token = "", context = null }: { token?: string; context?: any } = {}) => ({
+const withFormDataAuthConfig = ({
+  token = "",
+  context = null,
+}: { token?: string; context?: any } = {}) => ({
   headers: {
     Authorization: "Bearer " + resolveToken({ token, context }),
   },
 });
 
-const buildQueryString = (params: Record<string, string | number | undefined>) => {
+const buildQueryString = (
+  params: Record<string, string | number | undefined>,
+) => {
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {
@@ -49,7 +63,10 @@ const buildQueryString = (params: Record<string, string | number | undefined>) =
 export const FinanceService = {
   // super admin overview
   getFinanceDashboardOverview: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/admin/overview`, withAuthConfig({ token, context }));
+    return await Fetch.get(
+      `/admin/overview`,
+      withAuthConfig({ token, context }),
+    );
   },
 
   // get all courses
@@ -58,108 +75,116 @@ export const FinanceService = {
   },
 
   // get Finance Student Management
-    getStudentManagement: async ({
-      token = "",
-      context = null,
-      search = "",
-      studentType = "",
-      paymentStatus = "",
-      paymentType="",
-      page = 1,
-      limit = 10,
-    }: {
-      token?: string;
-      context?: any;
-      search?: string;
-      studentType?:string;
-      paymentStatus?:string;
-      paymentType?:string;
-      page?: number;
-      limit?: number;
-    } = {}) => {
-      return await Fetch.get(
-        `/admin/users`,{
-          ...withAuthConfig({ token, context }), params: {
-            search,
-            studentType,
-            paymentStatus,
-            paymentType,
-            page,
-            limit,
-          },
-        }
-      );
-    },
+  getStudentManagement: async ({
+    token = "",
+    context = null,
+    search = "",
+    studentType = "",
+    paymentStatus = "",
+    paymentType = "",
+    page = 1,
+    limit = 10,
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    studentType?: string;
+    paymentStatus?: string;
+    paymentType?: string;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    return await Fetch.get(`/admin/users`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        search,
+        studentType,
+        paymentStatus,
+        paymentType,
+        page,
+        limit,
+      },
+    });
+  },
 
-    // Student Details
-  getStudentDetails: async ({ id, token = "", context = null }: { id: string; token?: string; context?: any }) => {
-  return await Fetch.get(
-    // admin/student-management/student/:id
-    `/admin/student-management/student/${id}`,
-     withAuthConfig({ token, context }));
-    },
+  // Student Details
+  // getStudentDetails: async ({
+  //   id,
+  //   token = "",
+  //   context = null,
+  // }: {
+  //   id: string;
+  //   token?: string;
+  //   context?: any;
+  // }) => {
+  //   return await Fetch.get(
+  //     // admin/student-management/student/:id
+  //     `/admin/users/${id}`,
+  //     withAuthConfig({ token, context }),
+  //   );
+  // },
 
   // student manual enrollment by Finance team
-    createManualStudentEnrollment: async ({
-        token = "",
-        context = null,
-        courseId,
-        full_name,
-        email,
-        phone,
-        address,
-        date_of_birth,
-        experience_level,
-        acting_goals,
-        transaction_id,
-        currncy,
-        amount,
-        payment_date,
-        rules_signing,
-        contract_signing,
-      }: {
-        token?: string;
-        context?: any;
-        courseId: string;
-        full_name: string;
-        email: string;
-        phone: string;
-        address: string;
-        date_of_birth: string;
-        experience_level: string;
-        acting_goals: string;
-        transaction_id: string;
-        currncy: string;
-        amount: string;
-        payment_date: string;
-        rules_signing: File;
-        contract_signing: File;
-      }) => {
-        const formData = new FormData();
-    
-        formData.append("courseId", courseId);
-        formData.append("full_name", full_name);
-        formData.append("email", email);
-        formData.append("phone", phone);
-        formData.append("address", address);
-        formData.append("date_of_birth", date_of_birth);
-        formData.append("experience_level", experience_level);
-        formData.append("acting_goals", acting_goals);
-        formData.append("transaction_id", transaction_id);
-        formData.append("currncy", currncy);
-        formData.append("amount", amount);
-        formData.append("payment_date", payment_date);
-        formData.append("rules_signing", rules_signing);
-        formData.append("contract_signing", contract_signing);
-    
-        return await Fetch.post(
-          "/admin/student-management/manual-enrollment",
-          formData,
-          withFormDataAuthConfig({ token, context })
-        );
-      },
+  createManualStudentEnrollment: async ({
+    token = "",
+    context = null,
+    courseId,
+    full_name,
+    email,
+    phone,
+    address,
+    date_of_birth,
+    experience_level,
+    acting_goals,
+    transaction_id,
+    currncy,
+    amount,
+    payment_date,
+    rules_signing,
+    contract_signing,
+  }: {
+    token?: string;
+    context?: any;
+    courseId: string;
+    full_name: string;
+    email: string;
+    phone: string;
+    address: string;
+    date_of_birth: string;
+    experience_level: string;
+    acting_goals: string;
+    transaction_id: string;
+    currncy: string;
+    amount: string;
+    payment_date: string;
+    rules_signing: File;
+    contract_signing: File;
+  }) => {
+    const formData = new FormData();
 
-// update student info
+    formData.append("courseId", courseId);
+    formData.append("full_name", full_name);
+    formData.append("email", email);
+    formData.append("phone", phone);
+    formData.append("address", address);
+    formData.append("date_of_birth", date_of_birth);
+    formData.append("experience_level", experience_level);
+    formData.append("acting_goals", acting_goals);
+    formData.append("transaction_id", transaction_id);
+    formData.append("currncy", currncy);
+    formData.append("amount", amount);
+    formData.append("payment_date", payment_date);
+    formData.append("rules_signing", rules_signing);
+    formData.append("contract_signing", contract_signing);
+
+    return await Fetch.post(
+      "/admin/student-management/manual-enrollment",
+      formData,
+      withFormDataAuthConfig({ token, context }),
+    );
+  },
+
+  // update student info
   updateEnrollment: async ({
     token = "",
     context = null,
@@ -171,7 +196,11 @@ export const FinanceService = {
     id: string;
     data: any;
   }) => {
-    return await Fetch.patch(`/admin/student-management/enrollment/${id}`, data, withAuthConfig({ token, context }));
+    return await Fetch.patch(
+      `/admin/student-management/enrollment/${id}`,
+      data,
+      withAuthConfig({ token, context }),
+    );
   },
 
   // restrict user
@@ -185,48 +214,64 @@ export const FinanceService = {
     id: string;
   }) => {
     // admin/student-management/enrollment/:enrollId/restrict
-    return await Fetch.patch(`/admin/student-management/enrollment/${id}/restrict`, {}, withAuthConfig({ token, context }));
+    return await Fetch.patch(
+      `/admin/student-management/enrollment/${id}/restrict`,
+      {},
+      withAuthConfig({ token, context }),
+    );
   },
 
-  // get Finance Payments Stats 
+  // get Finance Payments Stats
   getFinancePaymentsStats: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/admin/transactions/stats`, withAuthConfig({ token, context }));
-  }, 
-
-
-   getAllPaymentsTransactions: async ({
-     token = "",
-     context = null,
-     search = "",
-     date,
-     payment_type = "",
-     paymentPlan = "",
-     paymentType = "",
-     status = "",
-     page = 1,
-     limit = 10,
-   }: {
-     token?: string;
-     context?: any;
-     search?: string;
-      date?: Date | string;
-      payment_type?: "ALL" | "ONE_TIME" | "MONTHLY" | "";
-     paymentPlan?: string | boolean;
-     paymentType?: string;
-     status?: string;
-     page?: number;
-     limit?: number;
-   } = {}) => {
-       return await Fetch.get(`/admin/transactions`, {
-         ...withAuthConfig({ token, context }),
-         params: {
-           ...(search ? { search } : {}),
-           ...(date ? { date: (() => { const d = date instanceof Date ? date : new Date(date); const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, "0"); const day = String(d.getDate()).padStart(2, "0"); return `${y}-${m}-${day}`; })() } : {}),
-           ...(payment_type ? { payment_type } : {}),
-           ...(status ? { status } : {}),
-           page,
-           limit,
-        },
-      });
+    return await Fetch.get(
+      `/admin/transactions/stats`,
+      withAuthConfig({ token, context }),
+    );
   },
-}
+
+  getAllPaymentsTransactions: async ({
+    token = "",
+    context = null,
+    search = "",
+    date,
+    payment_type = "",
+    paymentPlan = "",
+    paymentType = "",
+    status = "",
+    page = 1,
+    limit = 10,
+  }: {
+    token?: string;
+    context?: any;
+    search?: string;
+    date?: Date | string;
+    payment_type?: "ALL" | "ONE_TIME" | "MONTHLY" | "";
+    paymentPlan?: string | boolean;
+    paymentType?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    return await Fetch.get(`/admin/transactions`, {
+      ...withAuthConfig({ token, context }),
+      params: {
+        ...(search ? { search } : {}),
+        ...(date
+          ? {
+              date: (() => {
+                const d = date instanceof Date ? date : new Date(date);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, "0");
+                const day = String(d.getDate()).padStart(2, "0");
+                return `${y}-${m}-${day}`;
+              })(),
+            }
+          : {}),
+        ...(payment_type ? { payment_type } : {}),
+        ...(status ? { status } : {}),
+        page,
+        limit,
+      },
+    });
+  },
+};
