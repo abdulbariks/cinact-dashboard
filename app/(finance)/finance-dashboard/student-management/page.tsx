@@ -1,10 +1,8 @@
-import StudentManagement from "@/components/Finance/StudentManagement/StudentManagement";
-import React from "react";
+import StudentManagementHome from '@/components/SuperAdmin/student-management/StudentManagementHome'
+import React from 'react'
 
-export default function StudentManagementPage() {
+export default function page() {
   return (
-    <div>
-      <StudentManagement />
-    </div>
-  );
+     <StudentManagementHome/>
+  )
 }

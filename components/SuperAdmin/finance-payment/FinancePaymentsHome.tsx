@@ -139,14 +139,14 @@ export default function FinancePaymentsHome() {
   }, [currentPage, itemsPerPage, search, date, paymentPlan, status]);
 
   return (
-    <div>
-      <div className=" flex items-center justify-between">
-        <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
+    <div className="p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h2 className="text-xl md:text-2xl text-[#E6E7E8] font-semibold">
           Finance & Payments
         </h2>
         <Link
           href="/dashboard/finance-payments/add-payment"
-          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
+          className="p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer w-fit"
         >
           <PlusIcon />
           Add Payment
@@ -156,28 +156,26 @@ export default function FinancePaymentsHome() {
         <StatsCard data={statsCardData} loading={loading} />
       </div>
 
-      <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">
-        <div className=" flex flex-col lg:flex-row gap-3 items-center justify-between mb-6">
-          <h3 className=" text-white text-xl font-semibold">
-            {/* Transactions (44) */}
+      <div className="mt-5 p-4 md:p-6 bg-[#0A1726] rounded-2xl">
+        <div className="flex flex-col lg:flex-row gap-3 items-center justify-between mb-6">
+          <h3 className="text-white text-lg md:text-xl font-semibold">
             Transactions ({allPaymentsTransactions?.length})
           </h3>
-          <div className=" flex flex-col lg:flex-row items-center gap-2">
-            <div className=" relative w-80">
+          <div className="flex flex-col lg:flex-row items-center gap-2 w-full lg:w-auto">
+            <div className="relative w-full sm:w-64 md:w-80">
               <input
                 type="text"
                 name="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className=" w-full  py-2 px-4   rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white"
+                className="w-full py-2 px-4 rounded-[12px] bg-[#07121d] border border-[#3D4566] placeholder:text-[#4A4C56] text-white text-sm md:text-base"
                 placeholder="Search Transaction"
               />
-              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl cursor-pointer">
+              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-xl cursor-pointer">
                 <SearchIcon />
               </button>
             </div>
-            <div className="flex flex-col md:flex-row items-center gap-2">
-              {" "}
+            <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
               <DatePickerButton date={date} setDate={setDate} />
               <PaymentStatusDropdown status={status} setStatus={setStatus} />
               <AllPaymentPlan

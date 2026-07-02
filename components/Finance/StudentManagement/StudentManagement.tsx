@@ -100,8 +100,8 @@ const StudentManagementSkeleton = () => {
 export default function StudentManagementHome() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [paymentStatus, setPaymentStatus] = useState("all");
   const [allStudentManagementData, setAllStudentManagementData] = useState<
@@ -110,13 +110,13 @@ export default function StudentManagementHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        setDebouncedSearch(search)
-      }, 300)
-  
-      return () => clearTimeout(timeout)
-    }, [search])
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -201,19 +201,19 @@ export default function StudentManagementHome() {
             <StudentStatusFilter value={status} onValueChange={setStatus} />
           </div>
         </div>
-<DynamicTable
-           columns={getFinanceStudentManagementColumns(fetchStudentManagement)}
-           data={allStudentManagementData?.data || []}
-           currentPage={currentPage}
-           itemsPerPage={itemsPerPage}
-           totalpage={allStudentManagementData?.pagination?.totalPages || 1}
-           totalItems={allStudentManagementData?.pagination?.total || 0}
-           onPageChange={setCurrentPage}
-           setItemsPerPage={setItemsPerPage}
-           noDataMessage="No students found"
-           loading={loading}
-           error={error}
-         />
+        <DynamicTable
+          columns={getFinanceStudentManagementColumns(fetchStudentManagement)}
+          data={allStudentManagementData?.data || []}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalpage={allStudentManagementData?.pagination?.totalPages || 1}
+          totalItems={allStudentManagementData?.pagination?.total || 0}
+          onPageChange={setCurrentPage}
+          setItemsPerPage={setItemsPerPage}
+          noDataMessage="No students found"
+          loading={loading}
+          error={error}
+        />
       </div>
     </div>
   );
