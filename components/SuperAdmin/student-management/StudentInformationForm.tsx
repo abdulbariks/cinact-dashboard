@@ -20,7 +20,7 @@ type StudentInformationData = {
   address: string;
   dateOfBirth: string;
   enrollmentType: string;
-  installmentCount: string;
+  installmentCount?: string;
 };
 
 type StudentInformationErrors = Partial<
@@ -39,7 +39,7 @@ type StudentInformationFormProps = {
   labelClassName: string;
 };
 
-const enrollmentTypeOptions = ["ONE_TIME", "INSTALLMENT"];
+const enrollmentTypeOptions = ["FULL_PAYMENT", "INSTALLMENT"];
 
 type ApiCourse = {
   id: string;
@@ -251,6 +251,7 @@ export default function StudentInformationForm({
             id="installmentCount"
             type="number"
             min="1"
+            step="1"
             name="installmentCount"
             value={formData.installmentCount}
             onChange={handleInputChange}

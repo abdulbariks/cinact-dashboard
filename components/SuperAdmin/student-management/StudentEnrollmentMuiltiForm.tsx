@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import confirmImg from "@/public/admin-dashboard/confirm-img.png";
 import BackIcon from "@/components/icons/others/BackIcon";
 import Users2 from "@/components/icons/student-management/Users2";
-import PaymentCard from "@/components/icons/student-management/PaymentCard";
 import ContractDocumenticon from "@/components/icons/student-management/ContractDocumenticon";
 import PdfIcon from "@/components/icons/student-management/PdfIcon";
 import RedDownloadIcon from "@/components/icons/student-management/RedDownloadIcon";
@@ -38,7 +37,13 @@ type FormData = {
 
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
-const enrollmentTypeOptions = ["ONE_TIME", "INSTALLMENT"];
+type ApiCourse = {
+  id: string;
+  title: string;
+  course_overview?: string;
+};
+
+const enrollmentTypeOptions = ["FULL_PAYMENT", "INSTALLMENT"];
 
 const initialFormData: FormData = {
   course: "",
@@ -73,8 +78,41 @@ export default function StudentEnrollmentMuiltiForm({
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiCourses, setApiCourses] = useState<ApiCourse[]>([]);
 
   const router = useRouter();
+
+  const getCourseTitle = (courseId: string) => {
+    const course = apiCourses.find((c) => c.id === courseId);
+    return course?.title || courseId;
+  };
+
+  React.useEffect(() => {
+    let isMounted = true;
+
+    const loadCourses = async () => {
+      try {
+        const cookies = parseCookies();
+        const token = cookies.token || cookies.accessToken || "";
+        const response = await UserService.getAllCourses({ token });
+        const responseData = response?.data?.data || response?.data || [];
+
+        if (isMounted && Array.isArray(responseData)) {
+          setApiCourses(responseData);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setApiCourses([]);
+        }
+      }
+    };
+
+    loadCourses();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -110,6 +148,15 @@ export default function StudentEnrollmentMuiltiForm({
         !formData.installmentCount.trim()
       )
         nextErrors.installmentCount = "Installment count is required";
+      if (
+        formData.enrollmentType === "INSTALLMENT" &&
+        formData.installmentCount.trim()
+      ) {
+        const count = Number(formData.installmentCount);
+        if (!Number.isInteger(count) || count < 1)
+          nextErrors.installmentCount =
+            "Installment count must be a positive integer";
+      }
     }
 
     if (step === 2) {
@@ -153,15 +200,15 @@ export default function StudentEnrollmentMuiltiForm({
         token,
         courseId: formData.course,
         studentId: studentId,
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-        date_of_birth: formData.dateOfBirth,
-        enrollment_type: formData.enrollmentType.toUpperCase(),
-        installment_count: formData.installmentCount,
-        rules_document: rulesDocumentFile,
-        contract_document: contractDocumentFile,
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      date_of_birth: formData.dateOfBirth,
+      enrollment_type: formData.enrollmentType.toUpperCase(),
+      installment_count: formData.installmentCount,
+      rules_document: rulesDocumentFile,
+      contract_document: contractDocumentFile,
       });
 
       if (!response?.data?.success) {
@@ -273,9 +320,15 @@ export default function StudentEnrollmentMuiltiForm({
                     setErrors((prev) => ({ ...prev, course: "" }));
                 }}
                 handleEnrollmentTypeChange={(value) => {
-                  setFormData((prev) => ({ ...prev, enrollmentType: value }));
+                  setFormData((prev) => ({
+                    ...prev,
+                    enrollmentType: value,
+                    installmentCount: value === "FULL_PAYMENT" ? "1" : prev.installmentCount,
+                  }));
                   if (errors.enrollmentType)
                     setErrors((prev) => ({ ...prev, enrollmentType: "" }));
+                  if (value === "FULL_PAYMENT" && errors.installmentCount)
+                    setErrors((prev) => ({ ...prev, installmentCount: "" }));
                 }}
                 inputClassName={inputClassName}
                 labelClassName={labelClassName}
@@ -381,88 +434,45 @@ export default function StudentEnrollmentMuiltiForm({
                         <p className="mb-1.5 text-xs text-[#585E66]">
                           Full Name
                         </p>
-                        <p className="text-sm text-[#DFE1E7]">Jane Cooper</p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.name || "-"}
+                        </p>
                       </div>
                       <div>
                         <p className="mb-1.5 text-xs text-[#585E66]">Phone</p>
-                        <p className="text-sm text-[#DFE1E7]">+32123 456 789</p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.phone || "-"}
+                        </p>
                       </div>
                       <div>
-                        <p className="mb-1.5 text-xs text-[#585E66]">
-                          Experience Level
+                        <p className="mb-1.5 text-xs text-[#585E66]">Address</p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.address || "-"}
                         </p>
-                        <p className="text-sm text-[#DFE1E7]">1 Year</p>
                       </div>
                     </div>
                     <div className="flex-1 space-y-4">
                       <div>
-                        <p className="mb-1.5 text-xs text-[#585E66]">
-                          Email for Invoice
+                        <p className="mb-1.5 text-xs text-[#585E66]">Email</p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.email || "-"}
                         </p>
-                        <p className="text-sm text-[#DFE1E7]">your@email.com</p>
                       </div>
                       <div>
                         <p className="mb-1.5 text-xs text-[#585E66]">
                           Date of Birth
                         </p>
-                        <p className="text-sm text-[#DFE1E7]">12/ 11 /2022</p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.dateOfBirth || "-"}
+                        </p>
                       </div>
                       <div>
                         <p className="mb-1.5 text-xs text-[#585E66]">Course</p>
-                        <p className="text-sm text-[#DFE1E7]">1 Year</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4">
-                    <p className="mb-1.5 text-xs text-[#585E66]">
-                      Acting Goals / Interests
-                    </p>
-                    <p className="text-sm text-[#DFE1E7]">
-                      Aspiring actor passionate about stage, screen, and voice
-                      performance. Currently training at CINACT to grow my
-                      performance skills and creative confidence.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="rounded-[10px] bg-[#07121d] p-4">
-                  <div className="flex items-center gap-1">
-                    <PaymentCard />
-                    <h2 className="text-lg font-medium text-white">
-                      Payment Information
-                    </h2>
-                  </div>
-
-                  <div className="mt-4 flex">
-                    <div className="flex-1 space-y-4">
-                      <div>
-                        <p className="mb-1.5 text-xs text-[#585E66]">
-                          Payment Method:
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.course
+                            ? getCourseTitle(formData.course)
+                            : "-"}
                         </p>
-                        <p className="text-sm text-[#DFE1E7]">Stripe</p>
-                      </div>
-                      <div>
-                        <p className="mb-1.5 text-xs text-[#585E66]">Date</p>
-                        <p className="text-sm text-[#DFE1E7]">2025-08-19</p>
-                      </div>
-                      <div>
-                        <p className="mb-1.5 text-xs text-[#585E66]">Status:</p>
-                        <p className="text-sm text-[#DFE1E7]">Paid</p>
-                      </div>
-                    </div>
-                    <div className="flex-1 space-y-4">
-                      <div>
-                        <p className="mb-1.5 text-xs text-[#585E66]">
-                          Transaction ID:
-                        </p>
-                        <p className="text-sm text-[#DFE1E7]">#TXN248529</p>
-                      </div>
-                      <div>
-                        <p className="mb-1.5 text-xs text-[#585E66]">
-                          Amount Paid:
-                        </p>
-                        <p className="text-sm text-[#DFE1E7]">$2,400</p>
                       </div>
                     </div>
                   </div>
@@ -472,6 +482,46 @@ export default function StudentEnrollmentMuiltiForm({
                   <div className="flex items-center gap-1">
                     <ContractDocumenticon />
                     <h2 className="text-lg font-medium text-white">
+                      Enrollment Information
+                    </h2>
+                  </div>
+
+                  <div className="mt-4 flex">
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <p className="mb-1.5 text-xs text-[#585E66]">
+                          Enrollment Type:
+                        </p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.enrollmentType || "-"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <p className="mb-1.5 text-xs text-[#585E66]">
+                          Enrollment Type:
+                        </p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.enrollmentType || "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="mb-1.5 text-xs text-[#585E66]">
+                          Installment Count:
+                        </p>
+                        <p className="text-sm text-[#DFE1E7]">
+                          {formData.installmentCount || "-"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-[10px] bg-[#07121d] p-4">
+                  <div className="flex items-center gap-1">
+                    <PdfIcon />
+                    <h2 className="text-lg font-medium text-white">
                       Contract Documents
                     </h2>
                   </div>
@@ -480,11 +530,11 @@ export default function StudentEnrollmentMuiltiForm({
                     <div className=" p-3 rounded-[10px] bg-[#101923] border-l border-[#5F6CA0] flex items-center justify-between">
                       <div className=" flex items-center gap-2.5">
                         <PdfIcon />
-                        <p className=" text-sm text-white ">Signed Contact</p>
+                        <p className=" text-sm text-white ">Digital Contract</p>
                       </div>
-                      <button className=" cursor-pointer">
-                        <RedDownloadIcon />
-                      </button>
+                      <span className="text-sm text-[#B2B5B8]">
+                        {contractDocumentFile?.name || "No file selected"}
+                      </span>
                     </div>
                     <div className=" p-3 rounded-[10px] bg-[#101923] border-l border-[#5F6CA0] flex items-center justify-between">
                       <div className=" flex items-center gap-2.5">
@@ -493,9 +543,9 @@ export default function StudentEnrollmentMuiltiForm({
                           Rules & Regulations
                         </p>
                       </div>
-                      <button className=" cursor-pointer">
-                        <RedDownloadIcon />
-                      </button>
+                      <span className="text-sm text-[#B2B5B8]">
+                        {rulesDocumentFile?.name || "No file selected"}
+                      </span>
                     </div>
                   </div>
                 </div>
