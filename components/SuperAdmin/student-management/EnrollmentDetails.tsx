@@ -10,6 +10,7 @@ import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import PdfIcon from "@/components/icons/student-management/PdfIcon";
 import RedDownloadIcon from "@/components/icons/student-management/RedDownloadIcon";
 import BackIcon from "@/components/icons/others/BackIcon";
+import AddManualPaymentModal from "@/components/SuperAdmin/student-management/AddManualPaymentModal";
 import CrossIcon from "@/components/icons/others/CrossIcon";
 import TrashIcon from "@/components/icons/others/TrashIcon";
 import warnigImg from "@/public/admin-dashboard/warning-img.png";
@@ -58,30 +59,32 @@ export default function EnrollmentDetails({
   const [error, setError] = useState("");
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
+  const fetchDetails = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await UserService.getEnrollmentDetail({
+        enrollmentId,
+        token,
+      });
+      setData(response?.data?.data || null);
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to fetch enrollment details";
+      setError(message);
+      showErrorToast(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        const cookies = parseCookies();
-        const token = cookies.token || cookies.accessToken || "";
-        const response = await UserService.getEnrollmentDetail({
-          enrollmentId,
-          token,
-        });
-        setData(response?.data?.data || null);
-      } catch (err: any) {
-        const message =
-          err?.response?.data?.message ||
-          err?.message ||
-          "Failed to fetch enrollment details";
-        setError(message);
-        showErrorToast(message);
-      } finally {
-        setLoading(false);
-      }
-    };
     if (enrollmentId) fetchDetails();
   }, [enrollmentId]);
 
@@ -167,7 +170,7 @@ export default function EnrollmentDetails({
         <button
           type="button"
           onClick={() => setIsWarningOpen(true)}
-          className="flex items-center gap-2.5 text-base text-white font-medium bg-[#E9201D] rounded-md p-3 cursor-pointer"
+          className="flex items-center gap-2.5 text-base bg-[#E9201D] p-3 rounded-md text-white font-medium cursor-pointer"
         >
           Delete Enrollment
         </button>
@@ -235,9 +238,10 @@ export default function EnrollmentDetails({
             <h3 className="text-lg font-medium text-white">Payment Summary</h3>
             <button
               type="button"
+              onClick={() => setIsPaymentModalOpen(true)}
               className="flex items-center gap-2.5 text-base text-white font-medium bg-[#5F6CA0] rounded-md p-3 cursor-pointer"
             >
-              Add Payment
+              Add Manual Payment
             </button>
           </div>
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -445,6 +449,13 @@ export default function EnrollmentDetails({
           </div>
         </DialogContent>
       </Dialog>
+
+      <AddManualPaymentModal
+        open={isPaymentModalOpen}
+        onOpenChange={setIsPaymentModalOpen}
+        enrollmentId={enrollmentId}
+        onSuccess={fetchDetails}
+      />
     </div>
   );
 }

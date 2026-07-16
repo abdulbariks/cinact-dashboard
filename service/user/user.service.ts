@@ -183,7 +183,42 @@ export const UserService = {
     context?: any;
   }) => {
     return await Fetch.delete(
-      `/admin/courses/enrollments/${enrollmentId}`,
+      `/admin/enrollments/${enrollmentId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
+  // Add manual payment for an enrollment (admin)
+  AddManualPayment: async ({
+    token = "",
+    context = null,
+    enrollment_id,
+    payment_method,
+    transaction_ref,
+    payment_date,
+    receipt_url,
+    notes,
+  }: {
+    token?: string;
+    context?: any;
+    enrollment_id: string;
+    payment_method: string;
+    transaction_ref: string;
+    payment_date: string;
+    receipt_url: string;
+    notes: string;
+  }) => {
+    const data = {
+      enrollment_id,
+      payment_method,
+      transaction_ref,
+      payment_date,
+      receipt_url,
+      notes,
+    };
+    return await Fetch.post(
+      `/admin/transactions/payments/manual`,
+      data,
       withAuthConfig({ token, context }),
     );
   },

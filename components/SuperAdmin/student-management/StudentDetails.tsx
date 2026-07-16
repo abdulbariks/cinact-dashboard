@@ -298,9 +298,9 @@ export default function StudentDetails() {
                         {course.title || "Course Name"}
                       </h3>
                       <p
-                        className={`${course.status === "ACTIVE" ? " text-[#18CC3F] bg-[#2a3d2e] " : "text-[#FFC943] bg-[#423c2f]"} py-1 px-2.5 rounded-full text-sm `}
+                        className={`${course.enrollment_status === "ACTIVE" ? " text-[#18CC3F] bg-[#2a3d2e] " : "text-[#FFC943] bg-[#423c2f]"} py-1 px-2.5 rounded-full text-sm `}
                       >
-                        {course.status}
+                        {course.enrollment_status}
                       </p>
                     </div>
 
