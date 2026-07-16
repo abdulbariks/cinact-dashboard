@@ -288,7 +288,11 @@ export default function StudentDetails() {
             <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {allCourses.length > 0 ? (
                 allCourses.map((course: any, index: number) => (
-                  <div key={index} className=" bg-[#07121D] p-4 rounded-[10px]">
+                  <Link
+                    key={index}
+                    href={`/dashboard/student-management/student-details/${id}/enrollment-details/${course.enrollments_id}`}
+                    className=" block bg-[#07121D] p-4 rounded-[10px] cursor-pointer hover:bg-[#0d1a26] transition-colors"
+                  >
                     <div className=" flex items-center gap-2.5">
                       <h3 className=" text-base text-white font-medium">
                         {course.title || "Course Name"}
@@ -327,7 +331,7 @@ export default function StudentDetails() {
                           : "N/A"}
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 ))
               ) : (
                 <p className=" text-sm text-[#A5A5AB] col-span-3">

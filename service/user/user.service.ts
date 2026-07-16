@@ -156,6 +156,22 @@ export const UserService = {
     );
   },
 
+  // Enrollment details (admin)
+  getEnrollmentDetail: async ({
+    enrollmentId,
+    token = "",
+    context = null,
+  }: {
+    enrollmentId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.get(
+      `/admin/courses/enrollments/${enrollmentId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   // get all instructors
   getAllInstructors: async ({
     token = "",
