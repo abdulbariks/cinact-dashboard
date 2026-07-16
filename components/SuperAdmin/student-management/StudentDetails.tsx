@@ -13,6 +13,7 @@ import {
 import { showErrorToast } from "@/lib/hotToast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { parseCookies } from "nookies";
+import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 
 type PaymentHistoryItem = {
   user_id: string;
@@ -44,7 +45,7 @@ export default function StudentDetails() {
   );
   const [allCourses, setAllCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("payment-history");
+  const [activeTab, setActiveTab] = useState("all-courses");
 
   const navItems = [
     {
@@ -127,9 +128,21 @@ export default function StudentDetails() {
         <p className="text-base font-medium text-[#8D9CDC]">Student Details</p>
       </div>
 
-      <h2 className=" text-2xl text-[#E6E7E8] font-semibold mt-8">
+      {/* <h2 className=" text-2xl text-[#E6E7E8] font-semibold mt-8">
         Student Details
-      </h2>
+      </h2> */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-8">
+        <h2 className="text-2xl text-[#E6E7E8] font-semibold ">
+          Student Details
+        </h2>
+        <Link
+          href={`/dashboard/student-management/student-details/${id}/student-enrollment`}
+          className="p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
+        >
+          <PlusIcon />
+          Create Enrollment
+        </Link>
+      </div>
       <div className=" bg-[#0A1929] p-4  rounded-2xl mt-5">
         <h3 className=" text-lg text-white font-medium">
           Personal Information

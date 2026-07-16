@@ -100,7 +100,10 @@ export const UserService = {
 
   // get all courses
   getAllCourses: async ({ token = "", context = null } = {}) => {
-    return await Fetch.get(`/course/all`, withAuthConfig({ token, context }));
+    return await Fetch.get(
+      `/admin/courses`,
+      withAuthConfig({ token, context }),
+    );
   },
 
   // get all students
@@ -264,56 +267,46 @@ export const UserService = {
     token = "",
     context = null,
     courseId,
-    full_name,
+    studentId,
+    name,
     email,
     phone,
     address,
     date_of_birth,
-    experience_level,
-    acting_goals,
-    transaction_id,
-    currncy,
-    amount,
-    payment_date,
-    rules_signing,
-    contract_signing,
+    enrollment_type,
+    installment_count,
+    rules_document,
+    contract_document,
   }: {
     token?: string;
     context?: any;
     courseId: string;
-    full_name: string;
+    studentId: string;
+    name: string;
     email: string;
     phone: string;
     address: string;
     date_of_birth: string;
-    experience_level: string;
-    acting_goals: string;
-    transaction_id: string;
-    currncy: string;
-    amount: string;
-    payment_date: string;
-    rules_signing: File;
-    contract_signing: File;
+    enrollment_type: string;
+    installment_count: string;
+    rules_document: File;
+    contract_document: File;
   }) => {
     const formData = new FormData();
 
-    formData.append("courseId", courseId);
-    formData.append("full_name", full_name);
+    formData.append("student_id", studentId);
+    formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
     formData.append("address", address);
     formData.append("date_of_birth", date_of_birth);
-    formData.append("experience_level", experience_level);
-    formData.append("acting_goals", acting_goals);
-    formData.append("transaction_id", transaction_id);
-    formData.append("currncy", currncy);
-    formData.append("amount", amount);
-    formData.append("payment_date", payment_date);
-    formData.append("rules_signing", rules_signing);
-    formData.append("contract_signing", contract_signing);
+    formData.append("enrollment_type", enrollment_type);
+    formData.append("installment_count", installment_count);
+    formData.append("rules_document", rules_document);
+    formData.append("contract_document", contract_document);
 
     return await Fetch.post(
-      "/admin/student-management/manual-enrollment",
+      `/admin/courses/${courseId}/enrollment`,
       formData,
       withFormDataAuthConfig({ token, context }),
     );

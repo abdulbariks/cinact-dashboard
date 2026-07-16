@@ -22,13 +22,14 @@ import { FinanceService } from "@/service/finance/finance.service";
 
 type FormData = {
   course: string;
-  studentName: string;
+  studentId: string;
+  name: string;
   email: string;
   phone: string;
   address: string;
   dateOfBirth: string;
-  experienceLevel: string;
-  actingGoalsInterests: string;
+  enrollmentType: string;
+  installmentCount: string;
   transactionId: string;
   paymentDate: string;
   paymentAmount: string;
@@ -36,25 +37,16 @@ type FormData = {
 
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
-const courseOptions = [
-  "Acting Fundamentals",
-  "Screen Acting",
-  "Stage Performance",
-  "Voice and Expression",
-  "Improvisation",
-];
-
-const experienceOptions = ["Beginner", "Intermediate", "Advanced"];
-
 const initialFormData: FormData = {
   course: "",
-  studentName: "",
+  studentId: "",
+  name: "",
   email: "",
   phone: "",
   address: "",
   dateOfBirth: "",
-  experienceLevel: "",
-  actingGoalsInterests: "",
+  enrollmentType: "",
+  installmentCount: "",
   transactionId: "",
   paymentDate: "",
   paymentAmount: "",
@@ -101,17 +93,21 @@ export default function StudentEnrollmentForm() {
 
     if (step === 1) {
       if (!formData.course.trim()) nextErrors.course = "Course is required";
-      if (!formData.studentName.trim())
-        nextErrors.studentName = "Student name is required";
+      if (!formData.studentId.trim())
+        nextErrors.studentId = "Student is required";
+      if (!formData.name.trim()) nextErrors.name = "Name is required";
       if (!formData.email.trim()) nextErrors.email = "Email is required";
       if (!formData.phone.trim()) nextErrors.phone = "Phone is required";
       if (!formData.address.trim()) nextErrors.address = "Address is required";
       if (!formData.dateOfBirth.trim())
         nextErrors.dateOfBirth = "Date of birth is required";
-      if (!formData.experienceLevel.trim())
-        nextErrors.experienceLevel = "Experience level is required";
-      if (!formData.actingGoalsInterests.trim())
-        nextErrors.actingGoalsInterests = "Acting goals/interests is required";
+      if (!formData.enrollmentType.trim())
+        nextErrors.enrollmentType = "Enrollment type is required";
+      if (
+        formData.enrollmentType === "INSTALLMENT" &&
+        !formData.installmentCount.trim()
+      )
+        nextErrors.installmentCount = "Installment count is required";
     }
 
     if (step === 2) {
@@ -167,13 +163,13 @@ export default function StudentEnrollmentForm() {
       const response = await FinanceService.createManualStudentEnrollment({
         token,
         courseId: formData.course,
-        full_name: formData.studentName,
+        full_name: formData.name,
         email: formData.email,
         phone: formData.phone,
         address: formData.address,
         date_of_birth: formData.dateOfBirth,
-        experience_level: formData.experienceLevel.toUpperCase(),
-        acting_goals: formData.actingGoalsInterests,
+        experience_level: formData.enrollmentType.toUpperCase(),
+        acting_goals: formData.installmentCount,
         transaction_id: formData.transactionId,
         currncy: "usd",
         amount: formData.paymentAmount,
@@ -292,15 +288,13 @@ export default function StudentEnrollmentForm() {
                   if (errors.course)
                     setErrors((prev) => ({ ...prev, course: "" }));
                 }}
-                handleExperienceLevelChange={(value) => {
-                  setFormData((prev) => ({ ...prev, experienceLevel: value }));
-                  if (errors.experienceLevel)
-                    setErrors((prev) => ({ ...prev, experienceLevel: "" }));
+                handleEnrollmentTypeChange={(value) => {
+                  setFormData((prev) => ({ ...prev, enrollmentType: value }));
+                  if (errors.enrollmentType)
+                    setErrors((prev) => ({ ...prev, enrollmentType: "" }));
                 }}
                 inputClassName={inputClassName}
                 labelClassName={labelClassName}
-                courseOptions={courseOptions}
-                experienceOptions={experienceOptions}
               />
             )}
 
