@@ -2,13 +2,19 @@
 import React, { useEffect, useState } from "react";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { UserService } from "@/service/user/user.service";
 import { parseCookies } from "nookies";
-import { showErrorToast } from "@/lib/hotToast";
+import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import PdfIcon from "@/components/icons/student-management/PdfIcon";
 import RedDownloadIcon from "@/components/icons/student-management/RedDownloadIcon";
 import BackIcon from "@/components/icons/others/BackIcon";
+import CrossIcon from "@/components/icons/others/CrossIcon";
+import TrashIcon from "@/components/icons/others/TrashIcon";
+import warnigImg from "@/public/admin-dashboard/warning-img.png";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 const formatDate = (value?: string | null) => {
   if (!value) return "N/A";
@@ -45,10 +51,13 @@ export default function EnrollmentDetails({
   enrollmentId: string;
 }) {
   const { id: paramId } = useParams();
+  const router = useRouter();
   const resolvedStudentId = studentId || (paramId as string) || "";
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isWarningOpen, setIsWarningOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -75,6 +84,38 @@ export default function EnrollmentDetails({
     };
     if (enrollmentId) fetchDetails();
   }, [enrollmentId]);
+
+  const EnrollmentDelete = async () => {
+    try {
+      setIsDeleting(true);
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const response = await UserService.DeleteEnrollment({
+        enrollmentId,
+        token,
+      });
+      if (!response?.data?.success) {
+        throw new Error(
+          response?.data?.message || "Failed to delete enrollment",
+        );
+      }
+      showSuccessToast(
+        response?.data?.message || "Enrollment deleted successfully",
+      );
+      setIsWarningOpen(false);
+      router.push(
+        `/dashboard/student-management/student-details/${resolvedStudentId}`,
+      );
+    } catch (err: any) {
+      showErrorToast(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to delete enrollment",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (loading) {
     return <div className="p-6 text-white">Loading enrollment details...</div>;
@@ -123,13 +164,13 @@ export default function EnrollmentDetails({
         <h2 className="text-2xl font-semibold text-white">
           Enrollment Details
         </h2>
-        <Link
-          href={`/dashboard/student-management/student-details/${resolvedStudentId}`}
-          className="flex items-center gap-2.5 text-base text-[#8D9CDC] font-medium cursor-pointer"
+        <button
+          type="button"
+          onClick={() => setIsWarningOpen(true)}
+          className="flex items-center gap-2.5 text-base text-white font-medium bg-[#E9201D] rounded-md p-3 cursor-pointer"
         >
-          <BackIcon />
-          Back to Student
-        </Link>
+          Delete Enrollment
+        </button>
       </div>
 
       <div className="mt-5 flex flex-col gap-4">
@@ -190,7 +231,15 @@ export default function EnrollmentDetails({
 
         {/* Order / Payment summary */}
         <div className="bg-[#0A1726] p-6 rounded-2xl">
-          <h3 className="text-lg font-medium text-white">Payment Summary</h3>
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-lg font-medium text-white">Payment Summary</h3>
+            <button
+              type="button"
+              className="flex items-center gap-2.5 text-base text-white font-medium bg-[#5F6CA0] rounded-md p-3 cursor-pointer"
+            >
+              Add Payment
+            </button>
+          </div>
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
               <p className="text-xs text-[#585E66]">Order Number</p>
@@ -359,6 +408,43 @@ export default function EnrollmentDetails({
           </div>
         </div>
       </div>
+
+      <Dialog open={isWarningOpen} onOpenChange={setIsWarningOpen}>
+        <DialogContent
+          hideCloseButton
+          className="w-120 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-6 sm:p-8 text-white"
+        >
+          <div className="flex flex-col items-center text-center">
+            <Image src={warnigImg} alt="Warning" />
+            <h3 className="mt-4 text-lg sm:text-xl font-semibold text-white">
+              Delete Enrollment?
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-[#B2B5B8]">
+              Are you sure you want to delete this enrollment?
+            </p>
+
+            <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setIsWarningOpen(false)}
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 rounded-2xl border border-[#3D4566] px-8 sm:px-11 py-3 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#5F6CA0]"
+              >
+                <CrossIcon />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={EnrollmentDelete}
+                disabled={isDeleting}
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 rounded-2xl bg-[#E9201D] px-8 sm:px-11 py-3 sm:py-4 text-xs sm:text-sm font-medium text-white hover:bg-[#ff3b1f] disabled:opacity-50"
+              >
+                <TrashIcon />
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

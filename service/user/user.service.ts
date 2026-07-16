@@ -172,6 +172,22 @@ export const UserService = {
     );
   },
 
+  // Delete enrollment (admin)
+  DeleteEnrollment: async ({
+    enrollmentId,
+    token = "",
+    context = null,
+  }: {
+    enrollmentId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    return await Fetch.delete(
+      `/admin/courses/enrollments/${enrollmentId}`,
+      withAuthConfig({ token, context }),
+    );
+  },
+
   // get all instructors
   getAllInstructors: async ({
     token = "",
