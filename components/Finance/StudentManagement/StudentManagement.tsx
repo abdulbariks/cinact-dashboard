@@ -166,13 +166,13 @@ export default function StudentManagementHome() {
         <h2 className=" text-2xl text-[#E6E7E8] font-semibold">
           Student Management
         </h2>
-        <Link
+        {/* <Link
           href="/finance-dashboard/student-management/add-student"
           className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
         >
           <PlusIcon />
           Add Student
-        </Link>
+        </Link> */}
       </div>
 
       <div className=" mt-5 p-6  bg-[#0A1726] rounded-2xl">

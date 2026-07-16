@@ -13,6 +13,7 @@ import {
 import { showErrorToast } from "@/lib/hotToast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { parseCookies } from "nookies";
+import PlusIcon from "@/components/icons/SuperAdmindashboard/PlusIcon";
 
 type PaymentHistoryItem = {
   user_id: string;
@@ -39,8 +40,6 @@ type PaymentHistoryItem = {
 export default function StudentDetails() {
   const { id } = useParams();
   const [student, setStudent] = useState<any>(null);
-
-  console.log("[student========", student);
 
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItem[]>(
     [],
@@ -130,9 +129,18 @@ export default function StudentDetails() {
         <p className="text-base font-medium text-[#8D9CDC]">Student Details</p>
       </div>
 
-      <h2 className=" text-2xl text-[#E6E7E8] font-semibold mt-8">
-        Student Details
-      </h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-8">
+        <h2 className=" text-2xl text-[#E6E7E8] font-semibold ">
+          Student Details
+        </h2>
+        <Link
+          href={`/finance-dashboard/student-management/student-details/${id}/student-enrollment`}
+          className=" p-3 bg-[#E9201D] hover:bg-[#e9201d]/90 flex text-white items-center gap-3 rounded-xl cursor-pointer"
+        >
+          <PlusIcon />
+          Create Enrollment
+        </Link>
+      </div>
       <div className=" bg-[#0A1929] p-4  rounded-2xl mt-5">
         <h3 className=" text-lg text-white font-medium">
           Personal Information
@@ -278,7 +286,11 @@ export default function StudentDetails() {
             <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {allCourses.length > 0 ? (
                 allCourses.map((course: any, index: number) => (
-                  <div key={index} className=" bg-[#07121D] p-4 rounded-[10px]">
+                  <Link
+                    key={index}
+                    href={`/finance-dashboard/student-management/student-details/${id}/enrollment-details/${course.enrollments_id}`}
+                    className=" block bg-[#07121D] p-4 rounded-[10px] cursor-pointer hover:bg-[#0d1a26] transition-colors"
+                  >
                     <div className=" flex items-center gap-2.5">
                       <h3 className=" text-base text-white font-medium">
                         {course.title || "Course Name"}
@@ -317,7 +329,7 @@ export default function StudentDetails() {
                           : "N/A"}
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 ))
               ) : (
                 <p className=" text-sm text-[#A5A5AB] col-span-3">
