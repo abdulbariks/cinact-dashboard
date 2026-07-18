@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 import BreadCrumpRightArrow from "@/components/icons/SuperAdmindashboard/BreadCrumpRightArrow";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -9,6 +10,13 @@ import TeacherIcon from "@/components/icons/course-management/TeacherIcon";
 import EnrollmentIcon from "@/components/icons/course-management/EnrollmentIcon";
 import PeriodIcon from "@/components/icons/course-management/PeriodIcon";
 import ClockIcon from "@/components/icons/SuperAdmindashboard/ClockIcon";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import DownloadIcon from "@/components/icons/others/DownloadIcon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AssignmentIcon from "@/components/icons/course-management/AssignmentIcon";
 import AssignmentIconSecondary from "@/components/icons/course-management/AssignmentIconSecondary";
@@ -21,7 +29,10 @@ import EditClassModal from "./EditClassModal";
 import ClassAttendence from "./ClassAttendence";
 import Assets from "./Assets";
 import { parseCookies } from "nookies";
-import { AdminCourseManagementService } from "@/service/user/user.service";
+import {
+  AdminCourseManagementService,
+  AdminAttendanceService,
+} from "@/service/user/user.service";
 import { showErrorToast, showSuccessToast } from "@/lib/hotToast";
 import { TGetClassResponse } from "@/types/tutor.mycourse";
 
@@ -72,6 +83,9 @@ const formatPeriod = (startAt?: string | null, endAt?: string | null) => {
 export default function ClassDetails() {
   const [activeTab, setActiveTab] = useState("assignments");
   const [isEditClassOpen, setIsEditClassOpen] = useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
+  const [isGeneratingQr, setIsGeneratingQr] = useState(false);
   const [classData, setClassData] = useState<EditClassData>(emptyClassData);
   const [getClass, setGetClass] = useState<TGetClassResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -151,6 +165,48 @@ export default function ClassDetails() {
     }
   };
 
+  const handleGenerateQR = async () => {
+    if (!classId) return;
+    setIsGeneratingQr(true);
+    try {
+      const cookies = parseCookies();
+      const token = cookies.token || cookies.accessToken || "";
+      const qrData = await AdminAttendanceService.getAttendanceQR({
+        classId,
+        token,
+      });
+      if (qrImageUrl) URL.revokeObjectURL(qrImageUrl);
+      setQrImageUrl(qrData.qr_image);
+      setIsQrModalOpen(true);
+    } catch (error: any) {
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to generate QR code",
+      );
+    } finally {
+      setIsGeneratingQr(false);
+    }
+  };
+
+  const handleDownloadQR = async () => {
+    if (!qrImageUrl) return;
+    try {
+      const response = await fetch(qrImageUrl, { mode: "cors" });
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = `class-${classId}-attendance-qr.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(objectUrl);
+    } catch (error: any) {
+      showErrorToast(error?.message || "Failed to download QR code");
+    }
+  };
+
   const navItems = [
     {
       value: "assignments",
@@ -210,8 +266,12 @@ export default function ClassDetails() {
           >
             <PlusIcon /> Edit Class
           </button>
-          <button className="flex cursor-pointer items-center gap-3 rounded-2xl bg-[#e9201d] p-3 font-medium text-white">
-            <PlusIcon /> Generate QR Code
+          <button
+            onClick={handleGenerateQR}
+            disabled={isGeneratingQr}
+            className="flex cursor-pointer items-center gap-3 rounded-2xl bg-[#e9201d] p-3 font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <PlusIcon /> {isGeneratingQr ? "Generating..." : "Generate QR Code"}
           </button>
         </div>
       </div>
@@ -298,9 +358,9 @@ export default function ClassDetails() {
             <Assets />
           </TabsContent>
 
-<TabsContent value="attendence" className="mt-4">
-             <ClassAttendence classId={classId} />
-           </TabsContent>
+          <TabsContent value="attendence" className="mt-4">
+            <ClassAttendence classId={classId} />
+          </TabsContent>
         </Tabs>
       </div>
 
@@ -311,6 +371,40 @@ export default function ClassDetails() {
         setClassData={setClassData}
         onEditClass={handleEditClass}
       />
+
+      <Dialog open={isQrModalOpen} onOpenChange={setIsQrModalOpen}>
+        <DialogContent className="w-170 max-w-[95vw] rounded-2xl border-none bg-[#0A1726] p-6 text-white">
+          <DialogHeader className="mb-4 border-b border-[#141B34] pb-4">
+            <DialogTitle className="text-xl font-semibold text-white">
+              Attendance QR Code
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center gap-4">
+            {qrImageUrl && (
+              <div className="rounded-xl bg-white p-4">
+                <Image
+                  src={qrImageUrl}
+                  alt="Attendance QR Code"
+                  width={256}
+                  height={256}
+                  className="h-64 w-64 object-contain"
+                  unoptimized
+                />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={handleDownloadQR}
+              disabled={!qrImageUrl}
+              className="flex cursor-pointer items-center gap-2 rounded-2xl bg-[#5f6ca0] px-6 py-3 font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <DownloadIcon className="h-5 w-5" />
+              Download QR Code
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

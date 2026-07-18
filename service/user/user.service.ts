@@ -1,6 +1,7 @@
 import { CookieHelper } from "../../helper/cookie.helper";
 import { Fetch } from "../../lib/Fetch";
 import { CreateTutorClassPayload } from "@/types/tutor.mycourse";
+import axios from "axios";
 
 const jsonConfig = {
   headers: {
@@ -668,6 +669,32 @@ export const AdminAttendanceService = {
       },
       withAuthConfig({ token, context }),
     );
+  },
+
+  getAttendanceQR: async ({
+    classId,
+    token = "",
+    context = null,
+  }: {
+    classId: string;
+    token?: string;
+    context?: any;
+  }) => {
+    const authHeader =
+      "Bearer " +
+      (token ||
+        CookieHelper.get({ key: "token", context }) ||
+        "");
+
+    const demoData = {
+      id: "cmrpu09390001mdzwelsl9052",
+      class_id: "cmpc4w9b00001kg4cps4cxcgy",
+      qr_image:
+        "http://10.10.9.51:9000/sazed/course/class/attendance/cmpc4w9b00001kg4cps4cxcgy/fb97a2a4645925c8faed450fc658d6d955f65000817928f898a00342cf1e8916.png",
+      token: "fb97a2a4645925c8faed450fc658d6d955f65000817928f898a00342cf1e8916",
+    };
+
+    return demoData;
   },
 };
 
